@@ -1,24 +1,18 @@
 #pragma once
 
+#include <map>
+#include <string>
 #include "irrlicht.h"
 
 using namespace irr;
 using namespace scene;
+using namespace std;
 
 namespace IrrBoardGameEngine {
-	class InputReceiver{
-	public:
-		virtual bool isKeyDown(int keyCode) = 0;
-		virtual bool isKeyReleased(int keyCode) = 0;
-		virtual bool isKeyPressed(int keyCode) = 0;
-		virtual void clear() = 0;
-	};
-
-	class IrrInput: public IEventReceiver, public InputReceiver
+	class IrrInput: public IEventReceiver
 	{
 	public:
-		IrrInput(void);
-		~IrrInput(void);
+		IrrInput();
 		virtual bool OnEvent(const SEvent& event);
 		bool isKeyDown(int keyCode);
 		bool isKeyReleased(int keyCode);

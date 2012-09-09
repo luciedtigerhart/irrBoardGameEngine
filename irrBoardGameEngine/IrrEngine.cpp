@@ -17,14 +17,15 @@ IrrEngine::~IrrEngine(void)
 IrrEngine *IrrEngine::GetInstance()
 {
 	if(IrrEngine::instance==NULL){
-		IrrEngine::instance = new IrrEngine;
+		IrrEngine::instance = new IrrEngine();
+		IrrEngine::instance->init();
 	}
 	return IrrEngine::instance;
 }
 int IrrEngine::init() {
 	//irrklang::ISoundEngine* soundEngine = irrklang::createIrrKlangDevice();
 	soundEngine = createIrrKlangDevice();
-
+	
 	inputsReceiver = new IrrInput();
 
 	//Cria um novo dispositivo
@@ -35,12 +36,12 @@ int IrrEngine::init() {
 	//usa stencil buffer?
 	//se utiliza vsync
 	//o endereço objeto para receber os eventos. No caso o default é 0
-	device = createDevice( video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16, false, false, false, (IrrInput*)inputsReceiver);
+	device = createDevice( video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16, false, false, false, inputsReceiver);
 	//Se nao conseguiu retornar encerra a aplicação
     if (!device) return 1;
 
 	//Titulo na janela
-	device->setWindowCaption(L"Left 2 Die");
+	device->setWindowCaption(L"IrrBGE");
 
 	//Pegar o driver de video
 	driver = device->getVideoDriver();
@@ -59,16 +60,18 @@ void IrrEngine::loop(IrrScene *scene) {
 	// Qual foi a ultima fatia de tempo
 	u32 then = device->getTimer()->getTime();
 	int lastFPS = -1;
-
+	
 	//Game loop
-	while(device->run()){	
+	while(device->run())
+	{
+		
 		//Pega a fatia de tempo atual
 		const u32 now = device->getTimer()->getTime();
 		//Pega a variacao do tempo
 		frameDeltaTime = (f32)(now - then) / 1000.f; //Tempo em segundos
 		//Define o tempo passado com o atual
 		then = now;
-			
+		
 		//Atualiza a cena			
 		scene->update();
 
@@ -93,9 +96,9 @@ void IrrEngine::loop(IrrScene *scene) {
 		}
 
 		//Atualiza o input
-		((IrrInput*)inputsReceiver)->update();
-			
+		inputsReceiver->update();
 	}
+	
 	//Encerra. Deleta todos os objetos
 	device->drop();
 }

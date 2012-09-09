@@ -15,6 +15,7 @@
 
 using namespace irr;
 using namespace scene;
+using namespace core;
 using namespace std;
 
 namespace IrrBoardGameEngine {

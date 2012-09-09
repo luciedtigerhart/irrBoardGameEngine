@@ -4,12 +4,15 @@ using namespace IrrBoardGameEngine;
 
 IrrScene::IrrScene(ISceneManager *sm, ISoundEngine *se)
 {
-	this->smgr = sm;
-	this->soundEngine = se;
+	smgr = sm;
+	soundEngine = se;
+
+	objects = new vector<IrrGameObject*>();
 }
 
 IrrScene::~IrrScene(void)
 {
+	delete objects;
 }
 
 void IrrScene::addObject(IrrGameObject *o){
@@ -27,7 +30,7 @@ IrrGameObject *IrrScene::addCube(Vector* p)
 
 IrrGameObject *IrrScene::addSphere(Vector* p)
 {
-	IrrGameObject *go = new IrrGameObject;
+	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
 	go->setMesh(new IrrMesh(smgr->addSphereSceneNode(10.0f,16,go->node,-1,vector3df(p->x,p->y,p->z))));
 	this->addObject(go);	
@@ -36,7 +39,7 @@ IrrGameObject *IrrScene::addSphere(Vector* p)
 
 IrrGameObject *IrrScene::addCamera(Vector* p, Vector* lookAt)
 {
-	IrrGameObject *go = new IrrGameObject;
+	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
 	go->setCamera(new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z))));
 	this->addObject(go);	

@@ -1,10 +1,5 @@
 #include "IrrGameObject.h"
 
-#include "irrlicht.h"
-
-using namespace irr;
-using namespace core;
-
 using namespace IrrBoardGameEngine;
 
 IrrGameObject::IrrGameObject(void)
@@ -17,11 +12,11 @@ IrrGameObject::~IrrGameObject(void)
 }
 
 void IrrGameObject::setName(std::string *n){
-	this->name = n;
+	name = n;
 }
 
 std::string *IrrGameObject::getName(){
-	return this->name;
+	return name;
 }
 
 void IrrGameObject::setPosition(Vector& p){
@@ -45,7 +40,7 @@ void IrrGameObject::setRotation(Vector& p){
 
 void IrrGameObject::setCamera(IrrCamera *c)
 {
-	this->camera = c;
+	camera = c;
 	node->addChild(((IrrCamera*)c)->node);
 	((IrrCamera*)c)->node->setParent(node);
 }

@@ -21,20 +21,21 @@ namespace IrrBoardGameEngine {
 		static IrrEngine *instance;
 		IrrEngine(void);
 
+		//init
+		int init();
+
 		//manager
 		IrrlichtDevice *device;
 		IVideoDriver *driver;
 		ISceneManager *smgr;
 		ISoundEngine *soundEngine;
-		InputReceiver *inputsReceiver;
+		IrrInput *inputsReceiver;
 		
 		//default
 		f32 frameDeltaTime;
 		IrrScene *currentScene;
 
-	public:
-		//init
-		int init();
+	public:		
 		static IrrEngine *GetInstance();
 
 		void loop();
