@@ -65,7 +65,7 @@ namespace IrrBoardGameEngine {
 		int operator<=(const IrrGameObject &) const;
 
 		ISceneNode *node;
-	private:
+	protected:
 		std::string *name;
 		IrrCamera *camera;
 		IrrMesh *mesh;

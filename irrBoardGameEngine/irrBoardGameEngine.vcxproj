@@ -11,21 +11,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IrrBoard.h" />
     <ClInclude Include="IrrCamera.h" />
     <ClInclude Include="IrrEngine.h" />
     <ClInclude Include="IrrGameObject.h" />
     <ClInclude Include="IrrInput.h" />
+    <ClInclude Include="IrrLoader.h" />
     <ClInclude Include="IrrMesh.h" />
     <ClInclude Include="IrrScene.h" />
+    <ClInclude Include="IrrTile.h" />
+    <ClInclude Include="IrrToken.h" />
+    <ClInclude Include="IrrTokenRoot.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IrrBoard.cpp" />
     <ClCompile Include="IrrCamera.cpp" />
     <ClCompile Include="IrrEngine.cpp" />
     <ClCompile Include="IrrGameObject.cpp" />
     <ClCompile Include="IrrInput.cpp" />
+    <ClCompile Include="IrrLoader.cpp" />
     <ClCompile Include="IrrMesh.cpp" />
     <ClCompile Include="IrrScene.cpp" />
+    <ClCompile Include="IrrTile.cpp" />
+    <ClCompile Include="IrrToken.cpp" />
+    <ClCompile Include="IrrTokenRoot.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1B845DDD-49B1-401E-97DB-820FE64F3FC4}</ProjectGuid>

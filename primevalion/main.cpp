@@ -27,6 +27,7 @@ int main() {
 	cam->setName("Camera principal");
 	
 	//IrrGameObject *perso = scene->addMesh("media/carinha.obj",new Vector(0.0f, 0.0f, 0.0f));
+	IrrGameObject * cube = scene->addCube(new Vector(0.0f, 0.0f, 0.0f));
 	//perso->addBehaviour(new Personagem());
 
 	//GameObject *a = scene->addAudio("media/bell.wav",101,new Vector(10,0,0));
