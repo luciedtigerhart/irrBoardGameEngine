@@ -28,6 +28,13 @@ namespace IrrBoardGameEngine {
 	public:
 		IrrTile(void);
 		~IrrTile(void);
+
+		int posx;//posicao x
+		int posy;//posicao y
+
+		int idx;//index da imagem
+		int tok;//index do token
+		int inf;//index da informação/evento/comportamento
 	};
 
 }

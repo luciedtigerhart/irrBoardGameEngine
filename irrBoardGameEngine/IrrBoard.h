@@ -1,8 +1,11 @@
 #pragma once
-#include <map>
-
 #include "irrlicht.h"
+
+#include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
+#include <map>
 #include <vector>
 
 #include "Vector.h"
@@ -14,6 +17,7 @@
 //#include "IrrAudio.h"
 
 #include "IrrGameObject.h"
+#include "IrrTile.h"
 
 using namespace irr;
 using namespace scene;
@@ -28,6 +32,8 @@ namespace IrrBoardGameEngine {
 	public:
 		IrrBoard(void);
 		~IrrBoard(void);
+
+		vector<vector<IrrTile*>> board;
 	};
 
 }

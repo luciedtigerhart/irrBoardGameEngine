@@ -1,4 +1,5 @@
 #pragma once
+#include "IrrTile.h"
 #include "IrrBoard.h"
 
 using namespace irr;
@@ -19,6 +20,7 @@ namespace IrrBoardGameEngine {
 	public:
 		IrrLoader(void);
 		~IrrLoader(void);
+		bool loadBoard(std::string src, IrrBoard * board);
 	};
 
 }
