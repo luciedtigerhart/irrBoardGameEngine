@@ -23,17 +23,21 @@ int main() {
 	engine->setCurrentScene(scene);
 
 	//4. Adiciona-se objetos na cena
-	IrrGameObject *cam = scene->addCamera(new Vector(0.0f, -50.0f, 0.0f),new Vector(0.0f, 0.0f, 0.0f));
+	IrrGameObject *cam = scene->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
 	cam->setName("Camera principal");
 	
 	//IrrGameObject *perso = scene->addMesh("media/carinha.obj",new Vector(0.0f, 0.0f, 0.0f));
-	IrrGameObject * cube = scene->addCube(new Vector(0.0f, 0.0f, 0.0f));
+	//IrrGameObject * cube = scene->addCube(new Vector(0.0f, 0.0f, 0.0f));
 	//perso->addBehaviour(new Personagem());
 
 	//GameObject *a = scene->addAudio("media/bell.wav",101,new Vector(10,0,0));
 	//cube->addChild(a);
 	//cube->addBehaviour(new MyBehavior());
 	//cube->setActive(false);
+
+	//IrrGameObject * tile = scene->addMesh("obj/01.obj",new Vector(0.0f, 0.0f, 0.0f));
+
+	IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
         
 		
 	//6. Coloca-se a engine a funcionar!

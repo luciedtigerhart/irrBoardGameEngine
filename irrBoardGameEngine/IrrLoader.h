@@ -20,7 +20,7 @@ namespace IrrBoardGameEngine {
 	public:
 		IrrLoader(void);
 		~IrrLoader(void);
-		bool loadBoard(std::string src, IrrBoard * board);
+		static bool loadBoard(std::string src, IrrBoard * board);
 	};
 
 }

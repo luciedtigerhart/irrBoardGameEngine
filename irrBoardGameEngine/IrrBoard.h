@@ -33,7 +33,14 @@ namespace IrrBoardGameEngine {
 		IrrBoard(void);
 		~IrrBoard(void);
 
-		vector<vector<IrrTile*>> board;
+		int width; //largura em pixel
+		int height; //comprimento em pixel
+		int tile_x; //numeros de tiles em x
+		int tile_y; //numeros de tiles em y
+		int tile_width; //largura em pixel do tile
+		int tile_height; //comprimento em pixel do tile
+		vector<vector<IrrTile*>> board; //lista de tiles
+		vector<std::string> * objs; //lista de objs
 	};
 
 }

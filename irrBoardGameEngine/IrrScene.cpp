@@ -42,7 +42,7 @@ IrrGameObject *IrrScene::addCamera(Vector* p, Vector* lookAt)
 	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
 	go->setCamera(new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z))));
-	this->addObject(go);	
+	this->addObject(go);
 	return go;
 }
 
@@ -52,6 +52,35 @@ IrrGameObject *IrrScene::addMesh(char *m, Vector* p)
 	go->node = smgr->addEmptySceneNode();
 	go->setMesh(new IrrMesh(smgr->addMeshSceneNode(smgr->getMesh(m),go->node,-1,vector3df(p->x,p->y,p->z))));
 	this->addObject(go);	
+	return go;
+}
+
+IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
+{
+	IrrBoard *go = new IrrBoard();
+	std::string m;
+	
+	if(IrrLoader::loadBoard(src,go))
+	{
+		go->node = smgr->addEmptySceneNode();
+
+		p->x -= go->width / 2;
+		p->z -= go->height / 2;
+		
+		for(int i=0;i < go->tile_x; i++)
+		{
+			for(int j=0; j < go->tile_y; j++)
+			{
+				//go->board[i][j]->node = smgr->addCubeSceneNode(4.0f,go->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
+				m = go->objs->at(go->board[i][j]->idx);
+				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
+				go->node->addChild(go->board[i][j]->node);
+				go->board[i][j]->node->setParent(go->node);
+			}
+		}
+		
+	}
+
 	return go;
 }
 

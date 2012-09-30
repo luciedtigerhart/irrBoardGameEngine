@@ -13,7 +13,6 @@ IrrLoader::~IrrLoader(void)
 
 bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 {
-	int delta;
 	int tilesX, tilesY;
 	int larg, alt;
 	int tile_atual;
@@ -50,6 +49,7 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	while(arq >> nome_arq)
 	{
 		//iSC->carregar(nome_arq);
+		board->objs->push_back(nome_arq);
 		arq >> tile_num;
 		if(tile_num == "*") break;
 	}
@@ -57,6 +57,13 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	//
 	// CRIA O BOARD
 	//
+	board->width = tilesX*larg;
+	board->height = tilesY*alt;
+	board->tile_x = tilesX;
+	board->tile_y = tilesY;
+	board->tile_width = larg;
+	board->tile_height = alt;
+
 	board->board.resize(tilesX);
 	for(int i = 0; i < tilesX; i++)
 		board->board[i].resize(tilesY);
@@ -70,7 +77,6 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 		for(int x = 0; x < tilesX; x++)
 		{
 			arq >> tile_atual;
-			if(tile_atual >= 0) tile_atual += delta;
 			board->board[x][y] = new IrrTile();
 			board->board[x][y]->posx = x;
 			board->board[x][y]->posy = y;

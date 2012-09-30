@@ -4,6 +4,7 @@ using namespace IrrBoardGameEngine;
 
 IrrBoard::IrrBoard(void)
 {
+	objs = new vector<std::string>();
 }
 
 

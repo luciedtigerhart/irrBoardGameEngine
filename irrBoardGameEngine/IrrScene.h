@@ -3,10 +3,14 @@
 #include "irrlicht.h"
 #include "irrKlang.h"
 #include "IrrGameObject.h"
+#include "IrrTile.h"
+#include "IrrBoard.h"
+#include "IrrLoader.h"
 #include "IrrMesh.h"
 #include "IrrCamera.h"
 #include "Vector.h"
 #include <stack>
+#include <string>
 #include <vector>
 
 using namespace irr;
@@ -34,6 +38,7 @@ namespace IrrBoardGameEngine {
 		IrrGameObject *addSphere(Vector*);
 		IrrGameObject *addAnimatedMesh(char *,Vector*);
 		IrrGameObject *addMesh(char *,Vector*);
+		IrrBoard *addBoard(std::string src,Vector*);
 		IrrGameObject *addCamera(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 

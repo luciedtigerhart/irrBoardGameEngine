@@ -3,6 +3,9 @@
 #include "irrlicht.h"
 #include "irrKlang.h"
 
+#include "IrrTile.h"
+#include "IrrBoard.h"
+#include "IrrLoader.h";
 #include "IrrScene.h"
 #include "IrrInput.h"
 
