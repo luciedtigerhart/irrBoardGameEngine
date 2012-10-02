@@ -4,6 +4,8 @@ using namespace IrrBoardGameEngine;
 
 IrrToken::IrrToken(void)
 {
+	idx = 0;
+	player = 0;
 }
 
 

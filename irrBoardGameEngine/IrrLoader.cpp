@@ -100,8 +100,36 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 		}
 	}
 
+	arq >> sep;
+	if(sep != "*") return false;
+
 	//
-	// PEÇA INICIAL
+	// ARMAZENA A LISTA DE PEÇAS
+	//
+
+	arq >> tile_num;
+	while(arq >> nome_arq)
+	{
+		board->tokens->push_back(nome_arq);
+		arq >> tile_num;
+		if(tile_num == "*") break;
+	}
+
+
+	//
+	// FORMATOS DAS PEÇAS
+	//	
+	for(int y = 0; y < tilesY; y++)
+	{
+		for(int x = 0; x < tilesX; x++)
+		{
+			arq >> tile_atual;
+			board->board[x][y]->token->idx = tile_atual;
+		}
+	}
+
+	//
+	// PEÇA INICIAL dos JOGADORES
 	//
 	arq >> sep;
 	if(sep != "*") return false;
@@ -111,7 +139,7 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 		for(int x = 0; x < tilesX; x++)
 		{
 			arq >> tile_atual;
-			board->board[x][y]->tok = tile_atual;
+			board->board[x][y]->token->player = tile_atual;
 		}
 	}
 

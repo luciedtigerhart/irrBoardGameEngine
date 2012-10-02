@@ -41,6 +41,7 @@ namespace IrrBoardGameEngine {
 		int tile_height; //comprimento em pixel do tile
 		vector<vector<IrrTile*>> board; //lista de tiles
 		vector<std::string> * objs; //lista de objs
+		vector<std::string> * tokens; //lista de objs
 	};
 
 }

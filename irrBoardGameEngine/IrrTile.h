@@ -13,6 +13,7 @@
 //#include "IrrAnimation.h"
 //#include "IrrAudio.h"
 
+#include "IrrToken.h"
 #include "IrrGameObject.h"
 
 using namespace irr;
@@ -33,8 +34,9 @@ namespace IrrBoardGameEngine {
 		int posy;//posicao y
 
 		int idx;//index da imagem
-		int tok;//index do token
 		int inf;//index da informação/evento/comportamento
+
+		IrrToken * token;
 	};
 
 }

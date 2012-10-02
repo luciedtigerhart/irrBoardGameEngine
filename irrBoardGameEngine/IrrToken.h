@@ -28,6 +28,9 @@ namespace IrrBoardGameEngine {
 	public:
 		IrrToken(void);
 		~IrrToken(void);
+
+		int idx;//index do token
+		int player;//jogador
 	};
 
 }

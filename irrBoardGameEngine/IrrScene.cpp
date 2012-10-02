@@ -76,6 +76,18 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
 				go->node->addChild(go->board[i][j]->node);
 				go->board[i][j]->node->setParent(go->node);
+
+				//
+				// VERIFICA PEÇA
+				//
+				if(go->board[i][j]->token->idx != 0)
+				{
+					m = go->tokens->at(go->board[i][j]->token->idx);
+					//go->board[i][j]->token->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->board[i][j]->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
+					go->board[i][j]->token->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->board[i][j]->node,-1,vector3df(0,0,0));
+					go->board[i][j]->node->addChild(go->board[i][j]->token->node);
+					go->board[i][j]->token->node->setParent(go->board[i][j]->node);
+				}
 			}
 		}
 		
