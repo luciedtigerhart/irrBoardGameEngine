@@ -2,13 +2,17 @@
 #include <iostream>
 
 #include "IrrEngine.h"
+#include "PrimeGameStateManager.h"
 
 using namespace IrrBoardGameEngine;
+
+PrimeTeam team;
+PrimeToken token;
 
 int main() {
 	//1. Pegar a referencia para o motor
 	IrrEngine *engine = IrrEngine::GetInstance();
-	
+
 	//2. Registrar as teclas de comandos
 	/*
 	Input::registry("MoveUp",irr::KEY_KEY_W);
@@ -21,6 +25,8 @@ int main() {
 	//3. Cria um nova cena vazia
 	IrrScene *scene = engine->createScene();
 	engine->setCurrentScene(scene);
+
+	PrimeTile tile(scene);
 
 	//4. Adiciona-se objetos na cena
 	IrrGameObject *cam = scene->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
