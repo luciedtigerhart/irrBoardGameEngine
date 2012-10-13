@@ -32,7 +32,6 @@ namespace IrrBoardGameEngine {
 		IVideoDriver *driver;
 		ISceneManager *smgr;
 		ISoundEngine *soundEngine;
-		IrrInput *inputsReceiver;
 		
 		//default
 		f32 frameDeltaTime;
@@ -47,6 +46,9 @@ namespace IrrBoardGameEngine {
 		void setCurrentScene(IrrScene *s);
 		IrrScene *createScene();
 		IrrScene *getScene();
+
+		// Controle do INPUT
+		IrrInput * input;
 
 		float getDeltaTime();
 

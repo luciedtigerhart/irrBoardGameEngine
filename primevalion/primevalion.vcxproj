@@ -79,6 +79,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PrimeGameStateManager.cpp" />
+    <ClCompile Include="PrimeTeam.cpp" />
+    <ClCompile Include="PrimeTile.cpp" />
+    <ClCompile Include="PrimeToken.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PrimeGameStateManager.h" />
+    <ClInclude Include="PrimeTile.h" />
+    <ClInclude Include="PrimeTileManager.h" />
+    <ClInclude Include="PrimeToken.h" />
+    <ClInclude Include="PrimeTokenManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

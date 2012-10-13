@@ -27,8 +27,7 @@ int IrrEngine::init() {
 	//irrklang::ISoundEngine* soundEngine = irrklang::createIrrKlangDevice();
 	soundEngine = createIrrKlangDevice();
 	
-	inputsReceiver = new IrrInput();
-
+	input = new IrrInput();
 	//Cria um novo dispositivo
 	//qual o driver - no caso esta usando via software mesmo
 	//tamanho da janela - 640x480
@@ -37,7 +36,7 @@ int IrrEngine::init() {
 	//usa stencil buffer?
 	//se utiliza vsync
 	//o endereço objeto para receber os eventos. No caso o default é 0
-	device = createDevice( video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16, false, false, false, inputsReceiver);
+	device = createDevice( video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16, false, false, false, input);
 	//Se nao conseguiu retornar encerra a aplicação
     if (!device) return 1;
 
@@ -97,7 +96,7 @@ void IrrEngine::loop(IrrScene *scene) {
 		}
 
 		//Atualiza o input
-		inputsReceiver->update();
+		input->update();
 	}
 	
 	//Encerra. Deleta todos os objetos
