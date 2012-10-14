@@ -18,7 +18,7 @@
 
 using namespace IrrBoardGameEngine;
 
-class PrimeToken : public IrrToken
+class PrimeToken : public IrrTokenBehavior
 {
 private:
 public:
@@ -31,7 +31,8 @@ public:
 	int highlight; //Type of highlight (selection, pushing, attack, etc.)
 	int race; //Race of this token
 
-	void init(IrrEngine* engine, IrrScene* scene, PrimeTeam team); //Initializes token's mesh and texture
+	//void init(IrrEngine* engine, IrrScene* scene, PrimeTeam team); //Initializes token's mesh and texture
+	void init(PrimeTeam team); //Initializes token's mesh and texture
 	void update(); //Updates this token's visuals
 };
 

@@ -2,7 +2,7 @@
 #define _PRIMETOKENMANAGER_H
 
 #include <iostream>
-#include "PrimeToken.h"
+#include "PrimePlayState.h"
 
 using namespace std;
 
@@ -12,6 +12,8 @@ private:
 public:
 	PrimeTokenManager();
 	~PrimeTokenManager();
+
+	void updateTokens(IrrBoard* board);
 };
 
 #endif

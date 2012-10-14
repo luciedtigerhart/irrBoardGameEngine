@@ -2,6 +2,7 @@
 
 PrimeTile::PrimeTile(IrrScene* scene)
 {
+	/*
 	//Create highlight planes
 	highlightMove->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
 	highlightMove->node->setParent(node);
@@ -20,6 +21,7 @@ PrimeTile::PrimeTile(IrrScene* scene)
 
 	highlightAttackHover->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
 	highlightAttackHover->node->setParent(node);
+	*/
 
 	//Highlights are deactivated by default
 	turnOffHighlightsExcept(NONE);

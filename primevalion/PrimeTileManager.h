@@ -2,7 +2,7 @@
 #define _PRIMETILEMANAGER_H
 
 #include <iostream>
-#include "PrimeTile.h"
+#include "PrimePlayState.h"
 
 using namespace std;
 
@@ -12,6 +12,8 @@ private:
 public:
 	PrimeTileManager();
 	~PrimeTileManager();
+
+	void updateTiles(IrrBoard* board);
 };
 
 #endif

@@ -7,11 +7,11 @@
 using namespace IrrBoardGameEngine;
 
 PrimeTeam team;
-PrimeToken token;
 
 int main() {
+	
 	//1. Pegar a referencia para o motor
-	IrrEngine *engine = IrrEngine::GetInstance();
+	//IrrEngine *engine = IrrEngine::GetInstance();
 
 	//2. Registrar as teclas de comandos
 	/*
@@ -23,14 +23,12 @@ int main() {
 	*/
         
 	//3. Cria um nova cena vazia
-	IrrScene *scene = engine->createScene();
-	engine->setCurrentScene(scene);
-
-	PrimeTile tile(scene);
+	//IrrScene *scene = engine->createScene();
+	//engine->setCurrentScene(scene);
 
 	//4. Adiciona-se objetos na cena
-	IrrGameObject *cam = scene->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
-	cam->setName("Camera principal");
+	//IrrGameObject *cam = scene->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
+	//cam->setName("Camera principal");
 	
 	//IrrGameObject *perso = scene->addMesh("media/carinha.obj",new Vector(0.0f, 0.0f, 0.0f));
 	//IrrGameObject * cube = scene->addCube(new Vector(0.0f, 0.0f, 0.0f));
@@ -43,15 +41,15 @@ int main() {
 
 	//IrrGameObject * tile = scene->addMesh("obj/01.obj",new Vector(0.0f, 0.0f, 0.0f));
 
-	IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
+	//IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
         
 		
 	//6. Coloca-se a engine a funcionar!
-	engine->loop();
+	//engine->loop();
 
 	//7. Ao encerrar deleta cena e o motor
-	delete scene;
-	delete engine;
+	//delete scene;
+	//delete engine;
 
 	return 0;
 } 
