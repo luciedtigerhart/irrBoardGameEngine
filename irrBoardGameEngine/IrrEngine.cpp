@@ -46,6 +46,8 @@ int IrrEngine::init() {
 	//Pegar o driver de video
 	driver = device->getVideoDriver();
 
+	guienv = device->getGUIEnvironment();
+
 	smgr = device->getSceneManager();
 
 	return 0;
@@ -53,10 +55,15 @@ int IrrEngine::init() {
 
 void IrrEngine::loop()
 {
-	this->loop(this->currentScene);
+	this->loop(this->currentScene,this->currentGUI);
 }
 
-void IrrEngine::loop(IrrScene *scene) {
+void IrrEngine::loop(IrrGUI * gui)
+{
+	this->loop(this->currentScene,gui);
+}
+
+void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 	// Qual foi a ultima fatia de tempo
 	u32 then = device->getTimer()->getTime();
 	int lastFPS = -1;
@@ -64,7 +71,6 @@ void IrrEngine::loop(IrrScene *scene) {
 	//Game loop
 	while(device->run())
 	{
-		
 		//Pega a fatia de tempo atual
 		const u32 now = device->getTimer()->getTime();
 		//Pega a variacao do tempo
@@ -75,15 +81,18 @@ void IrrEngine::loop(IrrScene *scene) {
 		//Atualiza a cena			
 		scene->update();
 
+		//atualiza a gui
+		gui->update();
+
 		//Limpa a cena com uma cor
 		driver->beginScene(true, true, SColor(255,100,101,140));
 			
 		//Grafo de cena renderiza
 		smgr->drawAll();
 
-
 		//Gerenciador da GUI renderiza
-		//guienv->drawAll();
+		guienv->drawAll();
+
 		//Exibe o resultado na tela
 		driver->endScene();
 
@@ -108,7 +117,8 @@ IrrScene *IrrEngine::createScene()
 	return new IrrScene(smgr,soundEngine);
 }
 
-IrrScene *IrrEngine::getScene() {
+IrrScene *IrrEngine::getScene()
+{
 	return currentScene;
 }
 
@@ -117,6 +127,22 @@ void IrrEngine::setCurrentScene(IrrScene *s)
 	this->currentScene = s;
 }
 
-float IrrEngine::getDeltaTime() {
+float IrrEngine::getDeltaTime()
+{
 	return (float)frameDeltaTime;
+}
+
+void IrrEngine::setCurrentGUI(IrrGUI * gui)
+{
+	currentGUI = gui;
+}
+
+IrrGUI *IrrEngine::createGUI()
+{
+	return new IrrGUI(guienv, driver, input);
+}
+
+IrrGUI *IrrEngine::getGUI()
+{
+	return currentGUI;
 }

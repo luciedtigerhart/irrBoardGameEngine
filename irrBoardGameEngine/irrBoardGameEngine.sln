@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "irrBoardGameEngine", "irrBo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "primevalion", "..\primevalion\primevalion.vcxproj", "{5902CC26-901F-4F1E-A90E-A44CC6B7C998}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandBox", "..\sandBox\sandBox.vcxproj", "{0467EE22-F231-4743-A2AE-977DB4FD3B09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{5902CC26-901F-4F1E-A90E-A44CC6B7C998}.Debug|Win32.Build.0 = Debug|Win32
 		{5902CC26-901F-4F1E-A90E-A44CC6B7C998}.Release|Win32.ActiveCfg = Release|Win32
 		{5902CC26-901F-4F1E-A90E-A44CC6B7C998}.Release|Win32.Build.0 = Release|Win32
+		{0467EE22-F231-4743-A2AE-977DB4FD3B09}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0467EE22-F231-4743-A2AE-977DB4FD3B09}.Debug|Win32.Build.0 = Debug|Win32
+		{0467EE22-F231-4743-A2AE-977DB4FD3B09}.Release|Win32.ActiveCfg = Release|Win32
+		{0467EE22-F231-4743-A2AE-977DB4FD3B09}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

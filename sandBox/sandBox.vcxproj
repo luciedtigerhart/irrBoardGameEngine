@@ -10,39 +10,10 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="IrrBoard.h" />
-    <ClInclude Include="IrrCamera.h" />
-    <ClInclude Include="IrrEngine.h" />
-    <ClInclude Include="IrrGameObject.h" />
-    <ClInclude Include="IrrGUI.h" />
-    <ClInclude Include="IrrInput.h" />
-    <ClInclude Include="IrrLoader.h" />
-    <ClInclude Include="IrrMesh.h" />
-    <ClInclude Include="IrrScene.h" />
-    <ClInclude Include="IrrTile.h" />
-    <ClInclude Include="IrrToken.h" />
-    <ClInclude Include="IrrTokenRoot.h" />
-    <ClInclude Include="Vector.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="IrrBoard.cpp" />
-    <ClCompile Include="IrrCamera.cpp" />
-    <ClCompile Include="IrrEngine.cpp" />
-    <ClCompile Include="IrrGameObject.cpp" />
-    <ClCompile Include="IrrGUI.cpp" />
-    <ClCompile Include="IrrInput.cpp" />
-    <ClCompile Include="IrrLoader.cpp" />
-    <ClCompile Include="IrrMesh.cpp" />
-    <ClCompile Include="IrrScene.cpp" />
-    <ClCompile Include="IrrTile.cpp" />
-    <ClCompile Include="IrrToken.cpp" />
-    <ClCompile Include="IrrTokenRoot.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1B845DDD-49B1-401E-97DB-820FE64F3FC4}</ProjectGuid>
+    <ProjectGuid>{0467EE22-F231-4743-A2AE-977DB4FD3B09}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>irrBoardGameEngine</RootNamespace>
+    <RootNamespace>sandBox</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -51,7 +22,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -79,10 +50,10 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -94,16 +65,21 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;IRRWOLFORCE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\irrKlang-1.3.0\include;..\irrlicht-1.7.3\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\irrKlang-1.3.0\include;..\irrlicht-1.7.3\include;..\irrBoardGameEngine</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>irrKlang.lib;Irrlicht.lib;irrBoardGameEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\irrKlang-1.3.0\lib\Win32-visualStudio;..\irrlicht-1.7.3\lib\Win32-visualstudio;..\exe</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
