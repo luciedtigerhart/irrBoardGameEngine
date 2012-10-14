@@ -30,6 +30,7 @@ namespace IrrBoardGameEngine {
 		void clear();
 		void update();
 
+		/*
 		//registra uma comando de teclado
 		void registry(char *, int);
 
@@ -38,8 +39,9 @@ namespace IrrBoardGameEngine {
 		bool getButtonPressed(char *);
 		bool getButtonReleased(char *);
 
-	private:
 		multimap<std::string,int> *keys;
+		*/
+	private:
 
 		void setKeyStatus(int* k, int keyCode, bool value);
 		bool getKeyStatus(int* k, int keyCode);

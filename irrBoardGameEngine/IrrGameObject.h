@@ -1,21 +1,23 @@
 #pragma once
-
-#include <map>
-
 #include "irrlicht.h"
+#include "irrKlang.h"
+#include <map>
 #include <string>
 #include <vector>
 
 #include "Vector.h"
 #include "IrrCamera.h"
 #include "IrrMesh.h"
-//#include "IrrBehavior.h"
+#include "IrrBehavior.h"
+
 //#include "IrrAnimation.h"
 //#include "IrrAudio.h"
 
+
 using namespace irr;
-using namespace scene;
 using namespace core;
+using namespace scene;
+using namespace video;
 using namespace std;
 
 namespace IrrBoardGameEngine {
@@ -24,6 +26,8 @@ namespace IrrBoardGameEngine {
 	public:
 		IrrGameObject(void);
 		~IrrGameObject(void);
+
+		IrrInput * s;
 
 		void setPosition(Vector&);
 		void setScale(Vector&);
@@ -57,7 +61,7 @@ namespace IrrBoardGameEngine {
 		bool isActive();
 
 		void update();
-		//void addBehaviour(Behavior *);
+		void addBehaviour(IrrBehavior *b);
 
 		void translate(float x, float y, float z);
 		void play();
@@ -74,7 +78,8 @@ namespace IrrBoardGameEngine {
 		Animation *animation;
 		Audio *audio;
 		*/
-		//vector<Behavior*> *behaviors;
+
+		vector<IrrBehavior*> *behaviors;
 		std::map<IrrGameObject*,ISceneNode*> *children;
 	};
 }

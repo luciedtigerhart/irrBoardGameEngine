@@ -8,7 +8,6 @@ IrrToken::IrrToken(void)
 	player = 0;
 }
 
-
 IrrToken::~IrrToken(void)
 {
 }

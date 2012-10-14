@@ -2,16 +2,21 @@
 
 #include "irrlicht.h"
 #include "irrKlang.h"
-#include "IrrGameObject.h"
-#include "IrrTile.h"
-#include "IrrBoard.h"
-#include "IrrLoader.h"
-#include "IrrMesh.h"
-#include "IrrCamera.h"
 #include "Vector.h"
 #include <stack>
 #include <string>
 #include <vector>
+
+#include "IrrInput.h"
+
+#include "IrrGameObject.h"
+
+#include "IrrTile.h"
+#include "IrrBoard.h"
+
+#include "IrrLoader.h"
+#include "IrrMesh.h"
+#include "IrrCamera.h"
 
 using namespace irr;
 using namespace scene;

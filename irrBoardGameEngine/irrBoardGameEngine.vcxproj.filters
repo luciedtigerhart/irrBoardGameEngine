@@ -54,6 +54,15 @@
     <ClInclude Include="IrrGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IrrTokenBehavior.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IrrBehavior.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IrrTileBehavior.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IrrEngine.cpp">

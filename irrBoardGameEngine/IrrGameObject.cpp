@@ -5,36 +5,43 @@ using namespace IrrBoardGameEngine;
 IrrGameObject::IrrGameObject(void)
 {
 	children = new std::map<IrrGameObject*,ISceneNode*>();
+	behaviors = new vector<IrrBehavior*>();
 }
 
 IrrGameObject::~IrrGameObject(void)
 {
 }
 
-void IrrGameObject::setName(std::string *n){
+void IrrGameObject::setName(std::string *n)
+{
 	name = n;
 }
 
-std::string *IrrGameObject::getName(){
+std::string *IrrGameObject::getName()
+{
 	return name;
 }
 
-void IrrGameObject::setPosition(Vector& p){
+void IrrGameObject::setPosition(Vector& p)
+{
 	node->setPosition(vector3df(p.x,p.y,p.z));
 }
 
-void IrrGameObject::getPosition(Vector& p){
+void IrrGameObject::getPosition(Vector& p)
+{
 	vector3df a = node->getPosition();
 	p.x = a.X;
 	p.y = a.Y;
 	p.z = a.Z;
 }
 
-void IrrGameObject::setScale(Vector& p){
+void IrrGameObject::setScale(Vector& p)
+{
 	node->setScale(vector3df(p.x,p.y,p.z));
 }
 
-void IrrGameObject::setRotation(Vector& p){
+void IrrGameObject::setRotation(Vector& p)
+{
 	node->setRotation(vector3df(p.x,p.y,p.z));
 }
 
@@ -45,7 +52,8 @@ void IrrGameObject::setCamera(IrrCamera *c)
 	((IrrCamera*)c)->node->setParent(node);
 }
 
-IrrCamera* IrrGameObject::getCamera(){
+IrrCamera* IrrGameObject::getCamera()
+{
 	return camera;
 }
 
@@ -56,7 +64,8 @@ void IrrGameObject::setMesh(IrrMesh *c)
 	((IrrMesh*)c)->node->setParent(node);
 }
 
-IrrMesh* IrrGameObject::getMesh(){
+IrrMesh* IrrGameObject::getMesh()
+{
 	return mesh;
 }
 
@@ -127,13 +136,15 @@ int IrrGameObject::operator<=(const IrrGameObject &o) const
 	return strcmp(this->name->c_str(),o.name->c_str());
 }
 
+void IrrGameObject::addBehaviour(IrrBehavior *b){
+	this->behaviors->push_back(b);
+}
+
 void IrrGameObject::update(){
 	if(this->isActive()){
-		/*
-		vector<Behavior*>::iterator i;
+		vector<IrrBehavior*>::iterator i;
 		for(i=behaviors->begin(); i!=behaviors->end(); i++){
 			(*i)->update();
 		}
-		*/
 	}
 }

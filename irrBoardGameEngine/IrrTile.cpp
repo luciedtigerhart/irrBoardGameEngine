@@ -4,7 +4,8 @@ using namespace IrrBoardGameEngine;
 
 IrrTile::IrrTile(void)
 {
-	token = new IrrToken();
+	token = NULL;
+	start = 0;
 }
 
 

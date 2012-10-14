@@ -8,16 +8,12 @@
 #include "Vector.h"
 #include "IrrCamera.h"
 #include "IrrMesh.h"
-
-//#include "IrrBehavior.h"
-//#include "IrrAnimation.h"
-//#include "IrrAudio.h"
-
-#include "IrrToken.h"
 #include "IrrGameObject.h"
+#include "IrrToken.h"
 
 using namespace irr;
 using namespace scene;
+using namespace video;
 using namespace core;
 using namespace std;
 
@@ -30,12 +26,22 @@ namespace IrrBoardGameEngine {
 		IrrTile(void);
 		~IrrTile(void);
 
-		int posx;//posicao x
-		int posy;//posicao y
+		//posicao i na matriz
+		int posi;
 
-		int idx;//index da imagem
-		int inf;//index da informação/evento/comportamento
+		//posicao j na matriz
+		int posj;
 
+		//index da imagem
+		int idx;
+
+		//index da informação/evento/comportamento
+		int inf;
+
+		//define o grupo que inicia
+		int start;
+
+		//Peça
 		IrrToken * token;
 	};
 

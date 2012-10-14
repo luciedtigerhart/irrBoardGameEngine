@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IrrBehavior.h" />
     <ClInclude Include="IrrBoard.h" />
     <ClInclude Include="IrrCamera.h" />
     <ClInclude Include="IrrEngine.h" />
@@ -21,7 +22,9 @@
     <ClInclude Include="IrrMesh.h" />
     <ClInclude Include="IrrScene.h" />
     <ClInclude Include="IrrTile.h" />
+    <ClInclude Include="IrrTileBehavior.h" />
     <ClInclude Include="IrrToken.h" />
+    <ClInclude Include="IrrTokenBehavior.h" />
     <ClInclude Include="IrrTokenRoot.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>

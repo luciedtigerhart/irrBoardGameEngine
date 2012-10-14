@@ -1,12 +1,14 @@
 #include "IrrGUI.h"
 
+#include "IrrEngine.h"
+
 using namespace IrrBoardGameEngine;
 
-IrrGUI::IrrGUI(IGUIEnvironment * g, IVideoDriver *d, IrrInput * i)
+IrrGUI::IrrGUI()
 {
-	guienv = g;
-	driver = d;
-	input = i;
+	guienv = IrrEngine::getInstance()->getGUIenv();
+	driver = IrrEngine::getInstance()->getDriver();
+	input = IrrEngine::getInstance()->getInput();
 }
 
 IrrGUI::~IrrGUI(void)

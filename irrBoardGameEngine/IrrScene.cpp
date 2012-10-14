@@ -65,32 +65,18 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 		go->node = smgr->addEmptySceneNode();
 
 		p->x -= go->width / 2;
-		p->z -= go->height / 2;
+		p->z -= go->length / 2;
 		
-		for(int i=0;i < go->tile_x; i++)
+		for(int i=0;i < go->tile_i; i++)
 		{
-			for(int j=0; j < go->tile_y; j++)
+			for(int j=0; j < go->tile_j; j++)
 			{
-				//go->board[i][j]->node = smgr->addCubeSceneNode(4.0f,go->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
 				m = go->objs->at(go->board[i][j]->idx);
-				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
+				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_length))));
 				go->node->addChild(go->board[i][j]->node);
 				go->board[i][j]->node->setParent(go->node);
-
-				//
-				// VERIFICA PEÇA
-				//
-				if(go->board[i][j]->token->idx != 0)
-				{
-					m = go->tokens->at(go->board[i][j]->token->idx);
-					//go->board[i][j]->token->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->board[i][j]->node,-1,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_height))));
-					go->board[i][j]->token->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->board[i][j]->node,-1,vector3df(0,0,0));
-					go->board[i][j]->node->addChild(go->board[i][j]->token->node);
-					go->board[i][j]->token->node->setParent(go->board[i][j]->node);
-				}
 			}
 		}
-		
 	}
 
 	return go;

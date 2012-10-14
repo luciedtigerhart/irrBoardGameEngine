@@ -15,7 +15,7 @@ IrrEngine::~IrrEngine(void)
 
 
 //singleton
-IrrEngine *IrrEngine::GetInstance()
+IrrEngine *IrrEngine::getInstance()
 {
 	if(IrrEngine::instance==NULL){
 		IrrEngine::instance = new IrrEngine();
@@ -139,10 +139,40 @@ void IrrEngine::setCurrentGUI(IrrGUI * gui)
 
 IrrGUI *IrrEngine::createGUI()
 {
-	return new IrrGUI(guienv, driver, input);
+	return new IrrGUI();
 }
 
 IrrGUI *IrrEngine::getGUI()
 {
 	return currentGUI;
+}
+
+IrrInput *IrrEngine::getInput()
+{
+	return input;
+}
+
+IrrlichtDevice *IrrEngine::getDevice()
+{
+	return device;
+}
+
+IVideoDriver *IrrEngine::getDriver()
+{
+	return driver;
+}
+
+ISceneManager *IrrEngine::getSceneManager()
+{
+	return smgr;
+}
+
+IGUIEnvironment *IrrEngine::getGUIenv()
+{
+	return guienv;
+}
+
+ISoundEngine *IrrEngine::getSoundEngine()
+{
+	return soundEngine;
 }

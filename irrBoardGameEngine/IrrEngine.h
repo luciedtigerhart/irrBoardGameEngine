@@ -2,12 +2,16 @@
 
 #include "irrlicht.h"
 #include "irrKlang.h"
+#include "Vector.h"
+#include <stack>
+#include <string>
+#include <vector>
 
-#include "IrrTile.h"
-#include "IrrBoard.h"
-#include "IrrLoader.h"
-#include "IrrScene.h"
 #include "IrrInput.h"
+#include "IrrBehavior.h"
+#include "IrrGameObject.h"
+
+#include "IrrScene.h"
 #include "IrrGUI.h"
 
 using namespace irr;
@@ -32,10 +36,18 @@ namespace IrrBoardGameEngine {
 		f32 frameDeltaTime;
 		IrrScene *currentScene;
 		IrrGUI * currentGUI;
+		IrrInput * input;
+
+		//manager
+		IrrlichtDevice *device;
+		IVideoDriver *driver;
+		ISceneManager *smgr;
+		ISoundEngine *soundEngine;
+		IGUIEnvironment * guienv;
 
 	public:		
-		static IrrEngine *GetInstance();
-
+		static IrrEngine *getInstance();
+		
 		void loop();
 		void loop(IrrGUI * gui);
 		void loop(IrrScene*,IrrGUI * gui);
@@ -48,18 +60,15 @@ namespace IrrBoardGameEngine {
 		IrrGUI *createGUI();
 		IrrGUI *getGUI();
 
-		// Controle do INPUT
-		IrrInput * input;
+		IrrInput *getInput();
+		IrrlichtDevice *getDevice();
+		IVideoDriver *getDriver();
+		ISceneManager *getSceneManager();
+		ISoundEngine *getSoundEngine();
+		IGUIEnvironment * getGUIenv();
 
 		float getDeltaTime();
 		
 		~IrrEngine(void);
-
-		//manager
-		IrrlichtDevice *device;
-		IVideoDriver *driver;
-		ISceneManager *smgr;
-		ISoundEngine *soundEngine;
-		IGUIEnvironment * guienv;
 	};
 }

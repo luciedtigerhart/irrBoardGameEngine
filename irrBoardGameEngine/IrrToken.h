@@ -8,11 +8,6 @@
 #include "Vector.h"
 #include "IrrCamera.h"
 #include "IrrMesh.h"
-
-//#include "IrrBehavior.h"
-//#include "IrrAnimation.h"
-//#include "IrrAudio.h"
-
 #include "IrrGameObject.h"
 
 using namespace irr;
@@ -29,8 +24,14 @@ namespace IrrBoardGameEngine {
 		IrrToken(void);
 		~IrrToken(void);
 
-		int idx;//index do token
-		int player;//jogador
+		//index do token
+		int idx;
+
+		//jogador
+		int player;
+
+		//Tile
+		ISceneNode *parentNode;
 	};
 
 }

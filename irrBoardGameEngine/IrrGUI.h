@@ -28,7 +28,7 @@ namespace IrrBoardGameEngine {
 
 	public:
 
-		IrrGUI(IGUIEnvironment * g, IVideoDriver *d, IrrInput * i);
+		IrrGUI();
 		~IrrGUI(void);
 
 		//TEXTOS

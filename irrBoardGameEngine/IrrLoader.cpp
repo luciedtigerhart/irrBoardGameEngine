@@ -13,9 +13,8 @@ IrrLoader::~IrrLoader(void)
 
 bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 {
-	int tilesX, tilesY;
-	int larg, alt;
-	int tile_atual;
+	int tilesI, tilesJ, larg, alt, prof, tile_atual;
+
 	std::string tile_num;
 	std::string nome_arq;
 	tile_num = "*";
@@ -27,20 +26,18 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	if(!arq.is_open()) return false;
 
 	//
-	// QUANTIDADE DE TILES X ~ Y
+	// QUANTIDADE DE TILES i ~ j, para criar a matriz
 	//
-	arq >> tilesX >> tilesY;
+	arq >> tilesI >> tilesJ;
 
-	if( (tilesX < 1) || (tilesY < 1)) return false;
+	if( (tilesI < 1) || (tilesJ < 1)) return false;
 
 	//
 	// DIMENSÕES DO TILE
 	//
-	arq >> larg >> alt;
+	arq >> larg >> alt >> prof;
 
-	if( (larg < 1) || (alt < 1)) return false;
-
-	//delta = iSC->getNumTiles();
+	if( (larg < 1) || (alt < 1)  || (prof < 1)) return false;
 
 	//
 	// CARREGA AS IMAGENS PARA A TEXTURA DO TILE
@@ -48,7 +45,6 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	arq >> tile_num;
 	while(arq >> nome_arq)
 	{
-		//iSC->carregar(nome_arq);
 		board->objs->push_back(nome_arq);
 		arq >> tile_num;
 		if(tile_num == "*") break;
@@ -57,30 +53,32 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	//
 	// CRIA O BOARD
 	//
-	board->width = tilesX*larg;
-	board->height = tilesY*alt;
-	board->tile_x = tilesX;
-	board->tile_y = tilesY;
+	board->width = tilesI*larg;
+	board->length = tilesJ*prof;
+
+	board->tile_i = tilesI;
+	board->tile_j = tilesJ;
+
 	board->tile_width = larg;
 	board->tile_height = alt;
+	board->tile_length = prof;
 
-	board->board.resize(tilesX);
-	for(int i = 0; i < tilesX; i++)
-		board->board[i].resize(tilesY);
-
+	board->board.resize(tilesI);
+	for(int i = 0; i < tilesI; i++)
+		board->board[i].resize(tilesJ);
 
 	//
 	// POPULA O BOARD
 	//
-	for(int y = 0; y < tilesY; y++)
+	for(int j = 0; j < tilesJ; j++)
 	{
-		for(int x = 0; x < tilesX; x++)
+		for(int i = 0; i < tilesI; i++)
 		{
 			arq >> tile_atual;
-			board->board[x][y] = new IrrTile();
-			board->board[x][y]->posx = x;
-			board->board[x][y]->posy = y;
-			board->board[x][y]->idx = tile_atual;
+			board->board[i][j] = new IrrTile();
+			board->board[i][j]->posi = i;
+			board->board[i][j]->posj = j;
+			board->board[i][j]->idx = tile_atual;
 		}
 	}
 
@@ -91,40 +89,12 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	arq >> sep;
 	if(sep != "*") return false;
 
-	for(int y = 0; y < tilesY; y++)
+	for(int j = 0; j < tilesJ; j++)
 	{
-		for(int x = 0; x < tilesX; x++)
+		for(int i = 0; i < tilesI; i++)
 		{
 			arq >> tile_atual;
-			board->board[x][y]->inf = tile_atual;
-		}
-	}
-
-	arq >> sep;
-	if(sep != "*") return false;
-
-	//
-	// ARMAZENA A LISTA DE PEÇAS
-	//
-
-	arq >> tile_num;
-	while(arq >> nome_arq)
-	{
-		board->tokens->push_back(nome_arq);
-		arq >> tile_num;
-		if(tile_num == "*") break;
-	}
-
-
-	//
-	// FORMATOS DAS PEÇAS
-	//	
-	for(int y = 0; y < tilesY; y++)
-	{
-		for(int x = 0; x < tilesX; x++)
-		{
-			arq >> tile_atual;
-			board->board[x][y]->token->idx = tile_atual;
+			board->board[i][j]->inf = tile_atual;
 		}
 	}
 
@@ -134,12 +104,12 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	arq >> sep;
 	if(sep != "*") return false;
 	
-	for(int y = 0; y < tilesY; y++)
+	for(int j = 0; j < tilesJ; j++)
 	{
-		for(int x = 0; x < tilesX; x++)
+		for(int i = 0; i < tilesI; i++)
 		{
 			arq >> tile_atual;
-			board->board[x][y]->token->player = tile_atual;
+			if(tile_atual != 0) board->board[i][j]->start = tile_atual;
 		}
 	}
 
