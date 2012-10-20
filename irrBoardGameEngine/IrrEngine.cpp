@@ -15,15 +15,19 @@ IrrEngine::~IrrEngine(void)
 
 
 //singleton
-IrrEngine *IrrEngine::getInstance()
+//IrrEngine *IrrEngine::getInstance(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false)
+IrrEngine *IrrEngine::getInstance(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>& windowSize,u32 bits,bool fullscreen,bool stencilbuffer,bool vsync,const wchar_t* text)
 {
 	if(IrrEngine::instance==NULL){
 		IrrEngine::instance = new IrrEngine();
-		IrrEngine::instance->init();
+		IrrEngine::instance->init(deviceType,windowSize,bits,fullscreen,stencilbuffer,vsync,text);
 	}
 	return IrrEngine::instance;
 }
-int IrrEngine::init() {
+
+//int IrrEngine::init(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false) {
+int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>& windowSize,u32 bits,bool fullscreen,bool stencilbuffer,bool vsync,const wchar_t* text)
+{
 	//irrklang::ISoundEngine* soundEngine = irrklang::createIrrKlangDevice();
 	soundEngine = createIrrKlangDevice();
 	
@@ -36,12 +40,14 @@ int IrrEngine::init() {
 	//usa stencil buffer?
 	//se utiliza vsync
 	//o endereço objeto para receber os eventos. No caso o default é 0
-	device = createDevice( video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16, false, false, false, input);
+	device = createDevice(deviceType,windowSize,bits,fullscreen,stencilbuffer,vsync,input);
 	//Se nao conseguiu retornar encerra a aplicação
     if (!device) return 1;
 
 	//Titulo na janela
-	device->setWindowCaption(L"IrrBGE");
+	device->setWindowCaption(text);
+
+	//device->getCursorControl()->setVisible(true);
 
 	//Pegar o driver de video
 	driver = device->getVideoDriver();
@@ -114,7 +120,7 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 
 IrrScene *IrrEngine::createScene()
 {
-	return new IrrScene(smgr,soundEngine);
+	return new IrrScene(smgr,soundEngine,input);
 }
 
 IrrScene *IrrEngine::getScene()

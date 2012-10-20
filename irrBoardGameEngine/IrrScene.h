@@ -29,10 +29,32 @@ namespace IrrBoardGameEngine {
 	{
 	private:
 		ISceneManager *smgr;
+		IrrInput *input;
 		ISoundEngine *soundEngine;
 
 		vector<IrrGameObject*> *objects;
 		stack<IrrGameObject*> newObjects;
+
+		// All intersections in this example are done with a ray cast out from the camera to
+		// a distance of 1000.  You can easily modify this to check (e.g.) a bullet
+		// trajectory or a sword's position, or create a ray from a mouse click position using
+		// ISceneCollisionManager::getRayFromScreenCoordinates()
+		core::line3d<f32> ray;
+
+		// Tracks the current intersection point with the level or a mesh
+		core::vector3df intersection;
+		// Used to show with triangle has been hit
+		core::triangle3df hitTriangle;
+
+		ICameraSceneNode * currentCamera;
+		IrrBoard * currentBoard;
+
+		ISceneCollisionManager* collMan;
+
+		ISceneNode * getSceneNodeAndCollisionPointFromRay();
+		ITriangleSelector* selector;
+
+		IrrGameObject * bola;
 
 	protected:
 		void addObject(IrrGameObject*);
@@ -47,7 +69,15 @@ namespace IrrBoardGameEngine {
 		IrrGameObject *addCamera(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 
-		IrrScene(ISceneManager *,ISoundEngine *);
+		ISceneNode * currentCollisionPoint;
+
+		IrrScene(ISceneManager *,ISoundEngine *,IrrInput *);
 		~IrrScene(void);
+
+		//para definir a camera padrão
+		void setCamera(IrrCamera * camera);
+
+		//para definir a camera padrão
+		void setBoard(IrrBoard * board);
 	};
 }

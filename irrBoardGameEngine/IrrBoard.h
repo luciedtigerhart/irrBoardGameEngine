@@ -8,6 +8,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <list>
 
 #include "IrrInput.h"
 #include "IrrBehavior.h"
@@ -34,28 +35,56 @@ namespace IrrBoardGameEngine {
 		IrrBoard(void);
 		~IrrBoard(void);
 
-		int width; //largura em pixel
-		int length; //comprimento em pixel
+		//largura em pixel
+		int width;
 
-		int tile_i; //numeros de tiles em x
-		int tile_j; //numeros de tiles em z
+		//comprimento em pixel
+		int length;
 
-		int tile_width; //largura em coordenadas x do tile
-		int tile_height; //altura em coordenadas y do tile
-		int tile_length; //comprimento em coordenadas z do tile
+		//numeros de tiles em x
+		int tile_i;
 
-		vector<vector<IrrTile*>> board; //lista de tiles
-		vector<std::string> * objs; //lista de objs
+		//numeros de tiles em z
+		int tile_j;
 
+		//largura em coordenadas x do tile
+		int tile_width;
+
+		//altura em coordenadas y do tile
+		int tile_height;
+
+		//comprimento em coordenadas z do tile
+		int tile_length;
+
+		//lista de tiles
+		vector<vector<IrrTile*>> board;
+
+		//lista de objs
+		vector<std::string> * objs;
+
+		//adiciona um comportamento num tile especifico
+		void addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior);
 		void addTileBehavior(int i, int j, IrrTileBehavior * behavior);
 
-		void startTokens(int idx, IrrTokenBehavior * behavior);
+		//devolve o comportamento em vários tiles, cujo o inf do arquivo
+		std::list<IrrTile*> * getAllTiles();
+		std::list<IrrTile*> * getTiles(int inf);
+		std::list<IrrToken*> * createTokens(int start);
+
 		bool createToken(int i, int j, IrrTokenBehavior * behavior);
+		void addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior);
 
 		IrrToken *getToken(int i, int j);
 		bool addToken(int i, int j, IrrToken * token);
 		bool moveToken(int oi, int oj, int ti, int tj);
 		bool deleteToken(int i, int j);
+
+		void changeHighlightToken(int type, int player);
+		void changeHighlightTile(int type, int inf);
+
+		void setHighlight(ISceneNode *node);
+
+		void update();
 	};
 
 }

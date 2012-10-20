@@ -41,6 +41,7 @@ namespace IrrBoardGameEngine {
 
 		multimap<std::string,int> *keys;
 		*/
+		const SMouseState & getMouseState(void) const { return mouseState; }
 	private:
 
 		void setKeyStatus(int* k, int keyCode, bool value);
@@ -50,7 +51,5 @@ namespace IrrBoardGameEngine {
 		int keyStatusDown[KEY_KEY_CODES_COUNT / 32];
 		int keyStatusPressed[KEY_KEY_CODES_COUNT / 32];
 		int keyStatusReleased[KEY_KEY_CODES_COUNT / 32];
-
-		const SMouseState & getMouseState(void) const { return mouseState; }
 	};
 }

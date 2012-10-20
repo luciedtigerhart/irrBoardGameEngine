@@ -30,8 +30,9 @@ namespace IrrBoardGameEngine {
 		IrrEngine(void);
 
 		//init
-		int init();
-		
+		//int init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>& windowSize,u32 bits,bool fullscreen,bool stencilbuffer,bool vsync);
+		int init(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false,const wchar_t* text = L"IrrBGE");
+
 		//default
 		f32 frameDeltaTime;
 		IrrScene *currentScene;
@@ -45,8 +46,10 @@ namespace IrrBoardGameEngine {
 		ISoundEngine *soundEngine;
 		IGUIEnvironment * guienv;
 
+
 	public:		
-		static IrrEngine *getInstance();
+		//static IrrEngine *getInstance(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>& windowSize,u32 bits,bool fullscreen,bool stencilbuffer,bool vsync);		
+		static IrrEngine *getInstance(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false,const wchar_t* text = L"IrrBGE");
 		
 		void loop();
 		void loop(IrrGUI * gui);

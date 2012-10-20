@@ -13,3 +13,10 @@ IrrTile::~IrrTile(void)
 {
 	if(token != NULL) delete token;
 }
+
+
+void IrrTile::update()
+{
+	__super::update();
+	if(token != NULL) token->update();
+}

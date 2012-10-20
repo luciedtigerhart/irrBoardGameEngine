@@ -18,6 +18,7 @@ using namespace core;
 using namespace std;
 
 namespace IrrBoardGameEngine {
+	class IrrBoard;
 
 	class IrrTile :
 		public IrrGameObject
@@ -41,8 +42,20 @@ namespace IrrBoardGameEngine {
 		//define o grupo que inicia
 		int start;
 
+		//Whether this tile must be highlighted
+		bool isHighlighted;
+
+		//Type of highlight (movement, pushing, attack, etc.)
+		int highlight;
+
 		//Peça
-		IrrToken * token;
+		IrrToken *token;
+
+		//board
+		//ISceneNode *parentNode;
+		IrrBoard *parentNode;
+
+		void update();
 	};
 
 }

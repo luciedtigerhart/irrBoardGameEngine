@@ -1,4 +1,8 @@
 #pragma once
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <fstream>
 #include "irrlicht.h"
 #include "irrKlang.h"
 #include <map>
@@ -60,7 +64,7 @@ namespace IrrBoardGameEngine {
 		void setActive(bool a);	
 		bool isActive();
 
-		void update();
+		virtual void update();
 		void addBehaviour(IrrBehavior *b);
 
 		void translate(float x, float y, float z);
