@@ -42,7 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\exe</OutDir>
+    <OutDir>..\exe\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -78,14 +78,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="PrimeGameStateManager.cpp" />
+    <ClCompile Include="PrimePlayState.cpp" />
     <ClCompile Include="PrimeTeam.cpp" />
     <ClCompile Include="PrimeTile.cpp" />
+    <ClCompile Include="PrimeTileManager.cpp" />
     <ClCompile Include="PrimeToken.cpp" />
+    <ClCompile Include="PrimeTokenManager.cpp" />
+    <ClCompile Include="Primevalion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PrimeGameStateManager.h" />
+    <ClInclude Include="PrimePlayState.h" />
+    <ClInclude Include="PrimeTeam.h" />
     <ClInclude Include="PrimeTile.h" />
     <ClInclude Include="PrimeTileManager.h" />
     <ClInclude Include="PrimeToken.h" />

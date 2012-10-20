@@ -11,7 +11,7 @@ void PrimeTileManager::updateTiles(IrrBoard* board)
 		for (int j=0; j < board->tile_j; j++)
 		{
 			//Update every tile
-			//...
+			//board->board[i][j]->update();
 		}
 	}
 }

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "PrimePlayState.h"
 
-using namespace std;
+using namespace IrrBoardGameEngine;
 
 class PrimeTokenManager
 {

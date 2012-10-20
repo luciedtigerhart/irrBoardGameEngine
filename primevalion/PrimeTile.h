@@ -33,17 +33,17 @@
 
 using namespace IrrBoardGameEngine;
 
-class PrimeTile : public IrrTile
+class PrimeTile : public IrrTileBehavior
 {
 private:
 public:
-	PrimeTile(IrrScene* scene);
-	virtual ~PrimeTile();
+	PrimeTile();
+	~PrimeTile();
 
 	bool isHighlighted; //Whether this tile must be highlighted
 	int highlight; //Type of highlight (movement, pushing, attack, etc.)
 
-	//Highlight nodes, become visible or invisible depending on type of highlight (ISceneNode->setVisible())
+	//Highlight nodes, become visible or invisible depending on type of highlight
 	IrrGameObject* highlightMove;
 	IrrGameObject* highlightMoveHover;
 	IrrGameObject* highlightPush;
@@ -51,8 +51,10 @@ public:
 	IrrGameObject* highlightAttack;
 	IrrGameObject* highlightAttackHover;
 
-	void turnOffHighlightsExcept(int exception); //Deactivate all highlights, except for "exception"
+	void init(); //Initializes tile
 	void update(); //Updates highlight when necessary
+
+	void turnOffHighlightsExcept(int exception); //Deactivate all highlights, except for "exception"
 };
 
 #endif

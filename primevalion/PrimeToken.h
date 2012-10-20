@@ -22,17 +22,21 @@ class PrimeToken : public IrrTokenBehavior
 {
 private:
 public:
-	PrimeToken();
-	~PrimeToken();
+	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
 
 	bool isDead; //Whether this token has been killed
 	bool isFinished; //Whether this token has already moved
 	bool isHighlighted; //Whether this token must be highlighted
+	bool isAbilityActive; //Whether this token's race ability is active
+
 	int highlight; //Type of highlight (selection, pushing, attack, etc.)
 	int race; //Race of this token
+	int team; //Team of this token
 
-	//void init(IrrEngine* engine, IrrScene* scene, PrimeTeam team); //Initializes token's mesh and texture
-	void init(PrimeTeam team); //Initializes token's mesh and texture
+	const char* pathOBJ; //Stores 3D model path
+	const char* pathTEX; //Stores texture path
+
+	void init(); //Initializes token
 	void update(); //Updates this token's visuals
 };
 

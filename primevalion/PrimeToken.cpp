@@ -1,59 +1,68 @@
 #include "PrimeToken.h"
 
-PrimeToken::PrimeToken() {};
-PrimeToken::~PrimeToken() {};
-
-void PrimeToken::init(PrimeTeam team)
+PrimeToken::PrimeToken(PrimeTeam myTeam)
 {
-	token->player = team.idx;
-	race = team.assignedRace;
+	team = myTeam.idx;
+	race = myTeam.assignedRace;
 
 	//Set mesh according to race
 	
 	if (race == KOBOLD)
 	{
-		token->node = smgr->addMeshSceneNode(smgr->getMesh("obj/nome_do_modelo_KOBOLD.obj"), token->parentNode, token->idx, vector3df(0,0,0));
+		pathOBJ = "obj/tokens/token01.obj";
 
 		//Set texture according to team
-		if (token->player == 1) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_KOBOLD_TIME1.jpg"));
-		else if (token->player == 2) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_KOBOLD_TIME2.jpg"));
-		else if (token->player == 3) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_KOBOLD_TIME3.jpg"));
-		else if (token->player == 4) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_KOBOLD_TIME4.jpg"));
+		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
 	}
 
 	else if (race == GNOLL)
 	{
-		token->node = smgr->addMeshSceneNode(smgr->getMesh("obj/nome_do_modelo_GNOLL.obj"), token->parentNode, token->idx, vector3df(0,0,0));
+		pathOBJ = "obj/tokens/token01.obj";
 
 		//Set texture according to team
-		if (token->player == 1) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_GNOLL_TIME1.jpg"));
-		else if (token->player == 2) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_GNOLL_TIME2.jpg"));
-		else if (token->player == 3) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_GNOLL_TIME3.jpg"));
-		else if (token->player == 4) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_GNOLL_TIME4.jpg"));
+		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
 	}
 
 	else if (race == TROLL)
 	{
-		token->node = smgr->addMeshSceneNode(smgr->getMesh("obj/nome_do_modelo_TROLL.obj"), token->parentNode, token->idx, vector3df(0,0,0));
+		pathOBJ = "obj/tokens/token02.obj";
 
 		//Set texture according to team
-		if (token->player == 1) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_TROLL_TIME1.jpg"));
-		else if (token->player == 2) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_TROLL_TIME2.jpg"));
-		else if (token->player == 3) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_TROLL_TIME3.jpg"));
-		else if (token->player == 4) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_TROLL_TIME4.jpg"));
+		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
 	}
 
 	else if (race == HOG)
 	{
-		token->node = smgr->addMeshSceneNode(smgr->getMesh("obj/nome_do_modelo_HOG.obj"), token->parentNode, token->idx, vector3df(0,0,0));
+		pathOBJ = "obj/tokens/token02.obj";
 
 		//Set texture according to team
-		if (token->player == 1) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_HOG_TIME1.jpg"));
-		else if (token->player == 2) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_HOG_TIME2.jpg"));
-		else if (token->player == 3) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_HOG_TIME3.jpg"));
-		else if (token->player == 4) token->node->setMaterialTexture(0, driver->getTexture("obj/texturas/nome_da_textura_HOG_TIME4.jpg"));
+		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
 	}
-	
+};
+
+void PrimeToken::init()
+{
+	token->player = team;
+
+	//Load model and texture
+	token->node = smgr->addMeshSceneNode(smgr->getMesh(pathOBJ), token->parentNode, token->idx, vector3df(0,0,0));
+	token->node->setMaterialTexture(0, driver->getTexture(pathTEX));
+
+	//Update graph parent
+	token->node->setParent(token->parentNode);
+
 	//Activate lighting
 	token->node->setMaterialFlag(EMF_LIGHTING, true);
 
@@ -64,6 +73,8 @@ void PrimeToken::init(PrimeTeam team)
 
 void PrimeToken::update()
 {
+	float deltaTime = IrrEngine::getInstance()->getDeltaTime();
+
 	//Disable transparency
 	token->node->getMaterial(0).MaterialType = EMT_SOLID;
 

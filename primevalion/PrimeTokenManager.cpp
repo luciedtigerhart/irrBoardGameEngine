@@ -10,10 +10,11 @@ void PrimeTokenManager::updateTokens(IrrBoard* board)
 	{
 		for (int j=0; j < board->tile_j; j++)
 		{
-			//Update every tile's token
+			//For every tile which has a token
 			if (board->board[i][j]->token != NULL)
 			{
-				//...
+				//Update token
+				//board->board[i][j]->token->update();
 			}
 		}
 	}

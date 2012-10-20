@@ -1,6 +1,6 @@
 #include "PrimeTile.h"
 
-PrimeTile::PrimeTile(IrrScene* scene)
+PrimeTile::PrimeTile()
 {
 	/*
 	//Create highlight planes
@@ -22,12 +22,6 @@ PrimeTile::PrimeTile(IrrScene* scene)
 	highlightAttackHover->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
 	highlightAttackHover->node->setParent(node);
 	*/
-
-	//Highlights are deactivated by default
-	turnOffHighlightsExcept(NONE);
-
-	//Activate lighting
-	node->setMaterialFlag(EMF_LIGHTING, true);
 };
 
 PrimeTile::~PrimeTile() {};
@@ -42,18 +36,30 @@ void PrimeTile::turnOffHighlightsExcept(int exception)
 	if (exception != ATTACK_HOVER) highlightAttackHover->node->setVisible(false);
 }
 
+void PrimeTile::init()
+{
+	//Update graph parent
+	//node->setParent(board->node);
+
+	//Highlights are deactivated by default
+	turnOffHighlightsExcept(NONE);
+
+	//Activate lighting
+	tile->node->setMaterialFlag(EMF_LIGHTING, true);
+}
+
 void PrimeTile::update()
 {
 	//If this tile is highlighted...
 	if (isHighlighted)
 	{
 		//Activate the correct highlight plane and deactivate all others
-		if (highlight == MOVE) { highlightMove->node->setVisible(true); turnOffHighlightsExcept(MOVE); }
-		else if (highlight == MOVE_HOVER) { highlightMoveHover->node->setVisible(true); turnOffHighlightsExcept(MOVE_HOVER); }
-		else if (highlight == PUSH) { highlightPush->node->setVisible(true); turnOffHighlightsExcept(PUSH); }
-		else if (highlight == PUSH_HOVER) { highlightPushHover->node->setVisible(true); turnOffHighlightsExcept(PUSH_HOVER); }
-		else if (highlight == ATTACK) { highlightAttack->node->setVisible(true); turnOffHighlightsExcept(ATTACK); }
-		else if (highlight == ATTACK_HOVER) { highlightAttackHover->node->setVisible(true); turnOffHighlightsExcept(ATTACK_HOVER); }
+		if (highlight == MOVE) { highlightMove->setActive(true); turnOffHighlightsExcept(MOVE); }
+		else if (highlight == MOVE_HOVER) { highlightMoveHover->setActive(true); turnOffHighlightsExcept(MOVE_HOVER); }
+		else if (highlight == PUSH) { highlightPush->setActive(true); turnOffHighlightsExcept(PUSH); }
+		else if (highlight == PUSH_HOVER) { highlightPushHover->setActive(true); turnOffHighlightsExcept(PUSH_HOVER); }
+		else if (highlight == ATTACK) { highlightAttack->setActive(true); turnOffHighlightsExcept(ATTACK); }
+		else if (highlight == ATTACK_HOVER) { highlightAttackHover->setActive(true); turnOffHighlightsExcept(ATTACK_HOVER); }
 	}
 
 	//Otherwise, if this tile isn't highlighted...
