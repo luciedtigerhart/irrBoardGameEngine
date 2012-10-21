@@ -1,48 +1,94 @@
 #include "PrimeTile.h"
 
-PrimeTile::PrimeTile()
-{
-	/*
-	//Create highlight planes
-	highlightMove->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
-	highlightMove->node->setParent(node);
-
-	highlightMoveHover->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
-	highlightMoveHover->node->setParent(node);
-
-	highlightPush->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
-	highlightPush->node->setParent(node);
-
-	highlightPushHover->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
-	highlightPushHover->node->setParent(node);
-
-	highlightAttack->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
-	highlightAttack->node->setParent(node);
-
-	highlightAttackHover->node = scene->smgr->addMeshSceneNode(scene->smgr->getMesh("obj/nome_do_modelo.obj"), highlightMove->node, idx, node->getPosition());
-	highlightAttackHover->node->setParent(node);
-	*/
-};
-
+PrimeTile::PrimeTile() {};
 PrimeTile::~PrimeTile() {};
 
-void PrimeTile::turnOffHighlightsExcept(int exception)
+void PrimeTile::turnOnHighlight(int type)
 {
-	if (exception != MOVE) highlightMove->node->setVisible(false);
-	if (exception != MOVE_HOVER) highlightMoveHover->node->setVisible(false);
-	if (exception != PUSH) highlightPush->node->setVisible(false);
-	if (exception != PUSH_HOVER) highlightPushHover->node->setVisible(false);
-	if (exception != ATTACK) highlightAttack->node->setVisible(false);
-	if (exception != ATTACK_HOVER) highlightAttackHover->node->setVisible(false);
+	//Deactivate highlight
+	if (type == NONE) highlightPlane->setVisible(false);
+	
+	else
+	{
+		//Activate highlight
+		highlightPlane->setVisible(true);
+
+		//Set material to correct type of highlight
+		if (type == MOVE)
+		{
+			//Move and ressurrect highlight (Light blue)
+			highlightPlane->getMaterial(0) = matPlaneNormal;
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,40,80,255);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,40,80,255);
+		}
+
+		else if (type == MOVE_HOVER)
+		{
+			//Move and ressurrect hover highlight (Very Light blue)
+			highlightPlane->getMaterial(0) = matPlaneHover;
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,100,180,255);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,100,180,255);
+		}
+
+		else if (type == PUSH)
+		{
+			//Push highlight (Orange)
+			highlightPlane->getMaterial(0) = matPlaneNormal;
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,70,0);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,255,70,0);
+		}
+
+		else if (type == PUSH_HOVER)
+		{
+			//Push hover highlight (Light Orange)
+			highlightPlane->getMaterial(0) = matPlaneHover;
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,110,40);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,255,110,40);
+		}
+
+		else if (type == ATTACK)
+		{
+			//Attack highlight (Red)
+			highlightPlane->getMaterial(0) = matPlaneNormal;
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,0,0);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,255,0,0);
+		}
+
+		else if (type == ATTACK_HOVER)
+		{
+			//Attack hover highlight (Light Red)
+			highlightPlane->getMaterial(0) = matPlaneHover;
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,80,80);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,255,80,80);
+		}
+	}
 }
 
 void PrimeTile::init()
 {
-	//Update graph parent
-	//node->setParent(board->node);
+	//Highlight plane has tranparent texture
+	matPlaneNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/tileHighlight.jpg"));
+	matPlaneNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneNormal.Lighting = true;
+
+	//Highlight plane hover has a symbol on the texture
+	matPlaneHover.setTexture(0, driver->getTexture("obj/tiles/highlight/tileHover.jpg"));
+	matPlaneHover.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneHover.Lighting = true;
+
+	//Create highlight plane
+	IAnimatedMesh* plane = smgr->addHillPlaneMesh("Highlight Plane", // Name of mesh
+      core::dimension2d<f32>(1.5,1.5), //	Size of a tile of the mesh
+      core::dimension2d<u32>(1,1), 0, 0, // Specifies how many tiles there will be
+      core::dimension2d<f32>(0,0), //Material 
+      core::dimension2d<f32>(1,1)); //countHills 
+	
+	//Add highlight plane to scene
+	highlightPlane = smgr->addMeshSceneNode(plane->getMesh(0), tile->node, -1, vector3df(0.0f,0.25f,0.0f));
+	highlightPlane->getMaterial(0) = matPlaneNormal;
 
 	//Highlights are deactivated by default
-	turnOffHighlightsExcept(NONE);
+	turnOnHighlight(NONE);
 
 	//Activate lighting
 	tile->node->setMaterialFlag(EMF_LIGHTING, true);
@@ -50,22 +96,33 @@ void PrimeTile::init()
 
 void PrimeTile::update()
 {
+	float deltaTime = IrrEngine::getInstance()->getDeltaTime();
+
 	//If this tile is highlighted...
-	if (isHighlighted)
+	if (tile->isHighlighted)
 	{
-		//Activate the correct highlight plane and deactivate all others
-		if (highlight == MOVE) { highlightMove->setActive(true); turnOffHighlightsExcept(MOVE); }
-		else if (highlight == MOVE_HOVER) { highlightMoveHover->setActive(true); turnOffHighlightsExcept(MOVE_HOVER); }
-		else if (highlight == PUSH) { highlightPush->setActive(true); turnOffHighlightsExcept(PUSH); }
-		else if (highlight == PUSH_HOVER) { highlightPushHover->setActive(true); turnOffHighlightsExcept(PUSH_HOVER); }
-		else if (highlight == ATTACK) { highlightAttack->setActive(true); turnOffHighlightsExcept(ATTACK); }
-		else if (highlight == ATTACK_HOVER) { highlightAttackHover->setActive(true); turnOffHighlightsExcept(ATTACK_HOVER); }
+		//Activate the correct highlight plane
+
+		if (tile->highlight == MOVE || tile->highlight == RESSURRECT)
+		{
+			turnOnHighlight(MOVE);
+		}
+
+		else if (tile->highlight == MOVE_HOVER || tile->highlight == RESSURRECT_HOVER)
+		{
+			turnOnHighlight(MOVE_HOVER);
+		}
+
+		else if (tile->highlight == PUSH) turnOnHighlight(PUSH);
+		else if (tile->highlight == PUSH_HOVER) turnOnHighlight(PUSH_HOVER);
+		else if (tile->highlight == ATTACK) turnOnHighlight(ATTACK);
+		else if (tile->highlight == ATTACK_HOVER) turnOnHighlight(ATTACK_HOVER);
 	}
 
 	//Otherwise, if this tile isn't highlighted...
 	else
 	{
-		//Deactivate all highlights
-		turnOffHighlightsExcept(NONE);
+		//Deactivate highlight
+		turnOnHighlight(NONE);
 	}
 }

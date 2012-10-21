@@ -4,6 +4,7 @@
 #include <iostream>
 #include "PrimeTileManager.h"
 #include "PrimeTokenManager.h"
+#include "PrimeGUIManager.h"
 
 using namespace IrrBoardGameEngine;
 
@@ -11,23 +12,26 @@ class PrimeGameStateManager
 {
 private:
 	//Engine
-	IrrEngine *engine;
-
-	//GUI environments
-	IrrGUI *guienv_title;
-	IrrGUI *guienv_credits;
-	IrrGUI *guienv_tutorial;
-	IrrGUI *guienv_match;
+	IrrEngine* engine;
 
 	//Scenes
-	IrrScene *title;
-	IrrScene *credits;
-	IrrScene *tutorial;
-	IrrScene *match;
+	IrrScene* title;
+	IrrScene* credits;
+	IrrScene* tutorial;
+	IrrScene* match;
 
-	//Game board and camera
-	IrrBoard * board;
-	IrrGameObject *camera;
+	//Game board, camera and light
+	IrrBoard* board;
+	IrrGameObject* camera;
+	ILightSceneNode *light;
+
+	//Managers
+	PrimeTileManager tilemgr;
+	PrimeTokenManager tokenmgr;
+	PrimeGUIManager guimgr;
+
+	//Play State
+	PrimePlayState playState;
 
 	//Players
 	PrimeTeam player1;
@@ -35,10 +39,13 @@ private:
 	PrimeTeam player3;
 	PrimeTeam player4;
 
-	PrimeToken *tokenTeam1;
-	PrimeToken *tokenTeam2;
-	PrimeToken *tokenTeam3;
-	PrimeToken *tokenTeam4;
+	//Other data
+
+	int turn; //Match turn counter
+	int playersActive; //How many players are playing
+
+	//Scene management methods
+	void ManageTitleScreen();
 
 public:
 	PrimeGameStateManager();

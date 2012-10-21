@@ -33,16 +33,21 @@ public:
 	PrimePlayState();
 	~PrimePlayState();
 
+	int turn; //Current match turn
+	int turnPlayer; //Which player the current turn belongs to
 	int phase; //Which phase the current turn is at (ressurrection, token selection, etc.)
 
+	//Find out which player this turn belongs to
+	void SetTurnPlayer(int turn, int playersActive, PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
+
 	//Scan board and set tile highlights accordingly to current turn phase
-	void setupTileHighlight(IrrBoard* board, PrimeTeam team);
+	void SetupTileHighlight(IrrBoard* board, PrimeTeam team);
 
 	//Scan board looking for a tile whose token has index "tokenIndex", and highlight it accordingly to current turn phase
-	void setupTokenHighlight(IrrBoard* board, PrimeTeam team, int tokenIndex);
+	void SetupTokenHighlight(IrrBoard* board, PrimeTeam team, int tokenIndex);
 
-	bool playIsValid(int play); //Validate whether a move can be performed, setting the state of involved tiles and tokens
-	void setupPushLine(int direction); //Find all tokens in a line and set them to be pushed
+	bool PlayIsValid(int play); //Validate whether a move can be performed, setting the state of involved tiles and tokens
+	void SetupPushLine(int direction); //Find all tokens in a line and set them to be pushed
 };
 
 #endif
