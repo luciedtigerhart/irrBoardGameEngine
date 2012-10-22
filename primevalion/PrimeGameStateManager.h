@@ -2,6 +2,11 @@
 #define _PRIMEGAMESTATEMANAGER_H
 
 #include <iostream>
+#include <algorithm>
+#include <functional>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
 #include "PrimeTileManager.h"
 #include "PrimeTokenManager.h"
 #include "PrimeGUIManager.h"
@@ -44,8 +49,16 @@ private:
 	int turn; //Match turn counter
 	int playersActive; //How many players are playing
 
+	//Auxiliary methods
+	void ResetPlayers();
+	void CreateBoard();
+	void LoadTiles();
+	void LoadTokens();
+	void SortTurnOrder();
+
 	//Scene management methods
 	void ManageTitleScreen();
+	void ManageMatch();
 
 public:
 	PrimeGameStateManager();

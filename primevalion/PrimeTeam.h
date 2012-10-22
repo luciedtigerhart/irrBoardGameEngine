@@ -14,6 +14,7 @@ public:
 
 	bool isAI; //Whether this team is AI-controlled
 	bool isActive; //Whether this team will participate in a match
+	bool isVictorious; //Whether this team has won the match
 
 	int idx; //Index of this team
 

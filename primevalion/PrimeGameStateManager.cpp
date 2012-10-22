@@ -1,9 +1,21 @@
 #include "PrimeGameStateManager.h"
 
+#define FULLSCREEN true
+#define WINDOWED false
+
+//Random generator function:
+ptrdiff_t myrandom (ptrdiff_t i) { return rand() % i; }
+
+//Pointer object to it:
+ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
+
 PrimeGameStateManager::PrimeGameStateManager()
 {
+	//Initialize random seed
+	srand ( unsigned (time(NULL)) );
+
 	//Initialize engine
-	engine = IrrEngine::getInstance(video::EDT_OPENGL, dimension2d<u32>(800,600), 16, false, false, false,L"Primevalion");
+	engine = IrrEngine::getInstance(video::EDT_OPENGL, dimension2d<u32>(1024,768), 16, WINDOWED, false, false,L"Primevalion");
 
 	//Initialize GUI environments
 	//guimgr.env_title = engine->createGUI();
@@ -24,29 +36,40 @@ PrimeGameStateManager::PrimeGameStateManager()
 	match = engine->createScene();
 
 	//Initialize players
+	
+	playersActive = 0;
 
 	player1.idx = 1;
 	player2.idx = 2;
 	player3.idx = 3;
 	player4.idx = 4;
 
-	player1.isActive = player2.isActive = player3.isActive = player4.isActive = true;
-	player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
-	//player1.assignedTurn = player2.assignedTurn = player3.assignedTurn = player4.assignedTurn = -1;
-	//player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = KOBOLD;
-	player1.primevalium = player2.primevalium = player3.primevalium = player4.primevalium = 0;
+	ResetPlayers();
 
 	//----- FOR TESTING PURPOSES, DELETE LATER -----
+
+		player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
+		player1.assignedTurn = player2.assignedTurn = player3.assignedTurn = player4.assignedTurn = -1;
+
+		player1.isActive = true;
+		player2.isActive = true;
+		player3.isActive = true;
+		player4.isActive = true;
+
+		player1.isVictorious = false;
+		player2.isVictorious = false;
+		player3.isVictorious = false;
+		player4.isVictorious = false;
 
 		player1.assignedRace = KOBOLD;
 		player2.assignedRace = GNOLL;
 		player3.assignedRace = TROLL;
 		player4.assignedRace = HOG;
 
-		player1.assignedTurn = 1;
-		player2.assignedTurn = 2;
-		player3.assignedTurn = 3;
-		player4.assignedTurn = 4;
+		player1.primevalium = 100;
+		player2.primevalium = 200;
+		player3.primevalium = 300;
+		player4.primevalium = 400;
 
 		turn = 1;
 
@@ -69,6 +92,123 @@ PrimeGameStateManager::~PrimeGameStateManager()
 	delete camera;
 };
 
+void PrimeGameStateManager::ResetPlayers()
+{
+	player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
+	player1.isActive = player2.isActive = player3.isActive = player4.isActive = true;
+	player1.isVictorious = player2.isVictorious = player3.isVictorious = player4.isVictorious = false;
+	player1.assignedTurn = player2.assignedTurn = player3.assignedTurn = player4.assignedTurn = -1;
+	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = KOBOLD;
+	player1.primevalium = player2.primevalium = player3.primevalium = player4.primevalium = 0;
+}
+
+void PrimeGameStateManager::CreateBoard()
+{
+	//Add board to scene
+	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
+
+	//Create light
+	light = engine->getSceneManager()->addLightSceneNode(0, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+
+	//Initialize game elements
+	LoadTiles();
+	LoadTokens();
+}
+
+void PrimeGameStateManager::LoadTiles()
+{
+	//Get list of board tiles
+	std::list<IrrTile*> * tileList = board->getAllTiles();
+
+	//Add "PrimeTile" behavior to all board tiles
+	std::list<IrrTile*>::iterator i;
+	for(i = tileList->begin(); i != tileList->end(); i++)
+	{
+		board->addTileBehavior((*i), new PrimeTile());
+	}
+}
+
+void PrimeGameStateManager::LoadTokens()
+{
+	std::list<IrrToken*>::iterator t;
+
+	//Re-initialize players
+	//ResetPlayers();
+
+	//Sort turns
+	SortTurnOrder();
+
+	//Add "PrimeToken" behavior to all tokens,
+	//according to match configuration
+
+	//Player 1 tokens...
+	if (player1.isActive)
+	{
+		std::list<IrrToken*> * tokensTeam1 = board->createTokens(player1.idx);
+		for(t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
+		{
+			board->addTokenBehavior((*t), new PrimeToken(player1));
+		}
+	}
+
+	//Player 2 tokens...
+	if (player2.isActive)
+	{
+		std::list<IrrToken*> * tokensTeam2 = board->createTokens(player2.idx);
+		for(t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
+		{
+			board->addTokenBehavior((*t), new PrimeToken(player2));
+		}
+	}
+
+	//Player 3 tokens...
+	if (player3.isActive)
+	{
+		std::list<IrrToken*> * tokensTeam3 = board->createTokens(player3.idx);
+		for(t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
+		{
+			board->addTokenBehavior((*t), new PrimeToken(player3));
+		}
+	}
+
+	//Player 4 tokens...
+	if (player4.isActive)
+	{
+		std::list<IrrToken*> * tokensTeam4 = board->createTokens(player4.idx);
+		for(t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
+		{
+			board->addTokenBehavior((*t), new PrimeToken(player4));
+		}
+	}
+}
+
+void PrimeGameStateManager::SortTurnOrder()
+{
+	vector<int> turnOrder;
+	vector<int>::iterator itOrder;
+
+	//Count active players
+	if (player1.isActive) playersActive++;
+	if (player2.isActive) playersActive++;
+	if (player3.isActive) playersActive++;
+	if (player4.isActive) playersActive++;
+
+	//Add values to turn order:
+	for (int i = 1; i <= playersActive; ++i) turnOrder.push_back(i);
+
+	//Shuffle turn order
+	random_shuffle(turnOrder.begin(), turnOrder.end(), p_myrandom);
+
+	//Assign turns to active players
+	for (itOrder = turnOrder.begin(); itOrder != turnOrder.end(); itOrder++)
+	{
+		if (player1.isActive && player1.assignedTurn == -1) player1.assignedTurn = (*itOrder);
+		else if (player2.isActive && player2.assignedTurn == -1) player2.assignedTurn = (*itOrder);
+		else if (player3.isActive && player3.assignedTurn == -1) player3.assignedTurn = (*itOrder);
+		else if (player4.isActive && player4.assignedTurn == -1) player4.assignedTurn = (*itOrder);
+	}
+}
+
 void PrimeGameStateManager::loop()
 {
 	//----- FOR TESTING PURPOSES, DELETE LATER -----
@@ -79,60 +219,17 @@ void PrimeGameStateManager::loop()
 		camera = match->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
 		camera->setName("Match Camera");
 
-		board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
+		//Initialize game elements
+		CreateBoard();
 
-		light = match->smgr->addLightSceneNode(0, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+		//Initialize play state
+		playState.Initialize(playersActive, player1, player2, player3, player4);
 
-		//Tiles...
-		std::list<IrrTile*> * tileList = board->getAllTiles();
-		std::list<IrrTile*>::iterator i;
+		//Update play state
+		playState.Update(board, turn);
 
-		for(i = tileList->begin(); i != tileList->end(); i++)
-		{
-			board->addTileBehavior((*i), new PrimeTile());
-		}
-
-		//Tokens...
-		std::list<IrrToken*>::iterator t;
-
-		//Player 1 tokens...
-		std::list<IrrToken*> * tokensTeam1 = board->createTokens(1);
-		for(t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
-		{
-			board->addTokenBehavior((*t), new PrimeToken(player1));
-		}
-
-		//Player 2 tokens...
-		std::list<IrrToken*> * tokensTeam2 = board->createTokens(2);
-		for(t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
-		{
-			board->addTokenBehavior((*t), new PrimeToken(player2));
-		}
-
-		//Player 3 tokens...
-		std::list<IrrToken*> * tokensTeam3 = board->createTokens(3);
-		for(t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
-		{
-			board->addTokenBehavior((*t), new PrimeToken(player3));
-		}
-
-		//Player 4 tokens...
-		std::list<IrrToken*> * tokensTeam4 = board->createTokens(4);
-		for(t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
-		{
-			board->addTokenBehavior((*t), new PrimeToken(player4));
-		}
-
-		playersActive = 4;
-
-		//Find which player the current turn belongs to
-		playState.SetTurnPlayer(turn, playersActive, player1, player2, player3, player4);
-
-		//Update match interface
-		guimgr.ManageGUIMatchScreen(turn, playState, player1, player2, player3, player4);
-
-		
-		playState.SetupTileHighlight(board, player1);
+		//Update match interface (must come AFTER playState updates)
+		guimgr.ManageGUIMatchScreen(turn, playState);
 
 	//----------------------------------------------
 

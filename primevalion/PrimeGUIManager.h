@@ -5,12 +5,16 @@
 #include <sstream>
 #include "PrimePlayState.h"
 
+#define SORT_MESSAGE true
+#define TURN_MESSAGE true
+
 using namespace IrrBoardGameEngine;
 
 class PrimeGUIManager
 {
 private:
-	int tutorialPage;
+	int tutorialPage; //Current tutorial page
+	int playersActive; //Amount of players active in match
 
 public:
 	PrimeGUIManager();
@@ -23,8 +27,21 @@ public:
 	IrrGUI* env_match;
 
 	void SetTurnCount(bool show, int turn); //Show, hide, reset or update turn count
-	void SetTurnMarkers(bool show, int p1, int p2, int p3, int p4); //Show or hide player turn markers
 	void SetPlayerIndicator(bool show, int turnPlayer); //Show, hide or update player turn indicator
+
+	//Show and hide match messages
+	void SetGenericMessage(bool sortMessage, bool turnMessage, int player);
+	void ShowVictoryMessage(PrimePlayState playState);
+	void HideVictoryMessage();
+
+	//Show and hide player turn markers
+	void ShowTurnMarkers(PrimePlayState playState);
+	void HideTurnMarkers();
+
+	//Show, hide and update resource indicators and labels
+	void UpdateMatchIndicator(bool show, char* indicator, char* label, std::string counter);
+	void ShowResourceIndicators(int players, PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
+	void HideResourceIndicators();
 
 	//Methods that create GUI elements
 	void BuildGUITitleScreen();
@@ -36,7 +53,7 @@ public:
 	void ManageGUITitleScreen();
 	void ManageGUICreditsScreen();
 	void ManageGUITutorialScreen();
-	void ManageGUIMatchScreen(int turn, PrimePlayState playState, PrimeTeam player1, PrimeTeam player2, PrimeTeam player3, PrimeTeam player4);
+	void ManageGUIMatchScreen(int turn, PrimePlayState playState);
 };
 
 #endif
