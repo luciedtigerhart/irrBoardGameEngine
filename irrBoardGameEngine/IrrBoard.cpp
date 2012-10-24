@@ -215,22 +215,22 @@ void IrrBoard::setHighlight(ISceneNode *node)
 		{
 			if(board[i][j]->node == node)
 			{
-				board[i][j]->isHighlighted = true;
+				board[i][j]->isMouseHover = true;
 				//std::cout << "isHighlighted";
 			}
 			else
 			{
-				board[i][j]->isHighlighted = false;
+				board[i][j]->isMouseHover = false;
 				if(board[i][j]->token != NULL)
 				{
 					if(board[i][j]->token->node == node)
 					{
-						board[i][j]->token->isHighlighted = true;
+						board[i][j]->token->isMouseHover = true;
 						//std::cout << "isHighlighted";
 					}
 					else
 					{
-						board[i][j]->token->isHighlighted = false;
+						board[i][j]->token->isMouseHover = false;
 					}
 				}
 			}

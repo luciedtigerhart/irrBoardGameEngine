@@ -6,6 +6,7 @@ IrrGameObject::IrrGameObject(void)
 {
 	children = new std::map<IrrGameObject*,ISceneNode*>();
 	behaviors = new vector<IrrBehavior*>();
+	camera = NULL;
 }
 
 IrrGameObject::~IrrGameObject(void)
@@ -146,5 +147,6 @@ void IrrGameObject::update(){
 		for(i=behaviors->begin(); i!=behaviors->end(); i++){
 			(*i)->update();
 		}
+		if(camera != NULL) camera->update();
 	}
 }

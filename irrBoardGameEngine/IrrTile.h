@@ -42,6 +42,9 @@ namespace IrrBoardGameEngine {
 		//define o grupo que inicia
 		int start;
 
+		//quando o mouse estiver sobre
+		bool isMouseHover;
+
 		//Whether this tile must be highlighted
 		bool isHighlighted;
 

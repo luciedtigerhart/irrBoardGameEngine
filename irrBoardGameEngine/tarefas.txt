@@ -1,0 +1,17 @@
+Funcionalidades GUI:
+
+- formatar texto do label (fonte, tamanho e cor)
+- detectar hover do mouse e setar imagem para isso
+- controlar estado "toggled" do botão, que também deve ter hover
+- lançar raio do mouse e retornar objeto com o qual colidiu
+
+Funcionalidades Cena
+
+- adicionar LUZ
+
+Classe de partículas
+
+- Criar emissor, afetuador e billboards (ParticleSystem)
+- Destruir emissor, afetuador e billboards
+- Setar imagem do billboard
+- Setar atributos do emissor e afetuador (efeito das partículas)

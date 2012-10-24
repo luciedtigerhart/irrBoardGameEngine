@@ -102,4 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="tarefas.txt">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

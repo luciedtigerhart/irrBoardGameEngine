@@ -15,7 +15,7 @@ void TokenNoob::update(void)
 	// Movimentação
 	float dT = IrrEngine::getInstance()->getDeltaTime();
 
-	if(token->isHighlighted)
+	if(token->isMouseHover)
 	{		
 		token->node->setMaterialFlag(irr::video::EMF_WIREFRAME,true);
 	}

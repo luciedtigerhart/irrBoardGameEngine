@@ -34,7 +34,7 @@ IrrScene::IrrScene(ISceneManager *sm, ISoundEngine *se, IrrInput *inp)
 	objects = new vector<IrrGameObject*>();
 
 
-	bola = addSphere(new Vector(0.0f, 0.0f, 0.0f));
+	//bola = addSphere(new Vector(0.0f, 0.0f, 0.0f));
 }
 
 IrrScene::~IrrScene(void)
@@ -163,7 +163,7 @@ ISceneNode * IrrScene::getSceneNodeAndCollisionPointFromRay()
 
 	Vector nm((float)ray.end.X, (float)ray.end.Y, (float)ray.end.Z);
 
-	bola->setPosition(nm);
+	//bola->setPosition(nm);
 
 	ISceneNode * node = collMan->getSceneNodeAndCollisionPointFromRay(
 				ray,
@@ -185,8 +185,6 @@ void IrrScene::update()
 		objects->push_back(newObjects.top());
 		newObjects.pop();
 	}
-
-	currentCollisionPoint = getSceneNodeAndCollisionPointFromRay();
 
 	if(currentBoard != NULL && currentCamera != NULL)
 	{

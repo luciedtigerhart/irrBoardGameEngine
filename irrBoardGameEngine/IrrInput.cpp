@@ -41,10 +41,11 @@ bool IrrInput::OnEvent(const SEvent& event)
         {
 			case EMIE_LMOUSE_PRESSED_DOWN:
 				mouseState.leftButtonDown = true;
+				//std::cout << "EMIE_LMOUSE_PRESSED_DOWN" << endl;
 				break;
-
 			case EMIE_LMOUSE_LEFT_UP:
 				mouseState.leftButtonDown = false;
+				//std::cout << "EMIE_LMOUSE_LEFT_UP" << endl;
 				break;
 
 			case EMIE_RMOUSE_PRESSED_DOWN:

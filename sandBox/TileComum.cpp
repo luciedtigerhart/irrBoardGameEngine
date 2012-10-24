@@ -23,7 +23,7 @@ void TileComum::update(void)
 	// Movimentação
 	float dT = IrrEngine::getInstance()->getDeltaTime();
 
-	if(tile->isHighlighted)
+	if(tile->isMouseHover)
 	{		
 		tile->node->setMaterialFlag(irr::video::EMF_WIREFRAME,true);
 	}

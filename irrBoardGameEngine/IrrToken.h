@@ -31,6 +31,9 @@ namespace IrrBoardGameEngine {
 		//jogador
 		int player;
 
+		//quando o mouse estiver sobre
+		bool isMouseHover;
+
 		//Whether this tile must be highlighted
 		bool isHighlighted;
 

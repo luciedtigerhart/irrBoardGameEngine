@@ -42,6 +42,9 @@
     <ClCompile Include="IrrToken.cpp" />
     <ClCompile Include="IrrTokenRoot.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="tarefas.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1B845DDD-49B1-401E-97DB-820FE64F3FC4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
