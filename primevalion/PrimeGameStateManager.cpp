@@ -225,14 +225,43 @@ void PrimeGameStateManager::loop()
 		//Initialize play state
 		playState.Initialize(playersActive, player1, player2, player3, player4);
 
-		//Update play state
-		playState.Update(board, turn);
-
-		//Update match interface (must come AFTER playState updates)
-		guimgr.ManageGUIMatchScreen(turn, playState);
-
 	//----------------------------------------------
 
 	//Run game
-	engine->loop();
+	//engine->loop();
+
+	//----- FOR TESTING PURPOSES, DELETE LATER -----
+
+		while(engine->getDevice()->run())
+		{
+			//Engine updates
+			engine->getScene()->update();
+			engine->getGUI()->update();
+			engine->getInput()->update();
+
+			//My updates...
+			//---------------------------------------------
+
+				//Update play state
+				playState.Update(board, turn);
+
+				//Update match interface (must come AFTER playState updates)
+				guimgr.ManageGUIMatchScreen(turn, playState);
+
+			//---------------------------------------------
+
+			//Begin frame...
+			engine->getDriver()->beginScene(true, true, SColor(255,100,101,140));
+
+				//Draw stuff!
+				engine->getSceneManager()->drawAll();
+				engine->getGUIenv()->drawAll();
+
+			//...End frame.
+			engine->getDriver()->endScene();
+		}
+
+		engine->getDevice()->drop();
+
+	//----------------------------------------------
 }

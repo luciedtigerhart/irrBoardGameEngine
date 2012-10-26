@@ -5,25 +5,32 @@
 #include "IrrEngine.h"
 #include "PrimeToken.h"
 
-//Play definitions
+//Direction definitions
 //----------------------------
 
-	#define PLAY_MOVE 1
-	#define PLAY_PUSH 2
-	#define PLAY_ATTACK 3
-	#define PLAY_RESSURECT 4
+	#define NORTH 1
+	#define SOUTH 2
+	#define WEST 3
+	#define EAST 4
+
+//Valid move definitions
+//----------------------------
+
+	#define TOKEN -2
+	#define FREE -3
 
 //Phase definitions
 //----------------------------
 
 	#define MATCH_START 1
-	#define TURN_START 2
-	#define RESSURRECTION_PLACEMENT 3
-	#define TOKEN_SELECTION 4
-	#define PLAY_SELECTION 5
-	#define ANIMATION_EXECUTION 6
-	#define TURN_END 7
-	#define MATCH_END 8
+
+		#define TURN_START 2
+			#define RESSURRECTION_PLACEMENT 3
+			#define PLAY_SELECTION 4
+			#define ANIMATION_EXECUTION 5
+		#define TURN_END 6
+
+	#define MATCH_END 7
 
 //----------------------------
 
@@ -32,6 +39,11 @@ using namespace IrrBoardGameEngine;
 class PrimePlayState
 {
 private:
+	//Position of tiles adjacent to selected token
+	int iWest, jWest, iEast, jEast, iNorth, jNorth, iSouth, jSouth;
+	int iNorthwest, jNorthwest, iNortheast, jNortheast;
+	int iSouthwest, jSouthwest, iSoutheast, jSoutheast;
+
 public:
 	PrimePlayState();
 	~PrimePlayState();
@@ -45,23 +57,32 @@ public:
 	int turn; //Current match turn
 	int turnPlayer; //Which player the current turn belongs to
 	int playersActive; //Amount of active players in current match
+
 	int phase; //Which phase the current turn is at (ressurrection, token selection, etc.)
+	int movesFinished; //How many tokens have been moved in a turn
+
+	//Token selected to move
+	IrrToken* selectedToken;
 
 	//Initialize this match's play state
 	void Initialize(int players, PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
 
+	//Get tiles adjacent to selected token
+	void GetAdjacentTiles();
+
 	//Find out which player this turn belongs to
 	void SetTurnPlayer(int turn);
 
-	//Scan board and set tile highlights accordingly to current turn phase
-	void SetupTileHighlight(IrrBoard* board);
+	//Find all tokens in a line and set them to be pushed
+	void SetPushLine(int direction);
 
-	//Scan board and set token highlights accordingly to current turn phase
-	void SetupTokenHighlight(IrrBoard* board);
+	//Validate whether a move can be performed, setting the state of involved tiles and tokens
+	bool PlayIsValid(int play, int dir, IrrBoard* board, int i, int j);
 
-	bool PlayIsValid(int play); //Validate whether a move can be performed, setting the state of involved tiles and tokens
-	void SetupPushLine(int direction); //Find all tokens in a line and set them to be pushed
+	void ManageTokenSelection(IrrBoard* board, int i, int j); //Manage token selection phase (Play Selection sub-phase 1)
+	void ManageMoveSelection(IrrBoard* board, int i, int j); //Manage move selection phase (Play Selection sub-phase 2)
 
+	void UpdateTurnPhases(IrrBoard* board); //Scan board, setting highlights and advancing phases
 	void Update(IrrBoard* board, int turn); //Update play state
 };
 

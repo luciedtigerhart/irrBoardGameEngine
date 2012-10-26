@@ -521,45 +521,45 @@ void PrimeGUIManager::BuildGUITitleScreen()
 	env_title->addImage("Background Title Screen","gui/outgame/background_title.jpg",0,0);
 
 	//Player indicators
-	env_title->addImage("Indicator Player 1","gui/outgame/team_player1.jpg",30,60);
-	env_title->addImage("Indicator Player 2","gui/outgame/team_player2.jpg",300,60);
-	env_title->addImage("Indicator Player 3","gui/outgame/team_player3.jpg",30,180);
-	env_title->addImage("Indicator Player 4","gui/outgame/team_player4.jpg",300,180);
+	env_title->addImage("Indicator Player 1","gui/outgame/team_player1.jpg",230,160);
+	env_title->addImage("Indicator Player 2","gui/outgame/team_player2.jpg",650,160);
+	env_title->addImage("Indicator Player 3","gui/outgame/team_player3.jpg",230,380);
+	env_title->addImage("Indicator Player 4","gui/outgame/team_player4.jpg",650,380);
 
 	//Player activation buttons
-	env_title->addButton("Button Player 1 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",110,60,29,26);
-	env_title->addButton("Button Player 2 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",380,60,29,26);
-	env_title->addButton("Button Player 3 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",110,180,29,26);
-	env_title->addButton("Button Player 4 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",380,180,29,26);
+	env_title->addButton("Button Player 1 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",310,160,29,26);
+	env_title->addButton("Button Player 2 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",730,160,29,26);
+	env_title->addButton("Button Player 3 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",310,380,29,26);
+	env_title->addButton("Button Player 4 Activate","gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",730,380,29,26);
 
 	//Race buttons PLAYER 1
-	env_title->addButton("Button Player 1 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",30,90,29,26);
-	env_title->addButton("Button Player 1 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",60,90,29,26);
-	env_title->addButton("Button Player 1 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",90,90,29,26);
-	env_title->addButton("Button Player 1 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",120,90,29,26);
+	env_title->addButton("Button Player 1 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",230,190,29,26);
+	env_title->addButton("Button Player 1 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",260,190,29,26);
+	env_title->addButton("Button Player 1 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",290,190,29,26);
+	env_title->addButton("Button Player 1 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",320,190,29,26);
 
 	//Race buttons PLAYER 2
-	env_title->addButton("Button Player 2 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",300,90,29,26);
-	env_title->addButton("Button Player 2 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",330,90,29,26);
-	env_title->addButton("Button Player 2 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",360,90,29,26);
-	env_title->addButton("Button Player 2 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",390,90,29,26);
+	env_title->addButton("Button Player 2 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",650,190,29,26);
+	env_title->addButton("Button Player 2 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",680,190,29,26);
+	env_title->addButton("Button Player 2 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",710,190,29,26);
+	env_title->addButton("Button Player 2 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",740,190,29,26);
 
 	//Race buttons PLAYER 3
-	env_title->addButton("Button Player 3 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",30,210,29,26);
-	env_title->addButton("Button Player 3 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",60,210,29,26);
-	env_title->addButton("Button Player 3 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",90,210,29,26);
-	env_title->addButton("Button Player 3 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",120,210,29,26);
+	env_title->addButton("Button Player 3 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",230,410,29,26);
+	env_title->addButton("Button Player 3 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",260,410,29,26);
+	env_title->addButton("Button Player 3 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",290,410,29,26);
+	env_title->addButton("Button Player 3 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",320,410,29,26);
 
 	//Race buttons PLAYER 4
-	env_title->addButton("Button Player 4 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",300,210,29,26);
-	env_title->addButton("Button Player 4 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",330,210,29,26);
-	env_title->addButton("Button Player 4 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",360,210,29,26);
-	env_title->addButton("Button Player 4 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",390,210,29,26);
+	env_title->addButton("Button Player 4 Kobold","gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",650,410,29,26);
+	env_title->addButton("Button Player 4 Gnoll","gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",680,410,29,26);
+	env_title->addButton("Button Player 4 Troll","gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",710,410,29,26);
+	env_title->addButton("Button Player 4 Hog","gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",740,410,29,26);
 
 	//Screen transition buttons
-	env_title->addButton("Button Start Match","gui/outgame/button_start_match.jpg","gui/outgame/button_start_match.jpg",250,400,124,35);
-	env_title->addButton("Button Credits","gui/outgame/button_credits.jpg","gui/outgame/button_credits.jpg",80,400,124,35);
-	env_title->addButton("Button Tutorial","gui/outgame/button_tutorial.jpg","gui/outgame/button_tutorial.jpg",420,400,124,35);
+	env_title->addButton("Button Credits","gui/outgame/button_credits.jpg","gui/outgame/button_credits.jpg",280,650,124,35);
+	env_title->addButton("Button Start Match","gui/outgame/button_start_match.jpg","gui/outgame/button_start_match.jpg",450,650,124,35);
+	env_title->addButton("Button Tutorial","gui/outgame/button_tutorial.jpg","gui/outgame/button_tutorial.jpg",620,650,124,35);
 }
 
 void PrimeGUIManager::BuildGUICreditsScreen()
@@ -568,7 +568,7 @@ void PrimeGUIManager::BuildGUICreditsScreen()
 	env_credits->addImage("Background Credits Screen","gui/outgame/background_credits.jpg",0,0);
 
 	//Screen transition buttons
-	env_credits->addButton("Button Back To Title Credits","gui/outgame/button_title.jpg","gui/outgame/button_title.jpg",250,400,124,35);
+	env_credits->addButton("Button Back To Title Credits","gui/outgame/button_title.jpg","gui/outgame/button_title.jpg",450,650,124,35);
 }
 
 void PrimeGUIManager::BuildGUITutorialScreen()
@@ -581,17 +581,21 @@ void PrimeGUIManager::BuildGUITutorialScreen()
 	env_tutorial->addImage("Background Tutorial Screen Page 5","gui/outgame/background_tutorial5.jpg",0,0);
 
 	//Browsing buttons
-	env_tutorial->addButton("Button Previous","gui/outgame/button_previous.jpg","gui/outgame/button_previous.jpg",400,400,90,35);
-	env_tutorial->addButton("Button Next","gui/outgame/button_next.jpg","gui/outgame/button_next.jpg",510,400,90,35);
+	env_tutorial->addButton("Button Previous","gui/outgame/button_previous.jpg","gui/outgame/button_previous.jpg",750,650,90,35);
+	env_tutorial->addButton("Button Next","gui/outgame/button_next.jpg","gui/outgame/button_next.jpg",850,650,90,35);
 
 	//Screen transition buttons
-	env_tutorial->addButton("Button Back To Title Tutorial","gui/outgame/button_title.jpg","gui/outgame/button_title.jpg",50,400,124,35);
+	env_tutorial->addButton("Button Back To Title Tutorial","gui/outgame/button_title.jpg","gui/outgame/button_title.jpg",100,650,124,35);
 }
 
 void PrimeGUIManager::BuildGUIMatchScreen()
 {
+	//Buttons
+	env_match->addButton("Button End Turn","gui/ingame/button_end_turn.jpg","gui/ingame/button_end_turn.jpg",750,10,124,35);
+	env_match->addButton("Button End Match","gui/ingame/button_end_match.jpg","gui/ingame/button_end_match.jpg",880,10,124,35);
+
 	//Turn indicator
-	env_match->addImage("Indicator Turn Widget","gui/ingame/turn_widget.jpg",10,10);
+	env_match->addImage("Indicator Turn Widget","gui/ingame/turn_widget.png",10,10);
 	env_match->addImage("Indicator Turn Player 1","gui/ingame/team_player1.jpg",120,15);
 	env_match->addImage("Indicator Turn Player 2","gui/ingame/team_player2.jpg",120,15);
 	env_match->addImage("Indicator Turn Player 3","gui/ingame/team_player3.jpg",120,15);
@@ -667,10 +671,6 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 	env_match->addLabel("Label Resources 3rd Odd", "0", 680,710,740,730);
 
 	HideResourceIndicators(); //Hide resource indicators
-
-	//Buttons
-	env_match->addButton("Button End Turn","gui/ingame/button_end_turn.jpg","gui/ingame/button_end_turn.jpg",750,10,124,35);
-	env_match->addButton("Button End Match","gui/ingame/button_end_match.jpg","gui/ingame/button_end_match.jpg",880,10,124,35);
 
 	//Generic messages
 	env_match->addImage("Message Sort","gui/ingame/message_sorting_turn_order.jpg",380,330);

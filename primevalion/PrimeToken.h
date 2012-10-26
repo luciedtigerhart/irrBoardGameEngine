@@ -28,11 +28,21 @@ public:
 	bool isFinished; //Whether this token has already moved
 	bool isAbilityActive; //Whether this token's race ability is active
 
+	bool isSelected; //Whether this token has been selected by a player
+	bool isTargeted; //Whether this token has been targeted by a player
+	bool isGonnaBePushed; //Whether this tile will be pushed with the next move
+
+	bool isAnimRunning; //One of this token's animations is running
+	bool isAnimFinished; //All of this token's animations are finished
+
 	int race; //Race of this token
 	int team; //Team of this token
+	int moveDir; //Direction this tile is moving to
+	int pushDir; //Direction this tile is being pushed in
 
 	const char* pathOBJ; //Stores 3D model path
 	const char* pathTEX; //Stores texture path
+	const char* pathTEXHL; //Stores highlight texture path
 
 	//Token materials
 	SMaterial matHighlight;
@@ -40,6 +50,8 @@ public:
 
 	void init(); //Initializes token
 	void update(); //Updates this token's visuals
+
+	void PaintVanilla(); //Color token with original color
 };
 
 #endif

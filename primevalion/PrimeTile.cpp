@@ -78,7 +78,7 @@ void PrimeTile::init()
 
 	//Create highlight plane
 	IAnimatedMesh* plane = smgr->addHillPlaneMesh("Highlight Plane", // Name of mesh
-      core::dimension2d<f32>(1.5,1.5), //	Size of a tile of the mesh
+      core::dimension2d<f32>(1.8,1.8), //	Size of a tile of the mesh
       core::dimension2d<u32>(1,1), 0, 0, // Specifies how many tiles there will be
       core::dimension2d<f32>(0,0), //Material 
       core::dimension2d<f32>(1,1)); //countHills 
@@ -103,20 +103,29 @@ void PrimeTile::update()
 	{
 		//Activate the correct highlight plane
 
-		if (tile->highlight == MOVE || tile->highlight == RESSURRECT)
+		if (tile->isMouseHover || (tile->token != NULL && tile->token->isMouseHover))
 		{
-			turnOnHighlight(MOVE);
+			if (tile->highlight == MOVE_HOVER || tile->highlight == RESSURRECT_HOVER)
+			{
+				turnOnHighlight(MOVE_HOVER);
+			}
+
+			else if (tile->highlight == PUSH_HOVER) turnOnHighlight(PUSH_HOVER);
+			else if (tile->highlight == ATTACK_HOVER) turnOnHighlight(ATTACK_HOVER);
+			else turnOnHighlight(NONE);
 		}
 
-		else if (tile->highlight == MOVE_HOVER || tile->highlight == RESSURRECT_HOVER)
+		else
 		{
-			turnOnHighlight(MOVE_HOVER);
-		}
+			if (tile->highlight == MOVE || tile->highlight == RESSURRECT)
+			{
+				turnOnHighlight(MOVE);
+			}
 
-		else if (tile->highlight == PUSH) turnOnHighlight(PUSH);
-		else if (tile->highlight == PUSH_HOVER) turnOnHighlight(PUSH_HOVER);
-		else if (tile->highlight == ATTACK) turnOnHighlight(ATTACK);
-		else if (tile->highlight == ATTACK_HOVER) turnOnHighlight(ATTACK_HOVER);
+			else if (tile->highlight == PUSH) turnOnHighlight(PUSH);
+			else if (tile->highlight == ATTACK) turnOnHighlight(ATTACK);
+			else turnOnHighlight(NONE);
+		}
 	}
 
 	//Otherwise, if this tile isn't highlighted...
