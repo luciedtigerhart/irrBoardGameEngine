@@ -44,6 +44,11 @@ private:
 	PrimeTeam player3;
 	PrimeTeam player4;
 
+	std::list<IrrToken*>* tokensTeam1;
+	std::list<IrrToken*>* tokensTeam2;
+	std::list<IrrToken*>* tokensTeam3;
+	std::list<IrrToken*>* tokensTeam4;
+
 	//Other data
 
 	int turn; //Match turn counter

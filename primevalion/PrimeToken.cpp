@@ -66,6 +66,10 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 	isDead = false;
 	isFinished = false;
 	isAbilityActive = false;
+
+	//The team score is a secret identifier for ghost tokens
+	if (myTeam.primevalium == -6969) isGhost = true;
+	else isGhost = false;
 };
 
 void PrimeToken::init()
@@ -86,10 +90,25 @@ void PrimeToken::init()
 	token->node->setParent(token->parentNode->node);
 	token->player = team;
 
-	//Attach triangle selector
-	ITriangleSelector* selector = smgr->createTriangleSelectorFromBoundingBox(token->node);
-	token->node->setTriangleSelector(selector);
-	selector->drop();
+	//Attach triangle selector if this isn't a ghost token
+	if (!isGhost)
+	{
+		ITriangleSelector* selector = smgr->createTriangleSelectorFromBoundingBox(token->node);
+		token->node->setTriangleSelector(selector);
+		selector->drop();
+	}
+
+	//Make this token transparent if its a ghost
+	else if (isGhost)
+	{
+		//Ressurrection placement highlight (Transparent Gray)
+		token->node->getMaterial(0) = matHighlight;
+		token->node->getMaterial(0).EmissiveColor.set(255,10,10,10);
+		token->node->getMaterial(0).SpecularColor.set(255,10,10,10);
+
+		//Enable transparency
+		token->node->getMaterial(0).MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	}
 }
 
 void PrimeToken::update()
@@ -97,7 +116,7 @@ void PrimeToken::update()
 	float deltaTime = IrrEngine::getInstance()->getDeltaTime();
 
 	//Disable transparency
-	token->node->getMaterial(0).MaterialType = EMT_SOLID;
+	if (!isGhost) token->node->getMaterial(0).MaterialType = EMT_SOLID;
 
 	//Make this token invisible if dead
 	if (isDead) token->setActive(false);
@@ -148,17 +167,6 @@ void PrimeToken::update()
 					token->node->getMaterial(0) = matHighlight;
 					token->node->getMaterial(0).EmissiveColor.set(255,100,180,255);
 					token->node->getMaterial(0).SpecularColor.set(255,100,180,255);
-				}
-
-				else if (token->highlight == RESSURRECT)
-				{
-					//Ressurrection placement highlight (Transparent Gray)
-					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,10,10,10);
-					token->node->getMaterial(0).SpecularColor.set(255,10,10,10);
-
-					//Enable transparency
-					token->node->getMaterial(0).MaterialType = EMT_TRANSPARENT_ADD_COLOR;
 				}
 
 				else PaintVanilla();

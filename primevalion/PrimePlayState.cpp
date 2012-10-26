@@ -3,11 +3,30 @@
 PrimePlayState::PrimePlayState() {};
 PrimePlayState::~PrimePlayState() {};
 
-void PrimePlayState::Initialize(int players, PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4)
+void PrimePlayState::Initialize(IrrInput* engineInput, int players,
+								PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
+								std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
+								std::list<IrrToken*>* team3, std::list<IrrToken*>* team4)
 {
-	playersActive = players;
+	//Get input from engine
+	input = engineInput;
+
+	//Initialize token lists
+	tokensTeam1 = new std::list<IrrToken*>();
+	tokensTeam2 = new std::list<IrrToken*>();
+	tokensTeam3 = new std::list<IrrToken*>();
+	tokensTeam4 = new std::list<IrrToken*>();
+
+	//Clone token lists
+
+	for (t = team1->begin(); t != team1->end(); t++) tokensTeam1->push_back((*t));
+	for (t = team2->begin(); t != team2->end(); t++) tokensTeam2->push_back((*t));
+	for (t = team3->begin(); t != team3->end(); t++) tokensTeam3->push_back((*t));
+	for (t = team4->begin(); t != team4->end(); t++) tokensTeam4->push_back((*t));
 
 	//Clone players
+
+	playersActive = players;
 
 	//Player 1...
 	player1.idx = p1.idx;
@@ -44,6 +63,9 @@ void PrimePlayState::Initialize(int players, PrimeTeam p1, PrimeTeam p2, PrimeTe
 	player4.assignedRace = p4.assignedRace;
 	player4.assignedTurn = p4.assignedTurn;
 	player4.primevalium = p4.primevalium;
+
+	//Initialize match phase
+	phase = MATCH_START;
 }
 
 void PrimePlayState::GetAdjacentTiles()
@@ -253,6 +275,101 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 	return isValid;
 };
 
+bool PrimePlayState::GetDeadTokens()
+{
+	int deadTokens = 0;
+
+	//Find out which player this turn belongs to,
+	//and if that player has any dead tokens
+
+	if (player1.isActive && turnPlayer == player1.idx)
+	{
+		//Search for dead tokens among team 1's tokens
+		//for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) if ((*t)->isDead) deadTokens++; 
+	}
+
+	else if (player2.isActive && turnPlayer == player2.idx)
+	{
+		//Search for dead tokens among team 2's tokens
+		//for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) if ((*t)->isDead) deadTokens++;
+	}
+
+	else if (player3.isActive && turnPlayer == player3.idx)
+	{
+		//Search for dead tokens among team 3's tokens
+		//for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) if ((*t)->isDead) deadTokens++;
+	}
+
+	else if (player4.isActive && turnPlayer == player4.idx)
+	{
+		//Search for dead tokens among team 4's tokens
+		//for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) if ((*t)->isDead) deadTokens++;
+	}
+
+	//If there are dead tokens, they should be ressurrected
+	if (deadTokens > 0) return true;
+	else return false;
+}
+
+void PrimePlayState::ManageRessurrection(IrrBoard* board, int i, int j)
+{
+	bool tileMarked = false;
+	int iTile = -1;
+	int jTile = -1;
+
+	if (turnPlayer == player1.idx)
+	{
+		//If this tile is this team's safe zone, and there's no token on it...
+		if (board->board[i][j]->inf == SAFE_ZONE_TEAM_1 && board->board[i][j]->token == NULL)
+		{
+			//Mark this tile's position for highlighting
+			iTile = i; jTile = j; tileMarked = true;
+		}
+	}
+
+	else if (turnPlayer == player2.idx)
+	{
+		//If this tile is this team's safe zone, and there's no token on it...
+		if (board->board[i][j]->inf == SAFE_ZONE_TEAM_2 && board->board[i][j]->token == NULL)
+		{
+			//Mark this tile's position for highlighting
+			iTile = i; jTile = j; tileMarked = true;
+		}
+	}
+
+	else if (turnPlayer == player3.idx)
+	{
+		//If this tile is this team's safe zone, and there's no token on it...
+		if (board->board[i][j]->inf == SAFE_ZONE_TEAM_3 && board->board[i][j]->token == NULL)
+		{
+			//Mark this tile's position for highlighting
+			iTile = i; jTile = j; tileMarked = true;
+		}
+	}
+
+	else if (turnPlayer == player4.idx)
+	{
+		//If this tile is this team's safe zone, and there's no token on it...
+		if (board->board[i][j]->inf == SAFE_ZONE_TEAM_4 && board->board[i][j]->token == NULL)
+		{
+			//Mark this tile's position for highlighting
+			iTile = i; jTile = j; tileMarked = true;
+		}
+	}
+
+	//If a tile has been marked for highlighting...
+	if (tileMarked)
+	{
+		//Highlight the tile
+		board->board[iTile][jTile]->isHighlighted = true;
+
+		if (board->board[iTile][jTile]->isMouseHover)
+			board->board[iTile][jTile]->highlight = RESSURRECT_HOVER;
+
+		else board->board[iTile][jTile]->highlight = RESSURRECT;
+	}
+}
+
 void PrimePlayState::ManageTokenSelection(IrrBoard* board, int i, int j)
 {
 	//If the tile at (i,j) has a token
@@ -374,6 +491,26 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 
 void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 {
+	bool tileSelected = false;
+	bool tokenSelected = false;
+	bool ressurrectionActive = false;
+
+	//FOR TEST PURPOSES
+	//------------------
+	if (input->getMouseState().leftButtonDown)
+	{
+		phase = RESSURRECTION_PLACEMENT;
+	}
+
+	//Find dead tokens and decide whether ressurrection should be performed
+	if (phase == RESSURRECTION_PLACEMENT)
+	{
+		ressurrectionActive = GetDeadTokens();
+
+		//If there are no dead tokens, go to next phase
+		if (!ressurrectionActive) phase = PLAY_SELECTION;
+	}
+
 	//Scan the whole board
 	for (int i=0; i < board->tile_i; i++)
 	{
@@ -390,10 +527,6 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 				board->board[i][j]->token->highlight = NONE;
 			}
 
-			//FOR TEST PURPOSES
-			//------------------
-			phase = PLAY_SELECTION;
-
 			//Highlight tiles and tokens according to phase
 
 
@@ -404,14 +537,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 			if (phase == RESSURRECTION_PLACEMENT)
 			{
-				if (turnPlayer == player1.idx)
-				{
-					if (board->board[i][j]->inf == SAFE_ZONE_TEAM_1)
-					{
-						//board->board[i][j]->isHighlighted = true;
-						//board->board[i][j]->highlight = RESSURRECT;
-					}
-				}
+				ManageRessurrection(board,i,j);
 			}
 
 
@@ -422,7 +548,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 			else if (phase == PLAY_SELECTION)
 			{
-				selectedToken = board->getToken(7,9);
+				//selectedToken = board->getToken(7,9);
 
 				ManageTokenSelection(board,i,j);
 
@@ -446,6 +572,58 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 				//A token has been moved
 				movesFinished++;
 				selectedToken = NULL;
+			}
+
+
+			//-------------------------------------------
+			//---------- INPUT VERIFICATION -------------
+			//-------------------------------------------
+
+			//Check for mouse position over a tile which can be interacted with
+			if (board->board[i][j]->isMouseHover && board->board[i][j]->isHighlighted)
+			{
+				tileSelected = true;
+			}
+			
+			//Check for mouse position over a token which can be interacted with
+			if (board->board[i][j]->token != NULL)
+			{
+				if (board->board[i][j]->token->isMouseHover && board->board[i][j]->token->isHighlighted)
+				{
+					tokenSelected = true;
+				}
+			}
+
+			//If mouse button is pressed...
+			if (input->getMouseState().leftButtonDown)
+			{
+				//If mouse cursor is above a highlighted tile or token
+				if (tileSelected || tokenSelected)
+				{
+					cout<<"Clicked on highlight"<<endl;
+
+					//Find which player this turn belongs to
+					/*
+					if (turnPlayer == player1.idx)
+					{
+						//Iterate through this player's token list
+						for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
+						{
+							//Do something according to turn phase
+
+							if (phase == RESSURRECTION_PLACEMENT)
+							{
+								//Move dead token to this safe zone tile
+								if ((*t)->isDead) board->moveToken((*t)->parentNode->posi, (*t)->parentNode->posj,i,j);
+
+								//Activate token, but make sure it can't move this turn
+								(*t)->isDead = false;
+								(*t)->isFinished = true;
+							}
+						}
+					}
+					*/
+				}
 			}
 		}
 	}

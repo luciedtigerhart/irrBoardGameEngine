@@ -24,6 +24,7 @@ private:
 public:
 	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
 
+	bool isGhost; //Whether this token is just a ressurrection indicator
 	bool isDead; //Whether this token has been killed
 	bool isFinished; //Whether this token has already moved
 	bool isAbilityActive; //Whether this token's race ability is active

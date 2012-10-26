@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include "IrrEngine.h"
+#include "PrimeToken.h"
+#include "PrimeTeam.h"
 
 //Hightlight type definitions
 //----------------------------
@@ -36,12 +38,20 @@ using namespace IrrBoardGameEngine;
 class PrimeTile : public IrrTileBehavior
 {
 private:
+	int raceP1, idxP1;
+	int raceP2, idxP2;
+	int raceP3, idxP3;
+	int raceP4, idxP4;
+
 public:
-	PrimeTile();
+	PrimeTile(PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
 	~PrimeTile();
 
 	//Highlight effect plane
 	ISceneNode* highlightPlane;
+
+	//Ressurrection placement indicator
+	IrrToken* ghost;
 
 	//Highlight plane materials
 	SMaterial matPlaneNormal;
@@ -51,6 +61,8 @@ public:
 	void update(); //Updates highlight when necessary
 
 	void turnOnHighlight(int type); //Activates a type of highlight, or deactivate it with param "NONE"
+	void addGhostBehavior(IrrTokenBehavior * behavior); //Activate ghost token
+	void loadGhost(); //Load ghost token if this is a safe zone tile
 };
 
 #endif

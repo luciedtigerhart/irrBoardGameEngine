@@ -44,6 +44,9 @@ private:
 	int iNorthwest, jNorthwest, iNortheast, jNortheast;
 	int iSouthwest, jSouthwest, iSoutheast, jSoutheast;
 
+	//Input from engine
+	IrrInput * input;
+
 public:
 	PrimePlayState();
 	~PrimePlayState();
@@ -53,6 +56,14 @@ public:
 	PrimeTeam player2;
 	PrimeTeam player3;
 	PrimeTeam player4;
+
+	//Token lists
+	std::list<IrrToken*>* tokensTeam1;
+	std::list<IrrToken*>* tokensTeam2;
+	std::list<IrrToken*>* tokensTeam3;
+	std::list<IrrToken*>* tokensTeam4;
+	std::list<IrrToken*>::iterator t;
+
 
 	int turn; //Current match turn
 	int turnPlayer; //Which player the current turn belongs to
@@ -65,7 +76,10 @@ public:
 	IrrToken* selectedToken;
 
 	//Initialize this match's play state
-	void Initialize(int players, PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
+	void Initialize(IrrInput* engineInput, int players,
+					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
+					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
+					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4);
 
 	//Get tiles adjacent to selected token
 	void GetAdjacentTiles();
@@ -79,6 +93,10 @@ public:
 	//Validate whether a move can be performed, setting the state of involved tiles and tokens
 	bool PlayIsValid(int play, int dir, IrrBoard* board, int i, int j);
 
+	bool GetDeadTokens(); //Find dead tokens in the current turn
+	void ReviveDeadTokens(IrrBoard* board, int i, int j);
+
+	void ManageRessurrection(IrrBoard* board, int i, int j); //Manage Ressurrection Placement phase
 	void ManageTokenSelection(IrrBoard* board, int i, int j); //Manage token selection phase (Play Selection sub-phase 1)
 	void ManageMoveSelection(IrrBoard* board, int i, int j); //Manage move selection phase (Play Selection sub-phase 2)
 

@@ -110,7 +110,7 @@ void PrimeGameStateManager::CreateBoard()
 	//Create light
 	light = engine->getSceneManager()->addLightSceneNode(0, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 
-	//Initialize game elements
+	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();
 	LoadTokens();
 }
@@ -124,7 +124,7 @@ void PrimeGameStateManager::LoadTiles()
 	std::list<IrrTile*>::iterator i;
 	for(i = tileList->begin(); i != tileList->end(); i++)
 	{
-		board->addTileBehavior((*i), new PrimeTile());
+		board->addTileBehavior((*i), new PrimeTile(player1, player2, player3, player4));
 	}
 }
 
@@ -144,7 +144,8 @@ void PrimeGameStateManager::LoadTokens()
 	//Player 1 tokens...
 	if (player1.isActive)
 	{
-		std::list<IrrToken*> * tokensTeam1 = board->createTokens(player1.idx);
+		tokensTeam1 = board->createTokens(player1.idx);
+
 		for(t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player1));
@@ -154,7 +155,7 @@ void PrimeGameStateManager::LoadTokens()
 	//Player 2 tokens...
 	if (player2.isActive)
 	{
-		std::list<IrrToken*> * tokensTeam2 = board->createTokens(player2.idx);
+		tokensTeam2 = board->createTokens(player2.idx);
 		for(t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player2));
@@ -164,7 +165,7 @@ void PrimeGameStateManager::LoadTokens()
 	//Player 3 tokens...
 	if (player3.isActive)
 	{
-		std::list<IrrToken*> * tokensTeam3 = board->createTokens(player3.idx);
+		tokensTeam3 = board->createTokens(player3.idx);
 		for(t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player3));
@@ -174,7 +175,7 @@ void PrimeGameStateManager::LoadTokens()
 	//Player 4 tokens...
 	if (player4.isActive)
 	{
-		std::list<IrrToken*> * tokensTeam4 = board->createTokens(player4.idx);
+		tokensTeam4 = board->createTokens(player4.idx);
 		for(t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player4));
@@ -223,7 +224,9 @@ void PrimeGameStateManager::loop()
 		CreateBoard();
 
 		//Initialize play state
-		playState.Initialize(playersActive, player1, player2, player3, player4);
+		playState.Initialize(engine->getInput(), playersActive,
+							 player1, player2, player3, player4,
+							 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
 
 	//----------------------------------------------
 

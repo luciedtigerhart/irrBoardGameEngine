@@ -1,7 +1,91 @@
 #include "PrimeTile.h"
 
-PrimeTile::PrimeTile() {};
-PrimeTile::~PrimeTile() {};
+PrimeTile::PrimeTile(PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4)
+{
+	//No ghost token by default
+	ghost = NULL;
+
+	raceP1 = raceP2 = raceP3 = raceP4 = -1;
+	idxP1 = idxP2 = idxP3 = idxP4 = -1;
+
+	//Get team races and indexes
+	if (p1.isActive) { raceP1 = p1.assignedRace; idxP1 = p1.idx; }
+	if (p2.isActive) { raceP2 = p2.assignedRace; idxP2 = p2.idx; }
+	if (p3.isActive) { raceP3 = p3.assignedRace; idxP3 = p3.idx; }
+	if (p4.isActive) { raceP4 = p4.assignedRace; idxP4 = p4.idx; }
+};
+
+PrimeTile::~PrimeTile()
+{
+	//Delete ghost if it has been loaded
+	if (ghost != NULL) delete ghost;
+};
+
+void PrimeTile::addGhostBehavior(IrrTokenBehavior * behavior)
+{
+	//Initialize and set parent
+	ghost = new IrrToken();
+	ghost->parentNode = tile;
+
+	//Set associated token
+	behavior->setToken(ghost);
+
+	//Set engine components
+	behavior->driver = driver;
+	behavior->smgr = smgr;
+	behavior->soundEngine = soundEngine;
+	behavior->input = input;
+	behavior->init();
+
+	//Set new behavior
+	ghost->addBehaviour(behavior);
+}
+
+void PrimeTile::loadGhost()
+{
+	PrimeTeam player;
+	bool playerLoaded;
+
+	//Load ghost token based on type of tile and teams
+	
+	//If this is a Team 1 safe zone...
+	if (tile->inf == SAFE_ZONE_TEAM_1)
+	{
+		//If P1 is active...
+		if (idxP1 != -1) { player.assignedRace = raceP1; player.idx = idxP1; playerLoaded = true; }
+	}
+	
+	//If this is a Team 2 safe zone...
+	else if (tile->inf == SAFE_ZONE_TEAM_2)
+	{
+		//If P2 is active...
+		if (idxP2 != -1) { player.assignedRace = raceP2; player.idx = idxP2; playerLoaded = true; }
+	}
+	
+	//If this is a Team 3 safe zone...
+	else if (tile->inf == SAFE_ZONE_TEAM_3)
+	{
+		//If P3 is active...
+		if (idxP3 != -1) { player.assignedRace = raceP3; player.idx = idxP3; playerLoaded = true; }
+	}
+	
+	//If this is a Team 4 safe zone...
+	else if (tile->inf == SAFE_ZONE_TEAM_4)
+	{
+		//If P4 is active...
+		if (idxP4 != -1) { player.assignedRace = raceP4; player.idx = idxP4; playerLoaded = true; }
+	}
+
+	//Load ghost
+	if (playerLoaded)
+	{
+		//Set special ghost identifier
+		player.primevalium = -6969;
+
+		//Add token behavior to ghost
+		addGhostBehavior(new PrimeToken(player));
+	}
+}
 
 void PrimeTile::turnOnHighlight(int type)
 {
@@ -78,7 +162,7 @@ void PrimeTile::init()
 
 	//Create highlight plane
 	IAnimatedMesh* plane = smgr->addHillPlaneMesh("Highlight Plane", // Name of mesh
-      core::dimension2d<f32>(1.8,1.8), //	Size of a tile of the mesh
+      core::dimension2d<f32>(1.8f,1.8f), //	Size of a tile of the mesh
       core::dimension2d<u32>(1,1), 0, 0, // Specifies how many tiles there will be
       core::dimension2d<f32>(0,0), //Material 
       core::dimension2d<f32>(1,1)); //countHills 
@@ -90,6 +174,12 @@ void PrimeTile::init()
 	//Highlights are deactivated by default
 	turnOnHighlight(NONE);
 
+	//Load ghost token, if necessary...
+	loadGhost();
+
+	//...And deactivate it.
+	if (ghost != NULL) ghost->setActive(false);
+
 	//Activate lighting
 	tile->node->setMaterialFlag(EMF_LIGHTING, true);
 }
@@ -97,6 +187,9 @@ void PrimeTile::init()
 void PrimeTile::update()
 {
 	float deltaTime = IrrEngine::getInstance()->getDeltaTime();
+
+	//Ghost token is normally invisible
+	if (ghost != NULL) ghost->setActive(false);
 
 	//If this tile is highlighted...
 	if (tile->isHighlighted)
@@ -108,6 +201,12 @@ void PrimeTile::update()
 			if (tile->highlight == MOVE_HOVER || tile->highlight == RESSURRECT_HOVER)
 			{
 				turnOnHighlight(MOVE_HOVER);
+				
+				if (tile->highlight == RESSURRECT_HOVER)
+				{
+					//Show ghost token when hovering a ressurrection tile
+					if (ghost != NULL) ghost->setActive(true);
+				}
 			}
 
 			else if (tile->highlight == PUSH_HOVER) turnOnHighlight(PUSH_HOVER);
