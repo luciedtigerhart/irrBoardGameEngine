@@ -52,8 +52,14 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	//Pegar o driver de video
 	driver = device->getVideoDriver();
 
+	//
+	// GUI
+	//
 	guienv = device->getGUIEnvironment();
 
+	//
+	// SCENE
+	//
 	smgr = device->getSceneManager();
 
 	return 0;

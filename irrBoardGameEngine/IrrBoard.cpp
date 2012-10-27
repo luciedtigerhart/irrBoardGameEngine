@@ -14,7 +14,7 @@ IrrBoard::~IrrBoard(void)
 
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			delete board[i][j];
 		}
@@ -44,7 +44,7 @@ void IrrBoard::startTileBehavior(int inf, IrrTileBehavior * behavior)
 {
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			if(board[i][j]->inf == inf)
 			{
@@ -59,7 +59,7 @@ std::list<IrrTile*> *IrrBoard::getTiles(int inf)
 	std::list<IrrTile*> * list = new std::list<IrrTile*>();
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			if(board[i][j]->inf == inf)
 			{
@@ -75,7 +75,7 @@ std::list<IrrTile*> *IrrBoard::getAllTiles()
 	std::list<IrrTile*> * list = new std::list<IrrTile*>();
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			list->push_back(board[i][j]);
 		}
@@ -88,7 +88,7 @@ std::list<IrrToken*> *IrrBoard::createTokens(int start)
 	std::list<IrrToken*> *list = new std::list<IrrToken*>();
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			if(board[i][j]->start == start)
 			{
@@ -188,7 +188,7 @@ void IrrBoard::changeHighlightToken(int type, int player)
 {
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			if(board[i][j]->token != NULL && board[i][j]->token->player == player) board[i][j]->token->highlight = type;
 		}
@@ -199,7 +199,7 @@ void IrrBoard::changeHighlightTile(int type, int inf)
 {
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			if(board[i][j]->inf == inf) board[i][j]->highlight = type;
 		}
@@ -211,7 +211,7 @@ void IrrBoard::setHighlight(ISceneNode *node)
 	//FAZ A MAGICA
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			if(board[i][j]->node == node)
 			{
@@ -243,7 +243,7 @@ void IrrBoard::update()
 	__super::update();
 	for(int j = 0; j < tile_j; j++)
 	{
-		for(int i = 0; i < tile_j; i++)
+		for(int i = 0; i < tile_i; i++)
 		{
 			board[i][j]->update();
 		}
