@@ -89,16 +89,34 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 		frameDeltaTime = (f32)(now - then) / 1000.f; //Tempo em segundos
 		//Define o tempo passado com o atual
 		then = now;
+
+		//Limpa a cena com uma cor
+		driver->beginScene(true, true, SColor(255,100,101,140));
 		
+		/*
+		vector3df pos(0.0f, 0.0f, 0.0f);
+		SMaterial m;
+		m.setTexture(0,0);
+		m.Lighting=false; 
+		driver->setMaterial(m); 
+		driver->setTransform(video::ETS_WORLD, core::matrix4()); 
+
+		//y
+		driver->draw3DLine(pos,vector3df(0,10,0),SColor(255,255,0,0));
+
+		//x
+		driver->draw3DLine(pos,vector3df(10,0,0),SColor(255,0,255,0)); 
+
+		//z
+		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
+		*/
+
 		//Atualiza a cena			
 		scene->update();
 
 		//atualiza a gui
 		gui->update();
 
-		//Limpa a cena com uma cor
-		driver->beginScene(true, true, SColor(255,100,101,140));
-			
 		//Grafo de cena renderiza
 		smgr->drawAll();
 

@@ -21,12 +21,12 @@ int main()
 	//gui->addLabel("TESTE","AVISO DE TEXTO",0,0,60,20);
 	//gui->addImage("IMAGEM","gui/botao-off.png",10,60);
 
-	gui->addButton("IMAGEM","gui/botao-off.png","gui/botao-on.png",30,60,228,117);
+	//gui->addButton("IMAGEM","gui/botao-off.png","gui/botao-on.png",30,60,228,117);
 
 	engine->setCurrentScene(scene);
 	engine->setCurrentGUI(gui);
 
-	IrrGameObject *cam = scene->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
+	IrrGameObject *cam = scene->addCamera(new Vector(0.0f, 20.0f, 0.0f),new Vector(0.0f, 0.0f, 0.0f));
 	cam->setName("Camera principal");
 	
 	IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
@@ -53,7 +53,7 @@ int main()
 	{
 		board->addTokenBehavior((*t), new TokenNoob());
 	}
-
+	
 	std::list<IrrToken*> * list_token_player_two = board->createTokens(2);
 	for(t=list_token_player_two->begin(); t!=list_token_player_two->end(); t++)
 	{

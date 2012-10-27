@@ -93,22 +93,25 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 	{
 		go->node = smgr->addEmptySceneNode();
 
-		p->x -= go->width / 2;
-		p->z -= go->length / 2;
+		p->x += go->width / 2;
+		p->z += go->length / 2;
 		
-		for(int i=0;i < go->tile_i; i++)
+		for(int j=0; j < go->tile_j; j++)
 		{
-			for(int j=0; j < go->tile_j; j++)
+			for(int i=0;i < go->tile_i; i++)
 			{
-				m = go->objs->at(go->board[i][j]->idx);
-				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,IDFlag_IsPickable,vector3df((p->x+(i*go->tile_width)),p->y,(p->z+(j*go->tile_length))));
-				go->node->addChild(go->board[i][j]->node);
-				go->board[i][j]->node->setParent(go->node);
+				m = go->objs->at(go->board[j][i]->idx);
+				go->board[j][i]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,IDFlag_IsPickable,vector3df((p->z-(j*go->tile_length)),p->y,(p->x-(i*go->tile_width))));
+				go->node->addChild(go->board[j][i]->node);
+				go->board[j][i]->node->setParent(go->node);
 
-				selector = smgr->createTriangleSelectorFromBoundingBox(go->board[i][j]->node);
-				go->board[i][j]->node->setTriangleSelector(selector);
+				selector = smgr->createTriangleSelectorFromBoundingBox(go->board[j][i]->node);
+				go->board[j][i]->node->setTriangleSelector(selector);
 				selector->drop();
+
+				//std::cout << i*go->tile_width << " " << j*go->tile_length << " | ";
 			}
+			//std::cout << endl;
 		}
 
 		this->addObject(go);
