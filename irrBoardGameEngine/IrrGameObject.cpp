@@ -99,6 +99,17 @@ void IrrGameObject::play()
 }
 */
 
+IrrBehavior * IrrGameObject::getBehavior(int index)
+{
+	IrrBehavior * behavior = NULL;
+	if(index < (int)behaviors->max_size())
+	{
+		behavior = behaviors->at(index);
+	}
+
+	return behavior;
+}
+
 void IrrGameObject::addChild(IrrGameObject *o)
 {
 	ISceneNode *n = ((IrrGameObject*)o)->node;

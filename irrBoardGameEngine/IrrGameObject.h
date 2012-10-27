@@ -73,6 +73,8 @@ namespace IrrBoardGameEngine {
 		int operator<=(const IrrGameObject &) const;
 
 		ISceneNode *node;
+
+		IrrBehavior * getBehavior(int index);
 	protected:
 		std::string *name;
 		IrrCamera *camera;

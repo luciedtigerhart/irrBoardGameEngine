@@ -25,5 +25,11 @@ class IrrBehavior
 
 		virtual void init() = 0;
 		virtual void update() = 0;
+
+		virtual void setInt(char const * key, int value) = 0;
+		virtual int getInt(char const * key) = 0;
+
+		virtual void setBool(char const * key, bool value) = 0;
+		virtual bool getBool(char const * key) = 0;
 	};
 }

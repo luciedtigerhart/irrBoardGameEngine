@@ -24,3 +24,23 @@ void TokenDummy::update(void)
 		token->node->setMaterialFlag(irr::video::EMF_WIREFRAME,false);
 	}
 }
+
+void TokenDummy::setInt(char const * key, int value)
+{
+	//
+}
+
+int TokenDummy::getInt(char const * key)
+{
+	return 0;
+}
+
+void TokenDummy::setBool(char const * key, bool value)
+{
+
+}
+
+bool TokenDummy::getBool(char const * key)
+{
+	return false;
+}
