@@ -24,28 +24,41 @@ private:
 public:
 	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
 
+	// General token states
+
 	bool isGhost; //Whether this token is just a ressurrection indicator
 	bool isDead; //Whether this token has been killed
 	bool isFinished; //Whether this token has already moved
 	bool isAbilityActive; //Whether this token's race ability is active
 
-	bool isSelected; //Whether this token has been selected by a player
-	bool isTargeted; //Whether this token has been targeted by a player
-	bool isGonnaBePushed; //Whether this tile will be pushed with the next move
+	// Turn action states
 
+	bool isSelected; //Whether this token has been selected for an action
+	bool isTargeted; //Whether this token has been targeted for an attack
+	bool isGonnaMove; //Whether this token will move to an empty tile
+	bool isGonnaBePushed; //Whether this token will be pushed with the next move
+
+	bool isAnimStarted; //This token has started an animation this turn
 	bool isAnimRunning; //One of this token's animations is running
-	bool isAnimFinished; //All of this token's animations are finished
+	bool isAnimFinished; //One of this token's animations is finished
+	bool isAnimClosed; //All of this token's animations are done for the turn
+
+	// Other attributes
 
 	int race; //Race of this token
 	int team; //Team of this token
-	int moveDir; //Direction this tile is moving to
-	int pushDir; //Direction this tile is being pushed in
+	int moveDir; //Direction this tile is moving or being pushed to
+
+	//Variables used during translation animation
+	int iDest, jDest;
+	Vector destPosition, originPosition;
 
 	const char* pathOBJ; //Stores 3D model path
 	const char* pathTEX; //Stores texture path
 	const char* pathTEXHL; //Stores highlight texture path
 
-	//Token materials
+	// Token materials
+
 	SMaterial matHighlight;
 	SMaterial matNormal;
 
@@ -53,6 +66,7 @@ public:
 	void update(); //Updates this token's visuals
 
 	void PaintVanilla(); //Color token with original color
+	void ResetActionStates(); //Reset token's turn action states
 };
 
 #endif

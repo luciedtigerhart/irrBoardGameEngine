@@ -63,13 +63,17 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
 	}
 
+	//Set initial states
 	isDead = false;
 	isFinished = false;
 	isAbilityActive = false;
-
+	
 	//The team score is a secret identifier for ghost tokens
 	if (myTeam.primevalium == -6969) isGhost = true;
 	else isGhost = false;
+
+	//No move direction at the start
+	moveDir = -1;
 };
 
 void PrimeToken::init()
@@ -169,6 +173,14 @@ void PrimeToken::update()
 					token->node->getMaterial(0).SpecularColor.set(255,100,180,255);
 				}
 
+				else if (token->highlight == PUSH_HOVER)
+				{
+					//Push victim highlight (Orange)
+					token->node->getMaterial(0) = matHighlight;
+					token->node->getMaterial(0).EmissiveColor.set(255,255,70,0);
+					token->node->getMaterial(0).SpecularColor.set(255,255,70,0);
+				}
+
 				else PaintVanilla();
 			}
 		}
@@ -197,4 +209,25 @@ void PrimeToken::PaintVanilla()
 	token->node->getMaterial(0) = matNormal;
 	token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
 	token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
+}
+
+void PrimeToken::ResetActionStates()
+{
+	//Do exactly what the method name says
+
+	isSelected = false;
+	isTargeted = false;
+	isGonnaMove = false;
+	isGonnaBePushed = false;
+	isAnimStarted = false;
+	isAnimRunning = false;
+	isAnimFinished = false;
+	isAnimClosed = false;
+
+	moveDir = -1; //Reset move direction as well
+
+	//...And translation animation variables too
+	iDest = jDest = -1;
+	destPosition.x = destPosition.y = destPosition.z = 0.0f;
+	originPosition.x = originPosition.y = originPosition.z = 0.0f;
 }
