@@ -34,7 +34,7 @@ void IrrBoard::addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior)
 	behavior->init();
 }
 
-void IrrBoard::addTileBehavior(int i, int j, IrrTileBehavior * behavior)
+void IrrBoard::addTileBehavior(int j, int i, IrrTileBehavior * behavior)
 {
 	addTileBehavior(board[j][i],behavior);
 }
@@ -86,7 +86,7 @@ std::list<IrrToken*> *IrrBoard::createTokens(int start)
 	return list;
 }
 
-bool IrrBoard::createToken(int i, int j, IrrTokenBehavior * behavior)
+bool IrrBoard::createToken(int j, int i, IrrTokenBehavior * behavior)
 {
 	if(board[j][i]->token == NULL)
 	{
@@ -114,12 +114,12 @@ void IrrBoard::addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior)
 	token->addBehaviour(behavior);
 }
 
-IrrToken *IrrBoard::getToken(int i, int j)
+IrrToken *IrrBoard::getToken(int j, int i)
 {
 	return board[j][i]->token;
 }
 
-bool IrrBoard::addToken(int i, int j, IrrToken * token)
+bool IrrBoard::addToken(int j, int i, IrrToken * token)
 {
 	if(board[j][i]->token == NULL)
 	{
@@ -137,12 +137,12 @@ bool IrrBoard::addToken(int i, int j, IrrToken * token)
 	}
 }
 
-bool IrrBoard::moveToken(int oi, int oj, int ti, int tj)
+bool IrrBoard::moveToken(int oj, int oi, int tj, int ti)
 {
-	IrrToken * token = getToken(oi, oj);
+	IrrToken * token = getToken(oj, oi);
 	if(token != NULL)
 	{
-		if(addToken(ti,tj, token))
+		if(addToken(tj,ti, token))
 		{
 			board[oj][oi]->token = NULL;
 			return true;
@@ -158,9 +158,9 @@ bool IrrBoard::moveToken(int oi, int oj, int ti, int tj)
 	}
 }
 
-bool IrrBoard::deleteToken(int i, int j)
+bool IrrBoard::deleteToken(int j, int i)
 {
-	IrrToken * token = getToken(i, j);
+	IrrToken * token = getToken(j, i);
 	if(token != NULL)
 	{
 		token->node->getParent()->removeChild(token->node);

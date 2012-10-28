@@ -64,20 +64,20 @@ namespace IrrBoardGameEngine {
 
 		//adiciona um comportamento num tile especifico
 		void addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior);
-		void addTileBehavior(int i, int j, IrrTileBehavior * behavior);
+		void addTileBehavior(int j, int i, IrrTileBehavior * behavior);
 
 		//devolve o comportamento em vários tiles, cujo o inf do arquivo
 		std::list<IrrTile*> * getAllTiles();
 		std::list<IrrTile*> * getTiles(int inf);
 		std::list<IrrToken*> * createTokens(int start);
 
-		bool createToken(int i, int j, IrrTokenBehavior * behavior);
+		bool createToken(int j, int i, IrrTokenBehavior * behavior);
 		void addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior);
 
-		IrrToken *getToken(int i, int j);
-		bool addToken(int i, int j, IrrToken * token);
-		bool moveToken(int oi, int oj, int ti, int tj);
-		bool deleteToken(int i, int j);
+		IrrToken *getToken(int j, int i);
+		bool addToken(int j, int i, IrrToken * token);
+		bool moveToken(int oj, int oi, int tj, int ti);
+		bool deleteToken(int j, int i);
 
 		void changeHighlightToken(int type, int player);
 		void changeHighlightTile(int type, int inf);
