@@ -12,11 +12,11 @@ IrrBoard::~IrrBoard(void)
 {
 	delete objs;
 
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
-		{
-			delete board[j][i];
+		for(int j = 0; j < tile_j; j++)
+		{	
+			delete board[i][j];
 		}
 	}
 }
@@ -34,21 +34,21 @@ void IrrBoard::addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior)
 	behavior->init();
 }
 
-void IrrBoard::addTileBehavior(int j, int i, IrrTileBehavior * behavior)
+void IrrBoard::addTileBehavior(int i, int j, IrrTileBehavior * behavior)
 {
-	addTileBehavior(board[j][i],behavior);
+	addTileBehavior(board[i][j],behavior);
 }
 
 std::list<IrrTile*> *IrrBoard::getTiles(int inf)
 {
 	std::list<IrrTile*> * list = new std::list<IrrTile*>();
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
+		for(int j = 0; j < tile_j; j++)
 		{
-			if(board[j][i]->inf == inf)
+			if(board[i][j]->inf == inf)
 			{
-				list->push_back(board[j][i]);
+				list->push_back(board[i][j]);
 			}
 		}
 	}
@@ -58,11 +58,11 @@ std::list<IrrTile*> *IrrBoard::getTiles(int inf)
 std::list<IrrTile*> *IrrBoard::getAllTiles()
 {
 	std::list<IrrTile*> * list = new std::list<IrrTile*>();
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
+		for(int j = 0; j < tile_j; j++)
 		{
-			list->push_back(board[j][i]);
+			list->push_back(board[i][j]);
 		}
 	}
 	return list;
@@ -71,29 +71,29 @@ std::list<IrrTile*> *IrrBoard::getAllTiles()
 std::list<IrrToken*> *IrrBoard::createTokens(int start)
 {
 	std::list<IrrToken*> *list = new std::list<IrrToken*>();
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
+		for(int j = 0; j < tile_j; j++)
 		{
-			if(board[j][i]->start == start)
+			if(board[i][j]->start == start)
 			{
-				board[j][i]->token = new IrrToken();
-				board[j][i]->token->parentNode = board[j][i];
-				list->push_back(board[j][i]->token);
+				board[i][j]->token = new IrrToken();
+				board[i][j]->token->parentNode = board[i][j];
+				list->push_back(board[i][j]->token);
 			}
 		}
 	}
 	return list;
 }
 
-bool IrrBoard::createToken(int j, int i, IrrTokenBehavior * behavior)
+bool IrrBoard::createToken(int i, int j, IrrTokenBehavior * behavior)
 {
-	if(board[j][i]->token == NULL)
+	if(board[i][j]->token == NULL)
 	{
-		board[j][i]->token = new IrrToken();
-		board[j][i]->token->parentNode = board[j][i];
+		board[i][j]->token = new IrrToken();
+		board[i][j]->token->parentNode = board[i][j];
 
-		addTokenBehavior(board[j][i]->token, behavior);
+		addTokenBehavior(board[i][j]->token, behavior);
 	}
 	else
 	{
@@ -114,21 +114,21 @@ void IrrBoard::addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior)
 	token->addBehaviour(behavior);
 }
 
-IrrToken *IrrBoard::getToken(int j, int i)
+IrrToken *IrrBoard::getToken(int i, int j)
 {
-	return board[j][i]->token;
+	return board[i][j]->token;
 }
 
-bool IrrBoard::addToken(int j, int i, IrrToken * token)
+bool IrrBoard::addToken(int i, int j, IrrToken * token)
 {
-	if(board[j][i]->token == NULL)
+	if(board[i][j]->token == NULL)
 	{
 		if(token->node != NULL)
 		{
-			board[j][i]->node->addChild(token->node);
-			token->node->setParent(board[j][i]->node);
+			board[i][j]->node->addChild(token->node);
+			token->node->setParent(board[i][j]->node);
 		}
-		board[j][i]->token = token;
+		board[i][j]->token = token;
 		return true;
 	}
 	else
@@ -137,14 +137,14 @@ bool IrrBoard::addToken(int j, int i, IrrToken * token)
 	}
 }
 
-bool IrrBoard::moveToken(int oj, int oi, int tj, int ti)
+bool IrrBoard::moveToken(int oi, int oj, int ti, int tj)
 {
-	IrrToken * token = getToken(oj, oi);
+	IrrToken * token = getToken(oi, oj);
 	if(token != NULL)
 	{
-		if(addToken(tj,ti, token))
+		if(addToken(ti,tj, token))
 		{
-			board[oj][oi]->token = NULL;
+			board[oi][oj]->token = NULL;
 			return true;
 		}
 		else
@@ -160,33 +160,33 @@ bool IrrBoard::moveToken(int oj, int oi, int tj, int ti)
 
 bool IrrBoard::deleteToken(int j, int i)
 {
-	IrrToken * token = getToken(j, i);
+	IrrToken * token = getToken(i, j);
 	if(token != NULL)
 	{
 		token->node->getParent()->removeChild(token->node);
-		board[j][i]->token = NULL;
+		board[i][j]->token = NULL;
 		delete token;
 	}
 }
 
 void IrrBoard::changeHighlightToken(int type, int player)
 {
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
+		for(int j = 0; j < tile_j; j++)
 		{
-			if(board[j][i]->token != NULL && board[j][i]->token->player == player) board[j][i]->token->highlight = type;
+			if(board[i][j]->token != NULL && board[i][j]->token->player == player) board[i][j]->token->highlight = type;
 		}
 	}
 }
 
 void IrrBoard::changeHighlightTile(int type, int inf)
 {
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
+		for(int j = 0; j < tile_j; j++)
 		{
-			if(board[j][i]->inf == inf) board[j][i]->highlight = type;
+			if(board[i][j]->inf == inf) board[i][j]->highlight = type;
 		}
 	}
 }
@@ -194,28 +194,28 @@ void IrrBoard::changeHighlightTile(int type, int inf)
 void IrrBoard::setHighlight(ISceneNode *node)
 {
 	//FAZ A MAGICA
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
+		for(int j = 0; j < tile_j; j++)
 		{
-			if(board[j][i]->node == node)
+			if(board[i][j]->node == node)
 			{
-				board[j][i]->isMouseHover = true;
+				board[i][j]->isMouseHover = true;
 				//std::cout << "isHighlighted";
 			}
 			else
 			{
-				board[j][i]->isMouseHover = false;
-				if(board[j][i]->token != NULL)
+				board[i][j]->isMouseHover = false;
+				if(board[i][j]->token != NULL)
 				{
-					if(board[j][i]->token->node == node)
+					if(board[i][j]->token->node == node)
 					{
-						board[j][i]->token->isMouseHover = true;
+						board[i][j]->token->isMouseHover = true;
 						//std::cout << "isHighlighted";
 					}
 					else
 					{
-						board[j][i]->token->isMouseHover = false;
+						board[i][j]->token->isMouseHover = false;
 					}
 				}
 			}
@@ -226,11 +226,11 @@ void IrrBoard::setHighlight(ISceneNode *node)
 void IrrBoard::update()
 {
 	__super::update();
-	for(int j = 0; j < tile_j; j++)
+	for(int i = 0; i < tile_i; i++)
 	{
-		for(int i = 0; i < tile_i; i++)
-		{
-			board[j][i]->update();
+		for(int j = 0; j < tile_j; j++)
+		{	
+			board[i][j]->update();
 		}
 	}
 }

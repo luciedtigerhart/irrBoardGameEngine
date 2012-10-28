@@ -80,6 +80,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 			case EGET_ELEMENT_LEFT:
 				gui->setMouseOver(id, false);
 				break;
+
 			case EGET_BUTTON_CLICKED:
 				gui->setButtonPressed(id, true);
 				break;

@@ -91,7 +91,7 @@ int main()
 
 	gui->addLabel(GUI_ID_TEXT_03,"m450s45d4f05sd40f5sdfexto",100,0,150,80);
 
-	gui->addButton(GUI_ID_BUTTON,"gui/botao-off.png","gui/botao-on.png",30,60,228,117);
+	//gui->addButton(GUI_ID_BUTTON,"gui/botao-off.png","gui/botao-on.png",30,60,228,117);
 
 	/*
 	IrrGUI * gui_dois = engine->createGUI();

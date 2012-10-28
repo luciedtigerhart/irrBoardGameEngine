@@ -63,22 +63,22 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	board->tile_height = alt;
 	board->tile_length = prof;
 
-	board->board.resize(tilesJ);
-	for(int j = 0; j < tilesJ; j++)
-		board->board[j].resize(tilesI);
+	board->board.resize(tilesI);
+	for(int i = 0; i < tilesI; i++)
+		board->board[i].resize(tilesJ);
 
 	//
 	// POPULA O BOARD
 	//
-	for(int j = 0; j < tilesJ; j++)
+	for(int i = 0; i < tilesI; i++)
 	{
-		for(int i = 0; i < tilesI; i++)
+		for(int j = 0; j < tilesJ; j++)
 		{
 			arq >> tile_atual;
-			board->board[j][i] = new IrrTile();
-			board->board[j][i]->posi = i;
-			board->board[j][i]->posj = j;
-			board->board[j][i]->idx = tile_atual;
+			board->board[i][j] = new IrrTile();
+			board->board[i][j]->posi = i;
+			board->board[i][j]->posj = j;
+			board->board[i][j]->idx = tile_atual;
 			//std::cout << tile_atual << " ";
 		}
 		//std::cout << endl;
@@ -90,13 +90,12 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	std::string sep;
 	arq >> sep;
 	if(sep != "*") return false;
-
-	for(int j = 0; j < tilesJ; j++)
+	for(int i = 0; i < tilesI; i++)
 	{
-		for(int i = 0; i < tilesI; i++)
-		{
+		for(int j = 0; j < tilesJ; j++)
+		{	
 			arq >> tile_atual;
-			board->board[j][i]->inf = tile_atual;
+			board->board[i][j]->inf = tile_atual;
 		}
 	}
 
@@ -106,12 +105,12 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 	arq >> sep;
 	if(sep != "*") return false;
 	
-	for(int j = 0; j < tilesJ; j++)
+	for(int i = 0; i < tilesI; i++)
 	{
-		for(int i = 0; i < tilesI; i++)
-		{
+		for(int j = 0; j < tilesJ; j++)
+		{	
 			arq >> tile_atual;
-			if(tile_atual != 0) board->board[j][i]->start = tile_atual;
+			if(tile_atual != 0) board->board[i][j]->start = tile_atual;
 		}
 	}
 
