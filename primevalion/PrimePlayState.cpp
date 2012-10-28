@@ -358,30 +358,30 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, Vector origin, Vector d
 void PrimePlayState::GetAdjacentTiles()
 {
 	//Get adjacent tile positions
-	iNorth = selectedToken->parentNode->posi;
-	jNorth = selectedToken->parentNode->posj - 1;
+	iNorth = selectedToken->parentNode->posj - 1;
+	jNorth = selectedToken->parentNode->posi;
 
-	iSouth = selectedToken->parentNode->posi;
-	jSouth = selectedToken->parentNode->posj + 1;
+	iSouth = selectedToken->parentNode->posj + 1;
+	jSouth = selectedToken->parentNode->posi;
 
-	iWest = selectedToken->parentNode->posi - 1;
-	jWest = selectedToken->parentNode->posj;
+	iWest = selectedToken->parentNode->posj;
+	jWest = selectedToken->parentNode->posi - 1;
 
-	iEast = selectedToken->parentNode->posi + 1;
-	jEast = selectedToken->parentNode->posj;
+	iEast = selectedToken->parentNode->posj;
+	jEast = selectedToken->parentNode->posi + 1;
 
 	//Get diagonal tile positions
-	iNorthwest = selectedToken->parentNode->posi - 1;
-	jNorthwest = selectedToken->parentNode->posj - 1;
+	iNorthwest = selectedToken->parentNode->posj - 1;
+	jNorthwest = selectedToken->parentNode->posi - 1;
 
-	iNortheast = selectedToken->parentNode->posi + 1;
-	jNortheast = selectedToken->parentNode->posj - 1;
+	iNortheast = selectedToken->parentNode->posj + 1;
+	jNortheast = selectedToken->parentNode->posi - 1;
 
-	iSouthwest = selectedToken->parentNode->posi - 1;
-	jSouthwest = selectedToken->parentNode->posj + 1;
+	iSouthwest = selectedToken->parentNode->posj - 1;
+	jSouthwest = selectedToken->parentNode->posi + 1;
 
-	iSoutheast = selectedToken->parentNode->posi + 1;
-	jSoutheast = selectedToken->parentNode->posj + 1;
+	iSoutheast = selectedToken->parentNode->posj + 1;
+	jSoutheast = selectedToken->parentNode->posi + 1;
 
 	/*
 	//Get adjacent tile positions
@@ -672,7 +672,7 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 		else if (i == iNortheast && j == jNortheast) dir = NORTHEAST;
 		else if (i == iSouthwest && j == jSouthwest) dir = SOUTHWEST;
 		else if (i == iSoutheast && j == jSoutheast) dir = SOUTHEAST;
-
+		
 		//cout<<"dir: "<<dir<<endl;
 
 		//If this is the North, South, West or East tile...
@@ -956,6 +956,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 							//Otherwise, if a token has already been selected...
 							else if (selectedToken != NULL)
 							{
+								cout<<selectedToken->parentNode->posj<<", "<<selectedToken->parentNode->posi<<endl;
 								//cout<<selectedToken->parentNode->posi<<", "<<selectedToken->parentNode->posj<<endl;
 
 								//If mouse is above a token that's highlighted for pushing...
