@@ -42,9 +42,9 @@ namespace IrrBoardGameEngine {
 		//manager
 		IrrlichtDevice *device;
 		IVideoDriver *driver;
-		ISceneManager *smgr;
+		//ISceneManager *smgr;
 		ISoundEngine *soundEngine;
-		IGUIEnvironment * guienv;
+		//IGUIEnvironment * guienv;
 
 
 	public:		

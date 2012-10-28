@@ -14,17 +14,7 @@ int main()
 {
 	IrrEngine *engine = IrrEngine::getInstance(video::EDT_SOFTWARE, dimension2d<u32>(800, 600), 16, false, false, false,L"Jogo Dummy");
     
-	IrrScene *scene = engine->createScene();
-
-	IrrGUI *gui = engine->createGUI();
-
-	//gui->addLabel("TESTE","AVISO DE TEXTO",0,0,60,20);
-	//gui->addImage("IMAGEM","gui/botao-off.png",10,60);
-
-	//gui->addButton("IMAGEM","gui/botao-off.png","gui/botao-on.png",30,60,228,117);
-
-	engine->setCurrentScene(scene);
-	engine->setCurrentGUI(gui);
+	IrrScene *scene = engine->getScene();
 
 	IrrGameObject *cam = scene->addCamera(new Vector(0.0f, 20.0f, 0.0f),new Vector(0.0f, 0.0f, 0.0f));
 	cam->setName("Camera principal");
@@ -61,6 +51,16 @@ int main()
 	}
 
 	/*
+	IrrScene *scene_dois = engine->createScene();
+
+	scene_dois->addCube(new Vector(0.0f, 0.0f, 0.0f));
+
+	IrrGameObject *cam_dois = scene->addCamera(new Vector(2.0f, 20.0f, 20.0f),new Vector(0.0f, 0.0f, 0.0f));
+
+	engine->setCurrentScene(scene_dois);
+	*/
+
+	/*
 	if(board->moveToken(0,3,5,2))
 	{
 		cout << "aa";
@@ -70,6 +70,22 @@ int main()
 		cout << "nao";
 	}
 	*/
+
+	//
+	// CONSTRUÇÃO DO GUI
+	//
+	IrrGUI * gui = engine->getGUI();
+
+	gui->addLabel("teste","meu texto meu texto meu texto meu texto meu texto",0,0,50,80);
+
+	
+	IrrGUI * gui_dois = engine->createGUI();
+
+	gui_dois->addLabel("mostro","mostro texto meu mostro meu mostro meu mostro meu mostro",0,0,50,80);
+
+	engine->setCurrentGUI(gui_dois);
+	
+
 
 	engine->loop();
 

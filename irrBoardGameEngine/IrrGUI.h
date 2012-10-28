@@ -18,6 +18,9 @@ namespace IrrBoardGameEngine {
 	class IrrGUI
 	{
 	protected:
+
+		IGUIElement * rootGUI;
+
 		IGUIEnvironment *guienv;
 		IVideoDriver *driver;
 		IrrInput *input;
@@ -28,7 +31,7 @@ namespace IrrBoardGameEngine {
 
 	public:
 
-		IrrGUI();
+		IrrGUI(IrrlichtDevice *, IrrInput *);
 		~IrrGUI(void);
 
 		//TEXTOS
@@ -50,5 +53,11 @@ namespace IrrBoardGameEngine {
 		void removeButton(char *name);
 
 		void update();
+
+		//ativa a scena
+		void setActive(bool flag);
+
+		IGUIEnvironment * getGUIenv();
+		void drawAll();
 	};
 }

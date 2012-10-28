@@ -55,12 +55,16 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	//
 	// GUI
 	//
-	guienv = device->getGUIEnvironment();
+	//guienv = device->getGUIEnvironment();
+	currentGUI = createGUI();
+	currentGUI->setActive(true);
 
 	//
 	// SCENE
 	//
-	smgr = device->getSceneManager();
+	//smgr = device->getSceneManager();
+	currentScene = createScene();
+	currentScene->setActive(true);
 
 	return 0;
 }
@@ -111,17 +115,17 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
 		*/
 
-		//Atualiza a cena			
+		//Atualiza a cena
 		scene->update();
 
 		//atualiza a gui
 		gui->update();
 
 		//Grafo de cena renderiza
-		smgr->drawAll();
+		scene->drawAll();
 
 		//Gerenciador da GUI renderiza
-		guienv->drawAll();
+		gui->drawAll();
 
 		//Exibe o resultado na tela
 		driver->endScene();
@@ -144,7 +148,9 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 
 IrrScene *IrrEngine::createScene()
 {
-	return new IrrScene(smgr,soundEngine,input);
+	IrrScene * newScene = new IrrScene(device, soundEngine, input);
+	newScene->setActive(false);
+	return newScene;
 }
 
 IrrScene *IrrEngine::getScene()
@@ -154,7 +160,9 @@ IrrScene *IrrEngine::getScene()
 
 void IrrEngine::setCurrentScene(IrrScene *s)
 {
+	this->currentScene->setActive(false);
 	this->currentScene = s;
+	this->currentScene->setActive(true);
 }
 
 float IrrEngine::getDeltaTime()
@@ -162,14 +170,18 @@ float IrrEngine::getDeltaTime()
 	return (float)frameDeltaTime;
 }
 
-void IrrEngine::setCurrentGUI(IrrGUI * gui)
-{
-	currentGUI = gui;
-}
-
 IrrGUI *IrrEngine::createGUI()
 {
-	return new IrrGUI();
+	IrrGUI * newGUI = new IrrGUI(device, input);
+	newGUI->setActive(false);
+	return newGUI;
+}
+
+void IrrEngine::setCurrentGUI(IrrGUI * gui)
+{
+	currentGUI->setActive(false);
+	currentGUI = gui;
+	currentGUI->setActive(true);
 }
 
 IrrGUI *IrrEngine::getGUI()
@@ -194,12 +206,12 @@ IVideoDriver *IrrEngine::getDriver()
 
 ISceneManager *IrrEngine::getSceneManager()
 {
-	return smgr;
+	return currentScene->getSceneManager();
 }
 
 IGUIEnvironment *IrrEngine::getGUIenv()
 {
-	return guienv;
+	return currentGUI->getGUIenv();
 }
 
 ISoundEngine *IrrEngine::getSoundEngine()

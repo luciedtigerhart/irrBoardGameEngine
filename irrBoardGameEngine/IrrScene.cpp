@@ -18,9 +18,14 @@ enum
 	IDFlag_IsHighlightable = 1 << 1
 };
 
-IrrScene::IrrScene(ISceneManager *sm, ISoundEngine *se, IrrInput *inp)
+IrrScene::IrrScene(IrrlichtDevice *device, ISoundEngine *se, IrrInput *inp)
 {
-	smgr = sm;
+	//pega o SceneManager
+	smgr = device->getSceneManager();
+
+	//cria o node root da scena
+	rootScene = smgr->addEmptySceneNode();
+
 	soundEngine = se;
 	input = inp;
 
@@ -50,6 +55,7 @@ IrrGameObject *IrrScene::addCube(Vector* p)
 {
 	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
 	go->setMesh(new IrrMesh(smgr->addCubeSceneNode(10.0f,go->node,IDFlag_IsPickable | IDFlag_IsHighlightable,vector3df(p->x,p->y,p->z))));
 	this->addObject(go);	
 	return go;
@@ -59,6 +65,7 @@ IrrGameObject *IrrScene::addSphere(Vector* p)
 {
 	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
 	go->setMesh(new IrrMesh(smgr->addSphereSceneNode(10.0f,16,go->node,ID_IsNotPickable,vector3df(p->x,p->y,p->z))));
 	this->addObject(go);	
 	return go;
@@ -68,6 +75,8 @@ IrrGameObject *IrrScene::addCamera(Vector* p, Vector* lookAt)
 {
 	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
+
 	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)));
 	go->setCamera(cam);
 	currentCamera = cam->node;
@@ -79,6 +88,7 @@ IrrGameObject *IrrScene::addMesh(char *m, Vector* p)
 {
 	IrrGameObject *go = new IrrGameObject;
 	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
 	go->setMesh(new IrrMesh(smgr->addMeshSceneNode(smgr->getMesh(m),go->node,IDFlag_IsPickable | IDFlag_IsHighlightable,vector3df(p->x,p->y,p->z))));
 	this->addObject(go);	
 	return go;
@@ -92,6 +102,7 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 	if(IrrLoader::loadBoard(src,go))
 	{
 		go->node = smgr->addEmptySceneNode();
+		go->node->setParent(rootScene);
 
 		p->x += go->width / 2;
 		p->z += go->length / 2;
@@ -174,7 +185,7 @@ ISceneNode * IrrScene::getSceneNodeAndCollisionPointFromRay()
 				hitTriangle, // This will be the triangle hit in the collision
 				IDFlag_IsPickable, // This ensures that only nodes that we have
 									// set up to be pickable are considered
-									0); // Check the entire scene (this is actually the implicit default)
+									rootScene); // Check the entire scene (this is actually the implicit default)
 
 	//if(node != NULL) std::cout << "ACHOU" << endl;
 
@@ -211,4 +222,19 @@ void IrrScene::setCamera(IrrCamera * camera)
 void IrrScene::setBoard(IrrBoard * board)
 {
 	currentBoard = board;
+}
+
+void IrrScene::drawAll()
+{
+	smgr->drawAll();
+}
+
+ISceneManager *IrrScene::getSceneManager()
+{
+	return smgr;
+}
+
+void IrrScene::setActive(bool flag)
+{
+	rootScene->setVisible(flag);
 }

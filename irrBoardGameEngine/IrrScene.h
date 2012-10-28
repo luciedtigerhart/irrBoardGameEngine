@@ -46,6 +46,8 @@ namespace IrrBoardGameEngine {
 		// Used to show with triangle has been hit
 		core::triangle3df hitTriangle;
 
+		ISceneNode * rootScene;
+		ISceneNode * currentCollisionPoint;
 		ICameraSceneNode * currentCamera;
 		IrrBoard * currentBoard;
 
@@ -55,12 +57,13 @@ namespace IrrBoardGameEngine {
 		ITriangleSelector* selector;
 
 		IrrGameObject * bola;
-
 	protected:
 		void addObject(IrrGameObject*);
 
 	public:
 		void update();
+
+		//adiciona objetos na cena
 		IrrGameObject *addCube(Vector*);
 		IrrGameObject *addSphere(Vector*);
 		IrrGameObject *addAnimatedMesh(char *,Vector*);
@@ -69,9 +72,8 @@ namespace IrrBoardGameEngine {
 		IrrGameObject *addCamera(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 
-		ISceneNode * currentCollisionPoint;
-
-		IrrScene(ISceneManager *,ISoundEngine *,IrrInput *);
+		//construtora
+		IrrScene(IrrlichtDevice *,ISoundEngine *,IrrInput *);
 		~IrrScene(void);
 
 		//para definir a camera padrão
@@ -79,5 +81,14 @@ namespace IrrBoardGameEngine {
 
 		//para definir a camera padrão
 		void setBoard(IrrBoard * board);
+
+		//ativa a scena
+		void setActive(bool flag);
+
+		//manda desenhar a cena
+		void drawAll();
+
+		//pega o scene
+		ISceneManager *getSceneManager();
 	};
 }

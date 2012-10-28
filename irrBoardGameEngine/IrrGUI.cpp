@@ -1,14 +1,16 @@
 #include "IrrGUI.h"
 
-#include "IrrEngine.h"
-
 using namespace IrrBoardGameEngine;
 
-IrrGUI::IrrGUI()
-{
-	guienv = IrrEngine::getInstance()->getGUIenv();
-	driver = IrrEngine::getInstance()->getDriver();
-	input = IrrEngine::getInstance()->getInput();
+IrrGUI::IrrGUI(IrrlichtDevice * device, IrrInput * irrinput)
+{	
+	driver = device->getVideoDriver();
+	guienv = device->getGUIEnvironment();
+	input = irrinput;
+
+	//rootGUI = new IGUIElement(EGUIET_WINDOW,guienv,0,-1,rect<s32>(0, 0, 50, 50)); //guienv->addGUIElement(irr::gui::EGUI_ELEMENT_TYPE.EGUIET_ELEMENT);
+	//rootGUI = guienv->addModalScreen(guienv->getRootGUIElement());
+	rootGUI = guienv->addStaticText(L"",rect<s32>(0, 0, 50, 50));
 }
 
 IrrGUI::~IrrGUI(void)
@@ -16,12 +18,12 @@ IrrGUI::~IrrGUI(void)
 
 }
 
-void IrrGUI::addLabel(char *name, char *text, int minX, int minY, int maxX, int maxY) {
-    // Converte char para wchar_t
+void IrrGUI::addLabel(char *name, char *text, int minX, int minY, int maxX, int maxY)
+{
     std::string other(text);
     const std::wstring& ws =  std::wstring(other.begin(), other.end());
         
-    labels.insert(pair<std::string, IGUIStaticText*>(std::string(name),guienv->addStaticText(ws.c_str(), rect<s32>(minX, minY, maxX, maxY), true)));
+    labels.insert(pair<std::string, IGUIStaticText*>(std::string(name),guienv->addStaticText(ws.c_str(), rect<s32>(minX, minY, maxX, maxY), false, true, rootGUI)));
 }
 
 void IrrGUI::setText(char *nome, char *text) {
@@ -55,7 +57,7 @@ void IrrGUI::removeLabel(char *nome) {
 }
 
 void IrrGUI::addImage(char* name, char* file, int x, int y) {
-	imagens.insert(pair<std::string, IGUIImage*>(std::string(name),guienv->addImage(driver->getTexture(file),position2d<int>(x, y),true)));
+	imagens.insert(pair<std::string, IGUIImage*>(std::string(name),guienv->addImage(driver->getTexture(file),position2d<int>(x, y),true,rootGUI)));
 }
 
 void IrrGUI::setImage(char *nome, bool visible) {
@@ -78,10 +80,9 @@ void IrrGUI::removeImage(char *nome) {
 		(*it).second->remove();
 }
 
-
 void IrrGUI::addButton(char *name, char* fileNormal, char* filePressed, int x, int y, int w, int h) {
 	//imagens.insert(pair<std::string, IGUIImage*>(std::string(name),guienv->addImage(driver->getTexture(file),position2d<int>(x, y),true)));
-	IGUIButton* bt = guienv->addButton(rect<s32>(x, y, x+w, y+h));
+	IGUIButton* bt = guienv->addButton(rect<s32>(x, y, x+w, y+h),rootGUI);
 
 	bt->setImage(driver->getTexture(fileNormal),rect<s32>(0, 0, w, h));
 	bt->setPressedImage(driver->getTexture(filePressed),rect<s32>(0, 0, w, h));
@@ -103,4 +104,19 @@ void IrrGUI::removeButton(char *nome) {
 void IrrGUI::update()
 {
 
+}
+
+void IrrGUI::setActive(bool flag)
+{
+	rootGUI->setVisible(flag);
+}
+
+IGUIEnvironment * IrrGUI::getGUIenv()
+{
+	return guienv;
+}
+
+void IrrGUI::drawAll()
+{
+	guienv->drawAll();
 }
