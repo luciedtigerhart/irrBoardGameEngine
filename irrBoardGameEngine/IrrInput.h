@@ -3,12 +3,14 @@
 #include <map>
 #include <string>
 #include "irrlicht.h"
+#include "IrrGUI.h"
 
 using namespace irr;
 using namespace scene;
 using namespace std;
 
 namespace IrrBoardGameEngine {
+	class IrrGUI;
 	class IrrInput: public IEventReceiver
 	{
 	public:
@@ -30,6 +32,7 @@ namespace IrrBoardGameEngine {
 		void clear();
 		void update();
 
+		void setGUI(IrrGUI *);
 		/*
 		//registra uma comando de teclado
 		void registry(char *, int);
@@ -43,6 +46,8 @@ namespace IrrBoardGameEngine {
 		*/
 		const SMouseState & getMouseState(void) const { return mouseState; }
 	private:
+
+		IrrGUI * gui;
 
 		void setKeyStatus(int* k, int keyCode, bool value);
 		bool getKeyStatus(int* k, int keyCode);

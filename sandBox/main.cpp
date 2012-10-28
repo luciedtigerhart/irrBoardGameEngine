@@ -10,6 +10,15 @@
 
 using namespace IrrBoardGameEngine;
 
+// Define some values that we'll use to identify individual GUI controls.
+enum
+{
+    GUI_ID_TEXT_01 = 101,
+    GUI_ID_TEXT_02,
+    GUI_ID_TEXT_03,
+    GUI_ID_BUTTON
+};
+
 int main()
 {
 	IrrEngine *engine = IrrEngine::getInstance(video::EDT_SOFTWARE, dimension2d<u32>(800, 600), 16, false, false, false,L"Jogo Dummy");
@@ -76,15 +85,21 @@ int main()
 	//
 	IrrGUI * gui = engine->getGUI();
 
-	gui->addLabel("teste","meu texto meu texto meu texto meu texto meu texto",0,0,50,80);
+	gui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,50,80);
 
-	
+	gui->addLabel(GUI_ID_TEXT_02,"sdfsdf sdfs df",50,0,100,80);
+
+	gui->addLabel(GUI_ID_TEXT_03,"m450s45d4f05sd40f5sdfexto",100,0,150,80);
+
+	gui->addButton(GUI_ID_BUTTON,"gui/botao-off.png","gui/botao-on.png",30,60,228,117);
+
+	/*
 	IrrGUI * gui_dois = engine->createGUI();
 
 	gui_dois->addLabel("mostro","mostro texto meu mostro meu mostro meu mostro meu mostro",0,0,50,80);
 
 	engine->setCurrentGUI(gui_dois);
-	
+	*/
 
 
 	engine->loop();

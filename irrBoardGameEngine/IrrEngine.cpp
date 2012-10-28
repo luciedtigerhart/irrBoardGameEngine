@@ -57,6 +57,7 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	//
 	//guienv = device->getGUIEnvironment();
 	currentGUI = createGUI();
+	input->setGUI(currentGUI);
 	currentGUI->setActive(true);
 
 	//
@@ -65,6 +66,8 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	//smgr = device->getSceneManager();
 	currentScene = createScene();
 	currentScene->setActive(true);
+
+	
 
 	return 0;
 }
@@ -115,6 +118,9 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
 		*/
 
+		//Atualiza o input
+		input->update();
+
 		//Atualiza a cena
 		scene->update();
 
@@ -137,9 +143,6 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 		{					
 			lastFPS = fps;
 		}
-
-		//Atualiza o input
-		input->update();
 	}
 	
 	//Encerra. Deleta todos os objetos
@@ -172,7 +175,7 @@ float IrrEngine::getDeltaTime()
 
 IrrGUI *IrrEngine::createGUI()
 {
-	IrrGUI * newGUI = new IrrGUI(device, input);
+	IrrGUI * newGUI = new IrrGUI(device);
 	newGUI->setActive(false);
 	return newGUI;
 }
@@ -181,6 +184,7 @@ void IrrEngine::setCurrentGUI(IrrGUI * gui)
 {
 	currentGUI->setActive(false);
 	currentGUI = gui;
+	input->setGUI(currentGUI);
 	currentGUI->setActive(true);
 }
 

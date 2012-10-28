@@ -3,6 +3,7 @@
 #include "IrrInput.h"
 
 using namespace IrrBoardGameEngine;
+using namespace gui;
 
 IrrInput::IrrInput()
 {
@@ -66,6 +67,24 @@ bool IrrInput::OnEvent(const SEvent& event)
                 break;
         }
     }
+
+	if (event.EventType == EET_GUI_EVENT) 
+	{
+		s32 id = event.GUIEvent.Caller->getID();
+		gui->resetPressed();
+		switch(event.GUIEvent.EventType)
+		{
+			case EGET_ELEMENT_HOVERED:
+				gui->setMouseOver(id, true);
+				break;
+			case EGET_ELEMENT_LEFT:
+				gui->setMouseOver(id, false);
+				break;
+			case EGET_BUTTON_CLICKED:
+				gui->setButtonPressed(id, true);
+				break;
+		}
+	}
 	return false;
 }
 
@@ -114,6 +133,11 @@ void IrrInput::setKeyStatus(int* k, int keyCode, bool value)
 bool IrrInput::getKeyStatus(int* k, int keyCode)
 {
 	return (k[keyCode / 32] & (1 << (keyCode % 32))) != 0;
+}
+
+void IrrInput::setGUI(IrrGUI * currentGUI)
+{
+	gui = currentGUI;
 }
 /*
 bool IrrInput::getButton(char *c)
