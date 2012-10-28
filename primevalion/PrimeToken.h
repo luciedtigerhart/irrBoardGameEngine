@@ -67,6 +67,14 @@ public:
 
 	void PaintVanilla(); //Color token with original color
 	void ResetActionStates(); //Reset token's turn action states
+
+	//Behavior get/set override
+
+	void setInt(char const * key, int value);
+	int getInt(char const * key);
+
+	void setBool(char const * key, bool value);
+	bool getBool(char const * key);
 };
 
 #endif

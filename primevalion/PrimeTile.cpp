@@ -234,3 +234,21 @@ void PrimeTile::update()
 		turnOnHighlight(NONE);
 	}
 }
+
+void PrimeTile::setInt(char const * key, int value)
+{
+}
+
+int PrimeTile::getInt(char const * key)
+{
+	return 0;
+}
+
+void PrimeTile::setBool(char const * key, bool value)
+{
+}
+
+bool PrimeTile::getBool(char const * key)
+{
+	return false;
+}

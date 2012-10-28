@@ -64,4 +64,5 @@ bool TokenNoob::getBool(char const * key)
 	{
 		return flag_estado;
 	}
+	else return false;
 }

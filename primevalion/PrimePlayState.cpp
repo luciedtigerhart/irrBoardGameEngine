@@ -382,6 +382,34 @@ void PrimePlayState::GetAdjacentTiles()
 
 	iSoutheast = selectedToken->parentNode->posi + 1;
 	jSoutheast = selectedToken->parentNode->posj + 1;
+
+	/*
+	//Get adjacent tile positions
+	iNorth = selectedToken->parentNode->posi;
+	jNorth = selectedToken->parentNode->posj - 1;
+
+	iSouth = selectedToken->parentNode->posi;
+	jSouth = selectedToken->parentNode->posj + 1;
+
+	iWest = selectedToken->parentNode->posi - 1;
+	jWest = selectedToken->parentNode->posj;
+
+	iEast = selectedToken->parentNode->posi + 1;
+	jEast = selectedToken->parentNode->posj;
+
+	//Get diagonal tile positions
+	iNorthwest = selectedToken->parentNode->posi - 1;
+	jNorthwest = selectedToken->parentNode->posj - 1;
+
+	iNortheast = selectedToken->parentNode->posi + 1;
+	jNortheast = selectedToken->parentNode->posj - 1;
+
+	iSouthwest = selectedToken->parentNode->posi - 1;
+	jSouthwest = selectedToken->parentNode->posj + 1;
+
+	iSoutheast = selectedToken->parentNode->posi + 1;
+	jSoutheast = selectedToken->parentNode->posj + 1;
+	*/
 }
 
 int PrimePlayState::GetDestinationTile(int dir, int i, int j, bool iTile)
@@ -664,7 +692,7 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 				//Set move direction for selected token
 				//selectedToken->moveDir = dir;
 			}
-
+			/*
 			//Else, if there's a token on this tile...
 			else if (board->board[i][j]->token != NULL)
 			{
@@ -695,11 +723,13 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 					}
 				}
 			}
+			*/
 		}
 					
 		//If this is the Northeast, Northwest, Southeast or Southwest tile...
 		else if (dir == NORTHEAST || dir == NORTHWEST || dir == SOUTHEAST || dir == SOUTHWEST)
 		{
+			/*
 			//If there's a token on this tile...
 			if (board->board[i][j]->token != NULL)
 			{
@@ -727,6 +757,7 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 					}
 				}
 			}
+			*/
 		}
 	}
 }
@@ -799,7 +830,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	{
 		for (int j=0; j < board->tile_j; j++)
 		{
-			//if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
+			if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
 
 			//No token or tile is selected by default
 			tileSelected = false;
@@ -925,6 +956,8 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 							//Otherwise, if a token has already been selected...
 							else if (selectedToken != NULL)
 							{
+								//cout<<selectedToken->parentNode->posi<<", "<<selectedToken->parentNode->posj<<endl;
+
 								//If mouse is above a token that's highlighted for pushing...
 								if (board->board[i][j]->token->highlight == PUSH_HOVER)
 								{

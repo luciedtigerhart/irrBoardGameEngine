@@ -108,7 +108,7 @@ void PrimeGameStateManager::CreateBoard()
 	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
 
 	//Create light
-	light = engine->getSceneManager()->addLightSceneNode(0, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+	light = engine->getSceneManager()->addLightSceneNode(0, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 
 	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();
@@ -217,7 +217,7 @@ void PrimeGameStateManager::loop()
 		engine->setCurrentScene(match);
 		engine->setCurrentGUI(guimgr.env_match);
 
-		camera = match->addCamera(new Vector(15.0f, 15.0f, 15.0f),new Vector(0.0f, 0.0f, 0.0f));
+		camera = match->addCamera(new Vector(-15.0f, 12.0f, -15.0f),new Vector(0.0f, 0.0f, 0.0f));
 		camera->setName("Match Camera");
 
 		//Initialize game elements

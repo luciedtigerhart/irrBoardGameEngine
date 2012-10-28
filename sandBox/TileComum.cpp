@@ -101,6 +101,7 @@ int TileComum::getInt(char const * key)
 	{
 		return energia;
 	}
+	else return 0;
 }
 
 void TileComum::setBool(char const * key, bool value)
@@ -125,4 +126,5 @@ bool TileComum::getBool(char const * key)
 	{
 		return flag_estado;
 	}
+	else return false;
 }

@@ -231,3 +231,21 @@ void PrimeToken::ResetActionStates()
 	destPosition.x = destPosition.y = destPosition.z = 0.0f;
 	originPosition.x = originPosition.y = originPosition.z = 0.0f;
 }
+
+void PrimeToken::setInt(char const * key, int value)
+{
+}
+
+int PrimeToken::getInt(char const * key)
+{
+	return 0;
+}
+
+void PrimeToken::setBool(char const * key, bool value)
+{
+}
+
+bool PrimeToken::getBool(char const * key)
+{
+	return false;
+}
