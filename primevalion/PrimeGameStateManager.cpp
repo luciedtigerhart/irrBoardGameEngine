@@ -53,8 +53,8 @@ PrimeGameStateManager::PrimeGameStateManager()
 
 		player1.isActive = true;
 		player2.isActive = true;
-		player3.isActive = false;
-		player4.isActive = false;
+		player3.isActive = true;
+		player4.isActive = true;
 
 		player1.isVictorious = false;
 		player2.isVictorious = false;
@@ -108,7 +108,7 @@ void PrimeGameStateManager::CreateBoard()
 	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
 
 	//Create light
-	light = engine->getSceneManager()->addLightSceneNode(0, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+	light = engine->getSceneManager()->addLightSceneNode(board->node, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 
 	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();
@@ -217,11 +217,24 @@ void PrimeGameStateManager::loop()
 		engine->setCurrentScene(match);
 		engine->setCurrentGUI(guimgr.env_match);
 
-		camera = match->addCamera(new Vector(-15.0f, 12.0f, -15.0f),new Vector(0.0f, 0.0f, 0.0f));
-		camera->setName("Match Camera");
+		//camera = match->addCamera(new Vector(-15.0f, 12.0f, -15.0f), new Vector(0.0f, 0.0f, 1.0f));
+		//camera = match->addCamera(new Vector(0.0f, 25.0f, 0.0f), new Vector(0.0f, 0.0f, 1.0f));
+		//camera->setName("Match Camera");
+
+		ICameraSceneNode* cam = engine->getSceneManager()->addCameraSceneNode();
+		cam->bindTargetAndRotation(true);
+		cam->setTarget(vector3df(0.0f, 0.0f, 0.0f));
+		cam->setPosition(vector3df(0.0f, 25.0f, 0.0f));
+		//cam->setRotation(vector3df(0.0f, 0.0f, -90.0f));
+
+		IrrCamera* irrCam = new IrrCamera(cam);
+		match->setCamera(irrCam);
 
 		//Initialize game elements
 		CreateBoard();
+
+		// ----> TEMPORARY BOARD ROTATION FIX!
+		//board->setRotation(Vector(0.0f,-90.0f,0.0f));
 
 		//Initialize play state
 		playState.Initialize(engine->getInput(), playersActive,
@@ -250,6 +263,9 @@ void PrimeGameStateManager::loop()
 
 				//Update match interface (must come AFTER playState updates)
 				guimgr.ManageGUIMatchScreen(turn, playState);
+				
+				//When a turn is over, go to the next one
+				if (playState.turnOver) turn++;
 
 			//---------------------------------------------
 
@@ -267,4 +283,6 @@ void PrimeGameStateManager::loop()
 		engine->getDevice()->drop();
 
 	//----------------------------------------------
+
+	delete irrCam;
 }

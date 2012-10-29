@@ -49,12 +49,15 @@ private:
 
 	// Variables used during translation animation
 
-	int iDest, jDest;
-	Vector destPosition, originPosition;
+	int iDest, jDest; //'i' and 'j' positions of destination tile
+	Vector destPosition; //World coordinates of destination tile
+	Vector originPosition; //World coordinates of this token before moving
 
-	const char* pathOBJ; //Stores 3D model path
-	const char* pathTEX; //Stores texture path
-	const char* pathTEXHL; //Stores highlight texture path
+	//3D model and texture path storages
+
+	const char* pathOBJ; //OBJ file path
+	const char* pathTEX; //Normal texture (colored texture) path
+	const char* pathTEXHL; //Highlight texture (gray texture) path
 
 	// Token materials
 

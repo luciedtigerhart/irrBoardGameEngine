@@ -84,6 +84,7 @@ public:
 	std::list<IrrToken*>* tokensTeam4;
 	std::list<IrrToken*>::iterator t;
 
+	bool turnOver; //If "true", then current turn is over
 
 	int turn; //Current match turn
 	int turnPlayer; //Which player the current turn belongs to
@@ -111,6 +112,9 @@ public:
 	//Translate token with every call and returns "true" when it reaches the destination
 	bool TokenHasTranslated(IrrToken* token, Vector origin, Vector destination, float speed);
 
+	//Execute a token's animations
+	void AnimateToken(IrrToken* token, IrrBoard* board, float speed);
+
 	//Place a dead token on a safe zone tile
 	void RessurrectToken(IrrToken* token, IrrBoard* board, int i, int j);
 
@@ -118,7 +122,7 @@ public:
 	void ClearHighlights(IrrBoard* board);
 
 	//Count tokens and advance phases when conditions are met
-	void CountRemainingTokens();
+	void SwapPhase();
 
 	//Get tiles adjacent to selected token
 	void GetAdjacentTiles();

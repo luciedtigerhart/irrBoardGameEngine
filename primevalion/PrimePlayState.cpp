@@ -31,7 +31,7 @@ void PrimePlayState::Initialize(IrrInput* engineInput, int players,
 	if (p1.isActive) { for (t = team1->begin(); t != team1->end(); t++) tokensTeam1->push_back((*t)); }
 	if (p2.isActive) { for (t = team2->begin(); t != team2->end(); t++) tokensTeam2->push_back((*t)); }
 	if (p3.isActive) { for (t = team3->begin(); t != team3->end(); t++) tokensTeam3->push_back((*t)); }
-	if (p3.isActive) { for (t = team4->begin(); t != team4->end(); t++) tokensTeam4->push_back((*t)); }
+	if (p4.isActive) { for (t = team4->begin(); t != team4->end(); t++) tokensTeam4->push_back((*t)); }
 
 	//Clone player teams
 
@@ -317,23 +317,114 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, Vector origin, Vector d
 	bool destReached = false;
 	vector3df newRelativePosition;
 
-	//If destination hasn't been reached yet...
-	if (token->node->getAbsolutePosition().Z > destination.z)
-	{
-		float step = ((destination.z - origin.z) / 100) * speed;
+	float okDiff = 0.02f * speed; //Acceptable difference in distance between token and destination
+	float xDiff, yDiff, zDiff;
+	float xStep, yStep, zStep;
 
-		newRelativePosition.X = token->node->getPosition().X;
-		newRelativePosition.Y = token->node->getPosition().Y;
-		newRelativePosition.Z = token->node->getPosition().Z + step;
-			
+	//Get current distance between token and destination
+	xDiff = destination.x - token->node->getAbsolutePosition().X;
+	yDiff = destination.y - token->node->getAbsolutePosition().Y;
+	zDiff = destination.z - token->node->getAbsolutePosition().Z;
+
+	//If distance between token and destination is still higher than "okDiff"...
+	if (abs(xDiff) > okDiff || abs(yDiff) > okDiff || abs(zDiff) > okDiff)
+	{
+		//...Then destination hasn't been reached.
+
+		//Calculate next step offset
+		xStep = ((destination.x - origin.x) / 100) * speed;
+		yStep = ((destination.y - origin.y) / 100) * speed;
+		zStep = ((destination.z - origin.z) / 100) * speed;
+
+		//Calculate new position
+		newRelativePosition.X = token->node->getPosition().X + xStep;
+		newRelativePosition.Y = token->node->getPosition().Y + yStep;
+		newRelativePosition.Z = token->node->getPosition().Z + zStep;
+		
+		//Move token closer to destination
 		token->node->setPosition(newRelativePosition);
 	}
 
-	//Otherwise, if destination has been reached...
-	else destReached = true;
+	//Otherwise, if token is close enough to destination...
+	else
+	{
+		//...Consider destination as reached.
+		destReached = true;
+	}
 
 	//Report whether destination is reached
 	return destReached;
+}
+
+void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
+{
+	//Pass animation states to another variable (decreases size of "if" statementes below)
+	bool animStarted = token->getBehavior(0)->getBool("isAnimStarted");
+	bool animRunning = token->getBehavior(0)->getBool("isAnimRunning");
+	bool animFinished = token->getBehavior(0)->getBool("isAnimFinished");
+
+	//If "isGonnaMove" is true, then this is the selected token
+	if (token->getBehavior(0)->getBool("isGonnaMove"))
+	{
+		//If this token has been marked for animation, but hasn't started running it yet...
+		if (animStarted && !animRunning && !animFinished)
+		{
+			//Get destination tile positions
+			iDest = GetDestinationTile(token->getBehavior(0)->getInt("moveDir"), token->parentNode->posi, token->parentNode->posj, I_TILE);
+			jDest = GetDestinationTile(token->getBehavior(0)->getInt("moveDir"), token->parentNode->posi, token->parentNode->posj, J_TILE);
+					
+			//Pass destination tile positions to token
+			token->getBehavior(0)->setInt("iDest", iDest);
+			token->getBehavior(0)->setInt("jDest", jDest);
+					
+			//Pass destination and origin coordinates to token
+			//board->board[iDest][jDest]->getPosition(token->destPosition);
+			//token->originPosition.x = token->node->getAbsolutePosition().X;
+			//token->originPosition.y = token->node->getAbsolutePosition().Y;
+			//token->originPosition.z = token->node->getAbsolutePosition().Z;
+			board->board[iDest][jDest]->getPosition(destPosition);
+			originPosition.x = token->node->getAbsolutePosition().X;
+			originPosition.y = token->node->getAbsolutePosition().Y;
+			originPosition.z = token->node->getAbsolutePosition().Z;
+
+			//Start animation!
+			token->getBehavior(0)->setBool("isAnimRunning", true);
+		}
+				
+		//If this token's animation is currently running...
+		else if (animStarted && animRunning && !animFinished)
+		{
+			//Translate token, and when destination has been reached...
+			//if (TokenHasTranslated(token, token->originPosition, token->destPosition, speed))
+			if (TokenHasTranslated(token, originPosition, destPosition, speed))
+			{
+				//Finish up animation
+				token->getBehavior(0)->setBool("isAnimRunning", false);
+				token->getBehavior(0)->setBool("isAnimFinished", true);
+			}
+		}
+
+		//If this token's animation is over...
+		else if (animStarted && !animRunning && animFinished)
+		{
+			//Reset relative position
+			token->node->setPosition(vector3df(0,0,0));
+
+			//If snap to new position has been successful...
+			if (board->moveToken(token->parentNode->posi, token->parentNode->posj,
+								 token->getBehavior(0)->getInt("iDest"), token->getBehavior(0)->getInt("jDest")))
+			{
+				//Update parent
+				token->parentNode = board->board[token->getBehavior(0)->getInt("iDest")][token->getBehavior(0)->getInt("jDest")];
+						
+				//Terminate this token's animations
+				token->getBehavior(0)->setBool("isAnimClosed", true);
+
+				//Finish up this token's move
+				token->getBehavior(0)->setBool("isFinished", true);
+			}
+		}
+	}
 }
 
 void PrimePlayState::RessurrectToken(IrrToken* token, IrrBoard* board, int i, int j)
@@ -383,9 +474,24 @@ void PrimePlayState::ClearHighlights(IrrBoard* board)
 	}
 }
 
-void PrimePlayState::CountRemainingTokens()
+void PrimePlayState::SwapPhase()
 {
 	int remainingTokens = 0, finishedTokens = 0;
+
+	if (phase == MATCH_START)
+	{
+		phase = TURN_START;
+	}
+
+	//Show new turn messages and begin turn
+	if (phase == TURN_START)
+	{
+		//Turn has begun!
+		turnOver = false;
+
+		//First step of a new turn is to ressurrect dead tokens
+		phase = RESSURRECTION_PLACEMENT;
+	}
 
 	//Find dead tokens and decide whether ressurrection should be performed
 	if (phase == RESSURRECTION_PLACEMENT)
@@ -399,6 +505,29 @@ void PrimePlayState::CountRemainingTokens()
 			ResetTokenActionStates();
 
 			phase = PLAY_SELECTION;
+		}
+	}
+
+	//Find tokens which have moved and decide if turn is over
+	if (phase == PLAY_SELECTION)
+	{
+		finishedTokens = GetRemainingTokens(false, FINISHED_TOKENS, false);
+
+		//If all tokens are finished, go to next phase
+		if (finishedTokens >= 3)
+		{
+			//Don't forget to reset action states
+			ResetTokenActionStates();
+
+			//Enable movement for all alive tokens in the next turn
+
+			for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", false);
+			for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", false);
+			for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", false);
+			for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", false);
+
+			//Time for resource extraction!
+			phase = TURN_END;
 		}
 	}
 
@@ -420,19 +549,38 @@ void PrimePlayState::CountRemainingTokens()
 		}
 	}
 
-	//Find tokens which have moved and decide if turn is over
-	if (phase == PLAY_SELECTION)
+	//Extract resources and check for a victory condition
+	if (phase == TURN_END)
 	{
-		finishedTokens = GetRemainingTokens(false, FINISHED_TOKENS, false);
+		//Perform resource extraction
+		//...
 
-		//If all tokens are finished, go to next phase
-		if (finishedTokens >= 3)
+		//Check for victory condition
+		if (player1.isVictorious || player2.isVictorious || player3.isVictorious || player4.isVictorious)
 		{
-			//Don't forget to reset action states
-			ResetTokenActionStates();
-
-			phase = TURN_END;
+			phase = MATCH_END;
 		}
+
+		//If no victors so far, go on with game...
+		else
+		{
+			//Current turn is over!
+			turnOver = true;
+
+			//Advance to next turn
+			phase = TURN_START;
+		}
+	}
+
+	//Show victory messages and finish up match
+	if (phase == MATCH_END)
+	{
+		//Drop tokens which were dead by the end of match (still floating in limbo)
+
+		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
+		for (t = tokensTeam1->begin(); t != tokensTeam2->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
+		for (t = tokensTeam1->begin(); t != tokensTeam3->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
+		for (t = tokensTeam1->begin(); t != tokensTeam4->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
 	}
 }
 
@@ -588,6 +736,66 @@ void PrimePlayState::ResetTokenActionStates()
 	for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) (*t)->ResetActionStates();
 	for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) (*t)->ResetActionStates();
 	*/
+
+	for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
+	{
+		(*t)->getBehavior(0)->setBool("isSelected", false);
+		(*t)->getBehavior(0)->setBool("isTargeted", false);
+		(*t)->getBehavior(0)->setBool("isGonnaMove", false);
+		(*t)->getBehavior(0)->setBool("isGonnaBePushed", false);
+		(*t)->getBehavior(0)->setBool("isAnimStarted", false);
+		(*t)->getBehavior(0)->setBool("isAnimRunning", false);
+		(*t)->getBehavior(0)->setBool("isAnimFinished", false);
+		(*t)->getBehavior(0)->setBool("isAnimClosed", false);
+		(*t)->getBehavior(0)->setInt("moveDir", -1);
+		(*t)->getBehavior(0)->setInt("iDest", -1);
+		(*t)->getBehavior(0)->setInt("jDest", -1);
+	}
+
+	for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
+	{
+		(*t)->getBehavior(0)->setBool("isSelected", false);
+		(*t)->getBehavior(0)->setBool("isTargeted", false);
+		(*t)->getBehavior(0)->setBool("isGonnaMove", false);
+		(*t)->getBehavior(0)->setBool("isGonnaBePushed", false);
+		(*t)->getBehavior(0)->setBool("isAnimStarted", false);
+		(*t)->getBehavior(0)->setBool("isAnimRunning", false);
+		(*t)->getBehavior(0)->setBool("isAnimFinished", false);
+		(*t)->getBehavior(0)->setBool("isAnimClosed", false);
+		(*t)->getBehavior(0)->setInt("moveDir", -1);
+		(*t)->getBehavior(0)->setInt("iDest", -1);
+		(*t)->getBehavior(0)->setInt("jDest", -1);
+	}
+
+	for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
+	{
+		(*t)->getBehavior(0)->setBool("isSelected", false);
+		(*t)->getBehavior(0)->setBool("isTargeted", false);
+		(*t)->getBehavior(0)->setBool("isGonnaMove", false);
+		(*t)->getBehavior(0)->setBool("isGonnaBePushed", false);
+		(*t)->getBehavior(0)->setBool("isAnimStarted", false);
+		(*t)->getBehavior(0)->setBool("isAnimRunning", false);
+		(*t)->getBehavior(0)->setBool("isAnimFinished", false);
+		(*t)->getBehavior(0)->setBool("isAnimClosed", false);
+		(*t)->getBehavior(0)->setInt("moveDir", -1);
+		(*t)->getBehavior(0)->setInt("iDest", -1);
+		(*t)->getBehavior(0)->setInt("jDest", -1);
+	}
+
+	for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
+	{
+		(*t)->getBehavior(0)->setBool("isSelected", false);
+		(*t)->getBehavior(0)->setBool("isTargeted", false);
+		(*t)->getBehavior(0)->setBool("isGonnaMove", false);
+		(*t)->getBehavior(0)->setBool("isGonnaBePushed", false);
+		(*t)->getBehavior(0)->setBool("isAnimStarted", false);
+		(*t)->getBehavior(0)->setBool("isAnimRunning", false);
+		(*t)->getBehavior(0)->setBool("isAnimFinished", false);
+		(*t)->getBehavior(0)->setBool("isAnimClosed", false);
+		(*t)->getBehavior(0)->setInt("moveDir", -1);
+		(*t)->getBehavior(0)->setInt("iDest", -1);
+		(*t)->getBehavior(0)->setInt("jDest", -1);
+	}
 }
 
 void PrimePlayState::ManageRessurrection(IrrBoard* board, int i, int j)
@@ -797,8 +1005,9 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	//------------------
 	if (input->getMouseState().leftButtonDown)
 	{
-		phase = RESSURRECTION_PLACEMENT;
+		//phase = PLAY_SELECTION;
 		
+		/*
 		if (!test3)
 		{
 			for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
@@ -807,19 +1016,13 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 				(*t)->getBehavior(0)->setBool("isDead", true);
 			}
 
-			for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
-			{
-				//Kill token!
-				(*t)->getBehavior(0)->setBool("isDead", true);
-			}
-
 			test3 = true;
 		}
-		
+		*/
 	}
 
 	//Advance phases when conditions are met
-	CountRemainingTokens();
+	SwapPhase();
 
 	//By default, tiles and tokens are not highlighted
 	ClearHighlights(board);
@@ -829,7 +1032,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	{
 		for (int j=0; j < board->tile_j; j++)
 		{
-			//if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
+			if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
 
 			//No token or tile is selected by default
 			tileSelected = false;
@@ -904,8 +1107,6 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 					//Mouse has been clicked atop a highlighted object
 					mouseClickedOnHighlight = true;
 
-					//cout<<"Clicked on highlight"<<endl;
-
 					if (phase == PLAY_SELECTION)
 					{
 						//If mouse is hovering an empty tile...
@@ -914,7 +1115,6 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 							//...And a token has already been selected...
 							if (selectedToken != NULL)
 							{
-								/*
 								//...Mark selected token for movement.
 								selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
 
@@ -923,7 +1123,6 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 								//Execute move (start animations)
 								phase = ANIMATION_EXECUTION;
-								*/
 							}
 						}
 
@@ -1015,151 +1214,23 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	//--------- ANIMATION EXECUTION -------------
 	//-------------------------------------------
 
+
 	//Set animation speed
 	animSpeed = 0.5f;
 
-	//-------------------------------------
-	//--------- OLD MOVEMENT TEST ---------
-	//-------------------------------------
-	
-	/*
-	int moveDir = NORTH;
-
-	t = tokensTeam1->begin();
-
-	if (!test)
+	if (phase == ANIMATION_EXECUTION)
 	{
-		iDest = GetDestinationTile(moveDir, (*t)->parentNode->posi, (*t)->parentNode->posj, true);
-		jDest = GetDestinationTile(moveDir, (*t)->parentNode->posi, (*t)->parentNode->posj, false);
+		//Iterate through all players' token lists and animate them
 
-		//Destination tile position
-		board->board[iDest][jDest]->getPosition(destPosition);
-
-		//Token's current position
-		originPosition.x = (*t)->node->getAbsolutePosition().X;
-		originPosition.y = (*t)->node->getAbsolutePosition().Y;
-		originPosition.z = (*t)->node->getAbsolutePosition().Z;
-
-		test = true;
-	}
-	*/
-
-	//-------------------------------------
-
-	//if (phase == ANIMATION_EXECUTION)
-	if (phase == PLAY_SELECTION)
-	{
-		//-------------------------------------
-		//--------- OLD MOVEMENT TEST ---------
-		//-------------------------------------
-
-		/*
-		if (moveDir == NORTH)
-		{
-			vector3df newRelativePosition;
-
-			if ((*t)->node->getAbsolutePosition().X < destPosition.x)
-			{
-				float step = ((destPosition.x - originPosition.x) / 100) * animSpeed;
-
-				newRelativePosition.X = (*t)->node->getPosition().X + step;
-				newRelativePosition.Y = (*t)->node->getPosition().Y;
-				newRelativePosition.Z = (*t)->node->getPosition().Z;
-			
-				(*t)->node->setPosition(newRelativePosition);
-
-				//cout<<destPosition.x<<", "<<destPosition.y<<", "<<destPosition.z<<endl;
-				//cout<<newRelativePosition.X<<", "<<newRelativePosition.Y<<", "<<newRelativePosition.Z<<endl;
-			}
-
-			else if (!test2)
-			{
-				//Reset relative position
-				(*t)->node->setPosition(vector3df(0,0,0));
-
-				//Snap token to new position
-				test2 = board->moveToken((*t)->parentNode->posi, (*t)->parentNode->posj, iDest, jDest);
-
-				(*t)->parentNode = board->board[iDest][jDest];
-			}
-		}
-		*/
-
-		//-------------------------------------
-
-		/*
-		//Iterate through all players' token lists
-
-		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
-		{
-			//If "isGonnaMove" is true, then this is the selected token
-			if ((*t)->getBehavior(0)->getBool("isGonnaMove"))
-			{
-				//If this token has been marked for animation, but hasn't started running it yet...
-				if ((*t)->getBehavior(0)->getBool("isAnimStarted") && !(*t)->getBehavior(0)->getBool("isAnimRunning"))
-				{
-					//Get destination tile positions
-					iDest = GetDestinationTile((*t)->getBehavior(0)->getInt("moveDir"), (*t)->parentNode->posi, (*t)->parentNode->posj, I_TILE);
-					jDest = GetDestinationTile((*t)->getBehavior(0)->getInt("moveDir"), (*t)->parentNode->posi, (*t)->parentNode->posj, J_TILE);
-					
-					//Pass destination tile positions to token
-					(*t)->getBehavior(0)->setInt("iDest", iDest);
-					(*t)->getBehavior(0)->setInt("jDest", jDest);
-					
-					//Pass destination and origin coordinates to token
-					//board->board[iDest][jDest]->getPosition((*t)->destPosition);
-					//(*t)->originPosition.x = (*t)->node->getAbsolutePosition().X;
-					//(*t)->originPosition.y = (*t)->node->getAbsolutePosition().Y;
-					//(*t)->originPosition.z = (*t)->node->getAbsolutePosition().Z;
-
-					//Start animation!
-					(*t)->getBehavior(0)->setBool("isAnimRunning", true);
-				}
-				
-				//If this token's animation is currently running...
-				else if (*t)->getBehavior(0)->getBool("isAnimStarted") && (*t)->getBehavior(0)->getBool("isAnimRunning"))
-				{
-					//Translate
-					//...
-				}
-
-				//If this token's animation is over...
-				else if ((*t)->getBehavior(0)->getBool("isAnimStarted") && (*t)->getBehavior(0)->getBool("isAnimFinished"))
-				{
-					//Reset relative position
-					(*t)->node->setPosition(vector3df(0,0,0));
-
-					//If snap to new position has been successful...
-					if (board->moveToken((*t)->parentNode->posi, (*t)->parentNode->posj,
-										 (*t)->getBehavior(0)->getInt("iDest"), (*t)->getBehavior(0)->getInt("jDest"))
-					{
-						//Update parent
-						//(*t)->parentNode = board->board[(*t)->getBehavior(0)->getInt("iDest")][(*t)->getBehavior(0)->getInt("jDest")];
-						
-						//Terminate animations
-						(*t)->getBehavior(0)->setBool("isAnimClosed", true);
-					}
-				}
-			}	
-		}
-		*/
-
+		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) AnimateToken((*t), board, animSpeed);
+		for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) AnimateToken((*t), board, animSpeed);
+		for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) AnimateToken((*t), board, animSpeed);
+		for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) AnimateToken((*t), board, animSpeed);
 	}
 
-
-	//-------------------------------------------
-	//-------------- MATCH END ------------------
-	//-------------------------------------------
-
-
-	if (phase == MATCH_END)
-	{
-		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
-		for (t = tokensTeam1->begin(); t != tokensTeam2->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
-		for (t = tokensTeam1->begin(); t != tokensTeam3->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
-		for (t = tokensTeam1->begin(); t != tokensTeam4->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
-	}
-
+	//TRANSLATION TEST
+	//t = tokensTeam1->begin();
+	//(*t)->setPosition(Vector((*t)->node->getPosition().X, (*t)->node->getPosition().Y, (*t)->node->getPosition().Z - 0.01f));
 
 	//-------------------------------------------
 	//--- VERIFICATION FOR TOKEN DESELECTION ----

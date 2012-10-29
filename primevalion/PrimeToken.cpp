@@ -218,10 +218,27 @@ void PrimeToken::update()
 	//Otherwise, if this token already moved...
 	else if (isFinished)
 	{
-		//Color it darker and grayer
-		token->node->getMaterial(0) = matHighlight;
-		token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
-		token->node->getMaterial(0).SpecularColor.set(255,100,100,100);
+		//If this token is being highlighted by another token...
+		if (token->isHighlighted)
+		{
+			//...Like an allied token that's trying to push it...
+			if (token->highlight == PUSH_HOVER)
+			{
+				//Push victim highlight (Orange)
+				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).EmissiveColor.set(255,255,70,0);
+				token->node->getMaterial(0).SpecularColor.set(255,255,70,0);
+			}
+		}
+
+		//If not being highlighted at all...
+		else
+		{
+			//Color it darker and grayer
+			token->node->getMaterial(0) = matHighlight;
+			token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
+			token->node->getMaterial(0).SpecularColor.set(255,100,100,100);
+		}
 	}
 }
 
