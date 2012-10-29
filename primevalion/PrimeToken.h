@@ -21,9 +21,6 @@ using namespace IrrBoardGameEngine;
 class PrimeToken : public IrrTokenBehavior
 {
 private:
-public:
-	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
-
 	// General token states
 
 	bool isGhost; //Whether this token is just a ressurrection indicator
@@ -45,11 +42,13 @@ public:
 
 	// Other attributes
 
+	bool orphan; //If this token has been unattached from its parent
 	int race; //Race of this token
 	int team; //Team of this token
 	int moveDir; //Direction this tile is moving or being pushed to
 
-	//Variables used during translation animation
+	// Variables used during translation animation
+
 	int iDest, jDest;
 	Vector destPosition, originPosition;
 
@@ -61,6 +60,9 @@ public:
 
 	SMaterial matHighlight;
 	SMaterial matNormal;
+
+public:
+	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
 
 	void init(); //Initializes token
 	void update(); //Updates this token's visuals

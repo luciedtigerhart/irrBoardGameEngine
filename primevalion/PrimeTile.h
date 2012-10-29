@@ -38,6 +38,7 @@ using namespace IrrBoardGameEngine;
 class PrimeTile : public IrrTileBehavior
 {
 private:
+	//Variables to help in ghost creation
 	int raceP1, idxP1;
 	int raceP2, idxP2;
 	int raceP3, idxP3;

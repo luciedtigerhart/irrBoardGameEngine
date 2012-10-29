@@ -1,10 +1,12 @@
 #include "PrimePlayState.h"
 
 #define CLICKED true
-#define ONLY_HIGHLIGHT false
 #define DEAD_TOKENS true
 #define FINISHED_TOKENS true
 #define ANIMATED_TOKENS true
+#define I_TILE true
+#define J_TILE false
+#define ONLY_HIGHLIGHT false
 
 PrimePlayState::PrimePlayState() {};
 PrimePlayState::~PrimePlayState() {};
@@ -82,14 +84,15 @@ void PrimePlayState::SetTurnPlayer(int turn)
 {
 	int counter = 0;
 
-	//Iterate through turn count to find out which
-	//if this is the first, second, third or fourth player's turn...
+	//Iterate through turn count to find out if this
+	//is the first, second, third or fourth player's turn...
 	for (int iterator = 1; iterator <= turn; iterator++)
 	{
 		counter++;
 		if (counter > playersActive) counter = 1;
 	}
 
+	//Set "turnPlayer" as the current player
 	if (player1.assignedTurn == counter) turnPlayer = player1.idx;
 	else if (player2.assignedTurn == counter) turnPlayer = player2.idx;
 	else if (player3.assignedTurn == counter) turnPlayer = player3.idx;
@@ -108,20 +111,10 @@ void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iSt
 	int jBreak = -1;
 
 	//Configure search based on push direction
-
-	/*
-	//Non-Mirrored
-	if (dir == NORTH) { iBreak = 0; jBreak = -1; iAdd = -1; jAdd = 0; }
-	else if (dir == SOUTH) { iBreak = 9; jBreak = -1; iAdd = 1; jAdd = 0; }
-	else if (dir == WEST) { iBreak = -1; jBreak = 0; iAdd = 0; jAdd = -1; }
+	if (dir == WEST) { iBreak = -1; jBreak = 0; iAdd = 0; jAdd = -1; }
 	else if (dir == EAST) { iBreak = -1; jBreak = 9; iAdd = 0; jAdd = 1; }
-	*/
-
-	//Mirrored
-	if (dir == WEST) { iBreak = 0; jBreak = -1; iAdd = -1; jAdd = 0; }
-	else if (dir == EAST) { iBreak = 9; jBreak = -1; iAdd = 1; jAdd = 0; }
-	else if (dir == NORTH) { iBreak = -1; jBreak = 0; iAdd = 0; jAdd = -1; }
-	else if (dir == SOUTH) { iBreak = -1; jBreak = 9; iAdd = 0; jAdd = 1; }
+	else if (dir == NORTH) { iBreak = 0; jBreak = -1; iAdd = -1; jAdd = 0; }
+	else if (dir == SOUTH) { iBreak = 9; jBreak = -1; iAdd = 1; jAdd = 0; }
 
 	iTile = iStart;
 	jTile = jStart;
@@ -129,7 +122,7 @@ void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iSt
 	//Find tokens in a line, starting at token to be pushed
 	while (!breakScan)
 	{
-		//cout<<"tile: "<<iTile<<", "<<jTile;
+		//cout<<"tile: "<<iTile<<", "<<jTile<<endl;
 
 		//If a token has been found...
 		if (board->board[iTile][jTile]->token != NULL)
@@ -138,11 +131,11 @@ void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iSt
 			if (clicked)
 			{
 				//Mark this token for pushing
-				//board->board[iTile][jTile]->token->isGonnaBePushed = true;
-				//board->board[iTile][jTile]->token->moveDir = dir;
+				board->board[iTile][jTile]->token->getBehavior(0)->setBool("isGonnaBePushed", true);
+				board->board[iTile][jTile]->token->getBehavior(0)->setInt("moveDir", dir);
 
 				//Startup this token's animation
-				//board->board[iTile][jTile]->token->isAnimStarted = true;
+				board->board[iTile][jTile]->token->getBehavior(0)->setBool("isAnimStarted", true);
 			}
 
 			//Otherwise, if mouse is just hovering a pushable token...
@@ -168,8 +161,6 @@ void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iSt
 		//Iterate scan
 		iTile += iAdd;
 		jTile += jAdd;
-
-		//cout<<" - last: "<<lastTileFound<<endl;
 	}
 }
 
@@ -193,20 +184,10 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 	if (play == PUSH)
 	{
 		//Configure search based on push direction
-
-		/*
-		//Non-Mirrored
-		if (dir == NORTH) { iBreak = 0; jBreak = -1; iAdd = -1; jAdd = 0; }
-		else if (dir == SOUTH) { iBreak = 9; jBreak = -1; iAdd = 1; jAdd = 0; }
-		else if (dir == WEST) { iBreak = -1; jBreak = 0; iAdd = 0; jAdd = -1; }
+		if (dir == WEST) { iBreak = -1; jBreak = 0; iAdd = 0; jAdd = -1; }
 		else if (dir == EAST) { iBreak = -1; jBreak = 9; iAdd = 0; jAdd = 1; }
-		*/
-
-		//Mirrored
-		if (dir == WEST) { iBreak = 0; jBreak = -1; iAdd = -1; jAdd = 0; }
-		else if (dir == EAST) { iBreak = 9; jBreak = -1; iAdd = 1; jAdd = 0; }
-		else if (dir == NORTH) { iBreak = -1; jBreak = 0; iAdd = 0; jAdd = -1; }
-		else if (dir == SOUTH) { iBreak = -1; jBreak = 9; iAdd = 0; jAdd = 1; }
+		else if (dir == NORTH) { iBreak = 0; jBreak = -1; iAdd = -1; jAdd = 0; }
+		else if (dir == SOUTH) { iBreak = 9; jBreak = -1; iAdd = 1; jAdd = 0; }
 
 		iTile = i;
 		jTile = j;
@@ -355,81 +336,153 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, Vector origin, Vector d
 	return destReached;
 }
 
+void PrimePlayState::RessurrectToken(IrrToken* token, IrrBoard* board, int i, int j)
+{
+	//If this token's team is the current playing team
+	if (token->player == turnPlayer)
+	{
+		//If this token is dead and the highlighted safe zone tile is empty
+		if (token->getBehavior(0)->getBool("isDead") && board->board[i][j]->token == NULL)
+		{
+			//Re-activate token
+			token->setActive(true);
+			token->getBehavior(0)->setBool("isDead", false);
+
+			//Place token at the safe zone!
+			//if (board->moveToken(token->parentNode->posi, token->parentNode->posj, i, j))
+			if (board->addToken(i, j, token))
+			{
+				//Update token's parent
+				token->parentNode = board->board[i][j];
+
+				//Make sure the token cannot move this turn
+				token->getBehavior(0)->setBool("isFinished", true);
+			}
+		}
+	}
+}
+
+void PrimePlayState::ClearHighlights(IrrBoard* board)
+{
+	//Scan the whole board
+	for (int i=0; i < board->tile_i; i++)
+	{
+		for (int j=0; j < board->tile_j; j++)
+		{
+			//Deactivate tile highlights
+			board->board[i][j]->isHighlighted = false;
+			board->board[i][j]->highlight = NONE;
+
+			//Deactivate token highlights
+			if (board->board[i][j]->token != NULL)
+			{
+				board->board[i][j]->token->isHighlighted = false;
+				board->board[i][j]->token->highlight = NONE;
+			}
+		}
+	}
+}
+
+void PrimePlayState::CountRemainingTokens()
+{
+	int remainingTokens = 0, finishedTokens = 0;
+
+	//Find dead tokens and decide whether ressurrection should be performed
+	if (phase == RESSURRECTION_PLACEMENT)
+	{
+		remainingTokens = GetRemainingTokens(DEAD_TOKENS, false, false);
+
+		//If there are no dead tokens, go to next phase
+		if (remainingTokens == 0)
+		{
+			//Don't forget to reset action states
+			ResetTokenActionStates();
+
+			phase = PLAY_SELECTION;
+		}
+	}
+
+	//Find tokens which animation hasn't finished yet
+	if (phase == ANIMATION_EXECUTION)
+	{
+		remainingTokens = GetRemainingTokens(false, false, ANIMATED_TOKENS);
+
+		//If all tokens have finished their animations, go back to play selection
+		if (remainingTokens == 0)
+		{
+			//Reset selected token
+			selectedToken = NULL;
+
+			//Don't forget to reset action states
+			ResetTokenActionStates();
+
+			phase = PLAY_SELECTION;
+		}
+	}
+
+	//Find tokens which have moved and decide if turn is over
+	if (phase == PLAY_SELECTION)
+	{
+		finishedTokens = GetRemainingTokens(false, FINISHED_TOKENS, false);
+
+		//If all tokens are finished, go to next phase
+		if (finishedTokens >= 3)
+		{
+			//Don't forget to reset action states
+			ResetTokenActionStates();
+
+			phase = TURN_END;
+		}
+	}
+}
+
 void PrimePlayState::GetAdjacentTiles()
 {
 	//Get adjacent tile positions
-	iNorth = selectedToken->parentNode->posj - 1;
-	jNorth = selectedToken->parentNode->posi;
+	iNorth = selectedToken->parentNode->posi - 1;
+	jNorth = selectedToken->parentNode->posj ;
 
-	iSouth = selectedToken->parentNode->posj + 1;
-	jSouth = selectedToken->parentNode->posi;
+	iSouth = selectedToken->parentNode->posi + 1;
+	jSouth = selectedToken->parentNode->posj;
 
-	iWest = selectedToken->parentNode->posj;
-	jWest = selectedToken->parentNode->posi - 1;
+	iWest = selectedToken->parentNode->posi;
+	jWest = selectedToken->parentNode->posj - 1;
 
-	iEast = selectedToken->parentNode->posj;
-	jEast = selectedToken->parentNode->posi + 1;
-
-	//Get diagonal tile positions
-	iNorthwest = selectedToken->parentNode->posj - 1;
-	jNorthwest = selectedToken->parentNode->posi - 1;
-
-	iNortheast = selectedToken->parentNode->posj + 1;
-	jNortheast = selectedToken->parentNode->posi - 1;
-
-	iSouthwest = selectedToken->parentNode->posj - 1;
-	jSouthwest = selectedToken->parentNode->posi + 1;
-
-	iSoutheast = selectedToken->parentNode->posj + 1;
-	jSoutheast = selectedToken->parentNode->posi + 1;
-
-	/*
-	//Get adjacent tile positions
-	iNorth = selectedToken->parentNode->posi;
-	jNorth = selectedToken->parentNode->posj - 1;
-
-	iSouth = selectedToken->parentNode->posi;
-	jSouth = selectedToken->parentNode->posj + 1;
-
-	iWest = selectedToken->parentNode->posi - 1;
-	jWest = selectedToken->parentNode->posj;
-
-	iEast = selectedToken->parentNode->posi + 1;
-	jEast = selectedToken->parentNode->posj;
+	iEast = selectedToken->parentNode->posi;
+	jEast = selectedToken->parentNode->posj + 1;
 
 	//Get diagonal tile positions
 	iNorthwest = selectedToken->parentNode->posi - 1;
 	jNorthwest = selectedToken->parentNode->posj - 1;
 
-	iNortheast = selectedToken->parentNode->posi + 1;
-	jNortheast = selectedToken->parentNode->posj - 1;
+	iNortheast = selectedToken->parentNode->posi - 1;
+	jNortheast = selectedToken->parentNode->posj + 1;
 
-	iSouthwest = selectedToken->parentNode->posi - 1;
-	jSouthwest = selectedToken->parentNode->posj + 1;
+	iSouthwest = selectedToken->parentNode->posi + 1;
+	jSouthwest = selectedToken->parentNode->posj - 1;
 
 	iSoutheast = selectedToken->parentNode->posi + 1;
 	jSoutheast = selectedToken->parentNode->posj + 1;
-	*/
 }
 
 int PrimePlayState::GetDestinationTile(int dir, int i, int j, bool iTile)
 {
 	int dest = -1;
 
-	//If "iTile" is true, get the destination "i" tile (Horizontal)
+	//If "iTile" is true, get the destination "i" tile (Row)
 	if (iTile)
 	{
-		if (dir == NORTH || dir == SOUTH) dest = i;
-		else if (dir == EAST || dir == NORTHEAST || dir == SOUTHEAST) dest = i + 1;
-		else if (dir == WEST || dir == NORTHWEST || dir == SOUTHWEST) dest = i - 1;
+		if (dir == NORTH || dir == NORTHEAST || dir == NORTHWEST) dest = i - 1;
+		else if (dir == SOUTH || dir == SOUTHEAST || dir == SOUTHWEST) dest = i + 1;
+		else if (dir == EAST || dir == WEST) dest = i;
 	}
 
-	//Otherwise, get the destination "j" tile (Vertical)
+	//Otherwise, get the destination "j" tile (Column)
 	else
 	{
-		if (dir == NORTH || dir == NORTHEAST || dir == NORTHWEST) dest = j - 1;
-		else if (dir == SOUTH || dir == SOUTHEAST || dir == SOUTHWEST) dest = j + 1;
-		else if (dir == EAST || dir == WEST) dest = j;
+		if (dir == NORTH || dir == SOUTH) dest = j;
+		else if (dir == EAST || dir == NORTHEAST || dir == SOUTHEAST) dest = j + 1;
+		else if (dir == WEST || dir == NORTHWEST || dir == SOUTHWEST) dest = j - 1;
 	}
 
 	//Return destination
@@ -447,19 +500,23 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 
 		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
 		{
-			//if ((*t)->isAnimStarted == true && (*t)->isAnimClosed == false) remainingTokens++;
+			if ((*t)->getBehavior(0)->getBool("isAnimStarted") && !(*t)->getBehavior(0)->getBool("isAnimClosed"))
+				remainingTokens++;
 		}
 		for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
 		{
-			//if ((*t)->isAnimStarted == true && (*t)->isAnimClosed == false) remainingTokens++;
+			if ((*t)->getBehavior(0)->getBool("isAnimStarted") && !(*t)->getBehavior(0)->getBool("isAnimClosed"))
+				remainingTokens++;
 		}
 		for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
 		{
-			//if ((*t)->isAnimStarted == true && (*t)->isAnimClosed == false) remainingTokens++;
+			if ((*t)->getBehavior(0)->getBool("isAnimStarted") && !(*t)->getBehavior(0)->getBool("isAnimClosed"))
+				remainingTokens++;
 		}
 		for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
 		{
-			//if ((*t)->isAnimStarted == true && (*t)->isAnimClosed == false) remainingTokens++;
+			if ((*t)->getBehavior(0)->getBool("isAnimStarted") && !(*t)->getBehavior(0)->getBool("isAnimClosed"))
+				remainingTokens++;
 		}
 	}
 
@@ -474,17 +531,9 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 			//Search team 1's tokens
 			for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
 			{
-				if (dead)
-				{
-					//Look for dead tokens
-					//if ((*t)->isDead) remainingTokens++; 
-				}
-
-				else if (finished)
-				{
-					//Look for tokens which have already moved
-					//if ((*t)->isFinished) remainingTokens++; 
-				}
+				//Look for dead tokens or tokens which have already moved
+				if (dead) { if ((*t)->getBehavior(0)->getBool("isDead")) remainingTokens++; }
+				else if (finished) { if ((*t)->getBehavior(0)->getBool("isFinished")) remainingTokens++; }
 			}
 		}
 
@@ -493,17 +542,9 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 			//Search for dead tokens among team 2's tokens
 			for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
 			{
-				if (dead)
-				{
-					//Look for dead tokens
-					//if ((*t)->isDead) remainingTokens++; 
-				}
-
-				else if (finished)
-				{
-					//Look for tokens which have already moved
-					//if ((*t)->isFinished) remainingTokens++; 
-				}
+				//Look for dead tokens or tokens which have already moved
+				if (dead) { if ((*t)->getBehavior(0)->getBool("isDead")) remainingTokens++; }
+				else if (finished) { if ((*t)->getBehavior(0)->getBool("isFinished")) remainingTokens++; }
 			}
 		}
 
@@ -512,17 +553,9 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 			//Search for dead tokens among team 3's tokens
 			for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
 			{
-				if (dead)
-				{
-					//Look for dead tokens
-					//if ((*t)->isDead) remainingTokens++; 
-				}
-
-				else if (finished)
-				{
-					//Look for tokens which have already moved
-					//if ((*t)->isFinished) remainingTokens++; 
-				}
+				//Look for dead tokens or tokens which have already moved
+				if (dead) { if ((*t)->getBehavior(0)->getBool("isDead")) remainingTokens++; }
+				else if (finished) { if ((*t)->getBehavior(0)->getBool("isFinished")) remainingTokens++; }
 			}
 		}
 
@@ -531,17 +564,9 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 			//Search for dead tokens among team 4's tokens
 			for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
 			{
-				if (dead)
-				{
-					//Look for dead tokens
-					//if ((*t)->isDead) remainingTokens++; 
-				}
-
-				else if (finished)
-				{
-					//Look for tokens which have already moved
-					//if ((*t)->isFinished) remainingTokens++; 
-				}
+				//Look for dead tokens or tokens which have already moved
+				if (dead) { if ((*t)->getBehavior(0)->getBool("isDead")) remainingTokens++; }
+				else if (finished) { if ((*t)->getBehavior(0)->getBool("isFinished")) remainingTokens++; }
 			}
 		}
 	}
@@ -633,10 +658,10 @@ void PrimePlayState::ManageTokenSelection(IrrBoard* board, int i, int j)
 		if (board->board[i][j]->token->player == turnPlayer)
 		{
 			//If this token isn't selected, neither dead and hasn't moved yet...
-			//if (!board->board[i][j]->token->isSelected
-			//	&& !board->board[i][j]->token->isDead
-			//	&& !board->board[i][j]->token->isFinished)
-			//{
+			if (!board->board[i][j]->token->getBehavior(0)->getBool("isSelected")
+				&& !board->board[i][j]->token->getBehavior(0)->getBool("isDead")
+				&& !board->board[i][j]->token->getBehavior(0)->getBool("isFinished"))
+			{
 				//Highlight tile
 				board->board[i][j]->isHighlighted = true;
 
@@ -645,10 +670,15 @@ void PrimePlayState::ManageTokenSelection(IrrBoard* board, int i, int j)
 
 				else board->board[i][j]->highlight = MOVE;
 
-				//Highlight token
-				board->board[i][j]->token->isHighlighted = true;
-				board->board[i][j]->token->highlight = MOVE_HOVER;
-			//}
+				//Check if token isn't already highlighted
+				//by something else (like a Push move)
+				if (!board->board[i][j]->token->isHighlighted)
+				{
+					//Highlight token
+					board->board[i][j]->token->isHighlighted = true;
+					board->board[i][j]->token->highlight = MOVE_HOVER;
+				}
+			}
 		}
 	}
 }
@@ -672,8 +702,6 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 		else if (i == iNortheast && j == jNortheast) dir = NORTHEAST;
 		else if (i == iSouthwest && j == jSouthwest) dir = SOUTHWEST;
 		else if (i == iSoutheast && j == jSoutheast) dir = SOUTHEAST;
-		
-		//cout<<"dir: "<<dir<<endl;
 
 		//If this is the North, South, West or East tile...
 		if (dir == NORTH || dir == SOUTH || dir == WEST || dir == EAST)
@@ -690,9 +718,9 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 				else board->board[i][j]->highlight = MOVE;
 
 				//Set move direction for selected token
-				//selectedToken->moveDir = dir;
+				selectedToken->getBehavior(0)->setInt("moveDir", dir);
 			}
-			/*
+			
 			//Else, if there's a token on this tile...
 			else if (board->board[i][j]->token != NULL)
 			{
@@ -714,7 +742,7 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 						SetPushLine(ONLY_HIGHLIGHT, dir,board,i,j);
 
 						//Set move direction for selected token
-						//selectedToken->moveDir = dir;
+						selectedToken->getBehavior(0)->setInt("moveDir", dir);
 					}
 					
 					else if (!board->board[i][j]->isMouseHover && !board->board[i][j]->token->isMouseHover)
@@ -723,13 +751,11 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 					}
 				}
 			}
-			*/
 		}
 					
 		//If this is the Northeast, Northwest, Southeast or Southwest tile...
 		else if (dir == NORTHEAST || dir == NORTHWEST || dir == SOUTHEAST || dir == SOUTHWEST)
 		{
-			/*
 			//If there's a token on this tile...
 			if (board->board[i][j]->token != NULL)
 			{
@@ -748,7 +774,7 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 						board->board[i][j]->token->highlight = ATTACK_HOVER;
 
 						//Set move direction for selected token
-						//selectedToken->moveDir = dir;
+						selectedToken->getBehavior(0)->setInt("moveDir", dir);
 					}
 					
 					else if (!board->board[i][j]->isMouseHover && !board->board[i][j]->token->isMouseHover)
@@ -757,7 +783,6 @@ void PrimePlayState::ManageMoveSelection(IrrBoard* board, int i, int j)
 					}
 				}
 			}
-			*/
 		}
 	}
 }
@@ -768,96 +793,57 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	bool tokenSelected = false;
 	bool mouseClickedOnHighlight = false;
 
-	int remainingTokens = 0, finishedTokens = 0;
-
 	//FOR TEST PURPOSES
 	//------------------
 	if (input->getMouseState().leftButtonDown)
 	{
-		phase = PLAY_SELECTION;
-	}
-
-	//Find dead tokens and decide whether ressurrection should be performed
-	if (phase == RESSURRECTION_PLACEMENT)
-	{
-		remainingTokens = GetRemainingTokens(DEAD_TOKENS, false, false);
-
-		//If there are no dead tokens, go to next phase
-		if (remainingTokens == 0)
+		phase = RESSURRECTION_PLACEMENT;
+		
+		if (!test3)
 		{
-			//Don't forget to reset action states
-			ResetTokenActionStates();
+			for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
+			{
+				//Kill token!
+				(*t)->getBehavior(0)->setBool("isDead", true);
+			}
 
-			phase = PLAY_SELECTION;
+			for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
+			{
+				//Kill token!
+				(*t)->getBehavior(0)->setBool("isDead", true);
+			}
+
+			test3 = true;
 		}
+		
 	}
 
-	//Find tokens which animation hasn't finished yet
-	if (phase == ANIMATION_EXECUTION)
-	{
-		remainingTokens = GetRemainingTokens(false, false, ANIMATED_TOKENS);
+	//Advance phases when conditions are met
+	CountRemainingTokens();
 
-		//If all tokens have finished their animations, go back to play selection
-		if (remainingTokens == 0)
-		{
-			//Reset selected token
-			selectedToken = NULL;
-
-			//Don't forget to reset action states
-			ResetTokenActionStates();
-
-			phase = PLAY_SELECTION;
-		}
-	}
-
-	//Find tokens which have moved and decide if turn is over
-	if (phase == PLAY_SELECTION)
-	{
-		finishedTokens = GetRemainingTokens(false, FINISHED_TOKENS, false);
-
-		//If all tokens are finished, go to next phase
-		if (finishedTokens >= 3)
-		{
-			//Don't forget to reset action states
-			ResetTokenActionStates();
-
-			phase = TURN_END;
-		}
-	}
+	//By default, tiles and tokens are not highlighted
+	ClearHighlights(board);
 
 	//Scan the whole board
 	for (int i=0; i < board->tile_i; i++)
 	{
 		for (int j=0; j < board->tile_j; j++)
 		{
-			if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
+			//if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
 
 			//No token or tile is selected by default
 			tileSelected = false;
 			tokenSelected = false;
 
-			//Tile highlights are deactivated by default
-			board->board[i][j]->isHighlighted = false;
-			board->board[i][j]->highlight = NONE;
-
-			//Token highlights as well
-			if (board->board[i][j]->token != NULL)
-			{
-				board->board[i][j]->token->isHighlighted = false;
-				board->board[i][j]->token->highlight = NONE;
-			}
-
 			//If a token has been selected...
 			if (selectedToken != NULL)
 			{
-				/*
 				//...But its animation hasn't begun...
-				if (!selectedToken->isAnimStarted)
+				if (!selectedToken->getBehavior(0)->getBool("isAnimStarted"))
 				{
 					//...Reset its move direction.
-					selectedToken->moveDir = -1;
+					selectedToken->getBehavior(0)->setInt("moveDir", -1);
 				}
-				*/
 			}
 
 			//Highlight tiles and tokens according to phase
@@ -922,55 +908,51 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 					if (phase == PLAY_SELECTION)
 					{
-						/*
 						//If mouse is hovering an empty tile...
 						if (board->board[i][j]->token == NULL)
 						{
 							//...And a token has already been selected...
 							if (selectedToken != NULL)
 							{
+								/*
 								//...Mark selected token for movement.
-								selectedToken->isGonnaMove = true;
+								selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
 
 								//Startup animation for selected token
-								selectedToken->isAnimStarted = true;
+								selectedToken->getBehavior(0)->setBool("isAnimStarted", true);
 
 								//Execute move (start animations)
 								phase = ANIMATION_EXECUTION;
+								*/
 							}
 						}
-						*/
 
 						//Otherwise, if mouse is above an occupied tile...
-						//else if (board->board[i][j]->token != NULL)
-						if (board->board[i][j]->token != NULL)
+						else if (board->board[i][j]->token != NULL)
 						{
 							//If a token hasn't been selected yet
 							if (selectedToken == NULL)
 							{
 								//Select the hovered token
 								selectedToken = board->getToken(i,j);
-								//board->board[i][j]->token->isSelected = true;
+								board->board[i][j]->token->getBehavior(0)->setBool("isSelected", true);
 							}
 
 							//Otherwise, if a token has already been selected...
 							else if (selectedToken != NULL)
 							{
-								cout<<selectedToken->parentNode->posj<<", "<<selectedToken->parentNode->posi<<endl;
-								//cout<<selectedToken->parentNode->posi<<", "<<selectedToken->parentNode->posj<<endl;
-
 								//If mouse is above a token that's highlighted for pushing...
 								if (board->board[i][j]->token->highlight == PUSH_HOVER)
 								{
-									//Mark this token and the tokens behind it for pushing
-									//SetPushLine(CLICKED, selectedToken->moveDir, board, i, j);
-									
 									/*
+									//Mark this token and the tokens behind it for pushing
+									SetPushLine(CLICKED, selectedToken->getBehavior(0)->getInt("moveDir"), board, i, j);
+									
 									//Mark selected token for movement
-									selectedToken->isGonnaMove = true;
+									selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
 
 									//Startup animation for selected token
-									selectedToken->isAnimStarted = true;
+									selectedToken->getBehavior(0)->setBool("isAnimStarted", true);
 
 									//Execute move (start animations)
 									phase = ANIMATION_EXECUTION;
@@ -984,30 +966,31 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 									if (board->board[i][j]->token->player == turnPlayer)
 									{
 										//Unselect previous token
-										//selectedToken->isSelected = false;
+										selectedToken->getBehavior(0)->setBool("isSelected", false);
 
 										//Select new token
 										selectedToken = board->getToken(i,j);
-										//board->board[i][j]->token->isSelected = true;
+										board->board[i][j]->token->getBehavior(0)->setBool("isSelected", true);
 									}
-									/*
+									
 									//...If mouse is over an enemy token...
 									else
 									{
+										/*
 										//Mark enemy as attack target
-										board->board[i][j]->token->isTargeted = true;
+										board->board[i][j]->token->getBehavior(0)->setBool("isTargeted", true);
 
 										//Mark selected token for movement
-										selectedToken->isGonnaMove = true;
+										selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
 
 										//Startup animation for enemy and selected token
-										board->board[i][j]->token->isAnimStarted = true;
-										selectedToken->isAnimStarted = true;
+										board->board[i][j]->token->getBehavior(0)->setBool("isAnimStarted", true);
+										selectedToken->getBehavior(0)->setBool("isAnimStarted", true);
 
 										//Execute move (start animations)
 										phase = ANIMATION_EXECUTION;
+										*/
 									}
-									*/
 								}
 							}
 						}
@@ -1015,26 +998,12 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 					else if (phase == RESSURRECTION_PLACEMENT)
 					{
-						//Iterate through all players' token lists
-
-						for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
-						{
-							/*
-							//If this team is the current playing team
-							if ((*t)->player == turnPlayer)
-							{
-								//Move dead token to safe zone tile, if its empty
-								if ((*t)->isDead && board->board[i][j]->token == NULL)
-								{
-									board->moveToken((*t)->parentNode->posi, (*t)->parentNode->posj, i, j);
-
-									//Activate token, but make sure it can't move this turn
-									(*t)->isDead = false;
-									(*t)->isFinished = true;
-								}
-							}
-							*/
-						}
+						//Iterate through all players' token lists, reviving dead tokens
+						
+						for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) RessurrectToken((*t), board, i, j);
+						for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) RessurrectToken((*t), board, i, j);
+						for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) RessurrectToken((*t), board, i, j);
+						for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) RessurrectToken((*t), board, i, j);
 					}
 				}
 			}
@@ -1077,8 +1046,8 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 	//-------------------------------------
 
-	if (phase == ANIMATION_EXECUTION)
-	//if (phase == PLAY_SELECTION)
+	//if (phase == ANIMATION_EXECUTION)
+	if (phase == PLAY_SELECTION)
 	{
 		//-------------------------------------
 		//--------- OLD MOVEMENT TEST ---------
@@ -1089,13 +1058,13 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 		{
 			vector3df newRelativePosition;
 
-			if ((*t)->node->getAbsolutePosition().Z > destPosition.z)
+			if ((*t)->node->getAbsolutePosition().X < destPosition.x)
 			{
-				float step = ((destPosition.z - originPosition.z) / 100) * animSpeed;
+				float step = ((destPosition.x - originPosition.x) / 100) * animSpeed;
 
-				newRelativePosition.X = (*t)->node->getPosition().X;
+				newRelativePosition.X = (*t)->node->getPosition().X + step;
 				newRelativePosition.Y = (*t)->node->getPosition().Y;
-				newRelativePosition.Z = (*t)->node->getPosition().Z + step;
+				newRelativePosition.Z = (*t)->node->getPosition().Z;
 			
 				(*t)->node->setPosition(newRelativePosition);
 
@@ -1123,51 +1092,72 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
 		{
-			//If "isGonnaMove" is true, this is the selected token
-			if ((*t)->isGonnaMove)
+			//If "isGonnaMove" is true, then this is the selected token
+			if ((*t)->getBehavior(0)->getBool("isGonnaMove"))
 			{
 				//If this token has been marked for animation, but hasn't started running it yet...
-				if ((*t)->isAnimStarted && !(*t)->isAnimRunning)
+				if ((*t)->getBehavior(0)->getBool("isAnimStarted") && !(*t)->getBehavior(0)->getBool("isAnimRunning"))
 				{
 					//Get destination tile positions
-					(*t)->iDest = GetDestinationTile((*t)->moveDir, (*t)->parentNode->posi, (*t)->parentNode->posj, true);
-					(*t)->jDest = GetDestinationTile((*t)->moveDir, (*t)->parentNode->posi, (*t)->parentNode->posj, false);
+					iDest = GetDestinationTile((*t)->getBehavior(0)->getInt("moveDir"), (*t)->parentNode->posi, (*t)->parentNode->posj, I_TILE);
+					jDest = GetDestinationTile((*t)->getBehavior(0)->getInt("moveDir"), (*t)->parentNode->posi, (*t)->parentNode->posj, J_TILE);
 					
-					//Pass destination and origin positions to token
-					board->board[iDest][jDest]->getPosition((*t)->destPosition);
-					(*t)->originPosition.x = (*t)->node->getAbsolutePosition().X;
-					(*t)->originPosition.y = (*t)->node->getAbsolutePosition().Y;
-					(*t)->originPosition.z = (*t)->node->getAbsolutePosition().Z;
+					//Pass destination tile positions to token
+					(*t)->getBehavior(0)->setInt("iDest", iDest);
+					(*t)->getBehavior(0)->setInt("jDest", jDest);
+					
+					//Pass destination and origin coordinates to token
+					//board->board[iDest][jDest]->getPosition((*t)->destPosition);
+					//(*t)->originPosition.x = (*t)->node->getAbsolutePosition().X;
+					//(*t)->originPosition.y = (*t)->node->getAbsolutePosition().Y;
+					//(*t)->originPosition.z = (*t)->node->getAbsolutePosition().Z;
 
 					//Start animation!
-					(*t)->isAnimRunning = true;
+					(*t)->getBehavior(0)->setBool("isAnimRunning", true);
 				}
-						
-				else if ((*t)->isAnimStarted && (*t)->isAnimRunning)
+				
+				//If this token's animation is currently running...
+				else if (*t)->getBehavior(0)->getBool("isAnimStarted") && (*t)->getBehavior(0)->getBool("isAnimRunning"))
 				{
 					//Translate
 					//...
 				}
 
-				//If this token's animation is over
-				else if ((*t)->isAnimStarted && (*t)->isAnimFinished)
+				//If this token's animation is over...
+				else if ((*t)->getBehavior(0)->getBool("isAnimStarted") && (*t)->getBehavior(0)->getBool("isAnimFinished"))
 				{
 					//Reset relative position
 					(*t)->node->setPosition(vector3df(0,0,0));
 
-					//Snap token to new position
-					if (board->moveToken((*t)->parentNode->posi, (*t)->parentNode->posj, (*t)->iDest, (*t)->jDest))
+					//If snap to new position has been successful...
+					if (board->moveToken((*t)->parentNode->posi, (*t)->parentNode->posj,
+										 (*t)->getBehavior(0)->getInt("iDest"), (*t)->getBehavior(0)->getInt("jDest"))
 					{
 						//Update parent
-						//(*t)->parentNode = board->board[(*t)->iDest][(*t)->jDest];
+						//(*t)->parentNode = board->board[(*t)->getBehavior(0)->getInt("iDest")][(*t)->getBehavior(0)->getInt("jDest")];
 						
 						//Terminate animations
-						(*t)->isAnimClosed = true;
+						(*t)->getBehavior(0)->setBool("isAnimClosed", true);
 					}
 				}
-			}
+			}	
 		}
 		*/
+
+	}
+
+
+	//-------------------------------------------
+	//-------------- MATCH END ------------------
+	//-------------------------------------------
+
+
+	if (phase == MATCH_END)
+	{
+		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
+		for (t = tokensTeam1->begin(); t != tokensTeam2->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
+		for (t = tokensTeam1->begin(); t != tokensTeam3->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
+		for (t = tokensTeam1->begin(); t != tokensTeam4->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
 	}
 
 
@@ -1188,7 +1178,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 				if (!selectedToken->isMouseHover && !selectedToken->parentNode->isMouseHover)
 				{
 					//Unselect token!
-					//selectedToken->isSelected = false;
+					selectedToken->getBehavior(0)->setBool("isSelected", false);
 					selectedToken = NULL;
 				}
 			}

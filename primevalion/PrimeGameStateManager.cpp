@@ -53,8 +53,8 @@ PrimeGameStateManager::PrimeGameStateManager()
 
 		player1.isActive = true;
 		player2.isActive = true;
-		player3.isActive = true;
-		player4.isActive = true;
+		player3.isActive = false;
+		player4.isActive = false;
 
 		player1.isVictorious = false;
 		player2.isVictorious = false;

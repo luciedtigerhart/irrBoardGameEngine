@@ -60,7 +60,7 @@ private:
 	// TEST STUFF, DELETE LATER
 	//--------------------------
 
-		bool test, test2;
+		bool test, test2, test3;
 		int iOld, jOld;
 		Vector destPosition;
 		Vector originPosition;
@@ -110,6 +110,15 @@ public:
 
 	//Translate token with every call and returns "true" when it reaches the destination
 	bool TokenHasTranslated(IrrToken* token, Vector origin, Vector destination, float speed);
+
+	//Place a dead token on a safe zone tile
+	void RessurrectToken(IrrToken* token, IrrBoard* board, int i, int j);
+
+	//Clear highlights off every tile and token
+	void ClearHighlights(IrrBoard* board);
+
+	//Count tokens and advance phases when conditions are met
+	void CountRemainingTokens();
 
 	//Get tiles adjacent to selected token
 	void GetAdjacentTiles();

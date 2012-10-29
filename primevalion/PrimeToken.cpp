@@ -72,8 +72,8 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 	if (myTeam.primevalium == -6969) isGhost = true;
 	else isGhost = false;
 
-	//No move direction at the start
-	moveDir = -1;
+	//Reset other attributes
+	ResetActionStates();
 };
 
 void PrimeToken::init()
@@ -122,9 +122,31 @@ void PrimeToken::update()
 	//Disable transparency
 	if (!isGhost) token->node->getMaterial(0).MaterialType = EMT_SOLID;
 
-	//Make this token invisible if dead
-	if (isDead) token->setActive(false);
-	else token->setActive(true);
+	//If token dies...
+	if (isDead)
+	{
+		//If still attached to parent...
+		if (!orphan)
+		{
+			//Store pointer to old parent
+			IrrTile* oldParent;
+			oldParent = token->parentNode;
+
+			//Unattach token from its parent
+			token->node->grab();
+			token->node->remove();
+
+			//Empty parent tile
+			oldParent->token = NULL;
+
+			//Make token orphan, and deactivate it
+			orphan = true;
+			token->setActive(false);
+		}
+	}
+
+	//If token is alive...
+	else if (!isDead) orphan = false;
 
 	//If this token can still move...
 	if (!isFinished)
@@ -234,18 +256,54 @@ void PrimeToken::ResetActionStates()
 
 void PrimeToken::setInt(char const * key, int value)
 {
+	if (key == "moveDir") moveDir = value;
+	else if (key == "iDest") iDest = value;
+	else if (key == "jDest") jDest = value;
 }
 
 int PrimeToken::getInt(char const * key)
 {
-	return 0;
+	if (key == "moveDir") return moveDir;
+	else if (key == "iDest") return iDest;
+	else if (key == "jDest") return jDest;
+
+	else return 0;
 }
 
 void PrimeToken::setBool(char const * key, bool value)
 {
+	if (key == "isGhost") isGhost = value;
+	else if (key == "isDead") isDead = value;
+	else if (key == "isFinished") isFinished = value;
+	else if (key == "isAbilityActive") isAbilityActive = value;
+
+	else if (key == "isSelected") isSelected = value;
+	else if (key == "isTargeted") isTargeted = value;
+	else if (key == "isGonnaMove") isGonnaMove = value;
+	else if (key == "isGonnaBePushed") isGonnaBePushed = value;
+
+	else if (key == "isAnimStarted") isAnimStarted = value;
+	else if (key == "isAnimRunning") isAnimRunning = value;
+	else if (key == "isAnimFinished") isAnimFinished = value;
+	else if (key == "isAnimClosed") isAnimClosed = value;
 }
 
 bool PrimeToken::getBool(char const * key)
 {
-	return false;
+	if (key == "isGhost") return isGhost;
+	else if (key == "isDead") return isDead;
+	else if (key == "isFinished") return isFinished;
+	else if (key == "isAbilityActive") return isAbilityActive;
+
+	else if (key == "isSelected") return isSelected;
+	else if (key == "isTargeted") return isTargeted;
+	else if (key == "isGonnaMove") return isGonnaMove;
+	else if (key == "isGonnaBePushed") return isGonnaBePushed;
+
+	else if (key == "isAnimStarted") return isAnimStarted;
+	else if (key == "isAnimRunning") return isAnimRunning;
+	else if (key == "isAnimFinished") return isAnimFinished;
+	else if (key == "isAnimClosed") return isAnimClosed;
+
+	else return false;
 }
