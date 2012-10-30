@@ -44,3 +44,23 @@ bool TokenDummy::getBool(char const * key)
 {
 	return false;
 }
+
+void TokenDummy::setFloat(char const * key, float value)
+{
+	
+}
+
+float TokenDummy::getFloat(char const * key)
+{
+	return 0;
+}
+
+void TokenDummy::setVector(char const * key, Vector value)
+{
+
+}
+
+Vector TokenDummy::getVector(char const * key)
+{
+	return Vector();
+}

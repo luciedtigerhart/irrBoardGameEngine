@@ -128,3 +128,23 @@ bool TileComum::getBool(char const * key)
 	}
 	else return false;
 }
+
+void TileComum::setFloat(char const * key, float value)
+{
+
+}
+
+float TileComum::getFloat(char const * key)
+{
+	return 0;
+}
+
+void TileComum::setVector(char const * key, Vector value)
+{
+
+}
+
+Vector TileComum::getVector(char const * key)
+{
+	return Vector();
+}

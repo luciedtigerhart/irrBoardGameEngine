@@ -66,3 +66,23 @@ bool TokenNoob::getBool(char const * key)
 	}
 	else return false;
 }
+
+void TokenNoob::setFloat(char const * key, float value)
+{
+
+}
+
+float TokenNoob::getFloat(char const * key)
+{
+	return 0;
+}
+
+void TokenNoob::setVector(char const * key, Vector value)
+{
+
+}
+
+Vector TokenNoob::getVector(char const * key)
+{
+	return Vector();
+}

@@ -25,10 +25,12 @@ int main()
     
 	IrrScene *scene = engine->getScene();
 
-	IrrGameObject *cam = scene->addCamera(new Vector(0.0f, 20.0f, 0.0f),new Vector(0.0f, 0.0f, 0.0f));
+	IrrGameObject *cam = scene->addCamera(new Vector(0.0f, 20.0f, 0.0f),new Vector(0.0f, 0.0f, 1.0f));
 	cam->setName("Camera principal");
 	
-	IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
+	IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
+
+	//engine->getSceneManager()->addLightSceneNode(board->node, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 	
 	//
 	// CONFIGURA TILES

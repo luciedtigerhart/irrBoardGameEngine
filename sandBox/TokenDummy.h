@@ -18,5 +18,11 @@ public:
 
 	void setBool(char const * key, bool value);
 	bool getBool(char const * key);
+
+	void setFloat(char const * key, float value);
+	float getFloat(char const * key);
+
+	void setVector(char const * key, Vector value);
+	Vector getVector(char const * key);
 };
 

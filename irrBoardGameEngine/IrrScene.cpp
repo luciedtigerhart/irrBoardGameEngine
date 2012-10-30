@@ -77,7 +77,7 @@ IrrGameObject *IrrScene::addCamera(Vector* p, Vector* lookAt)
 	go->node = smgr->addEmptySceneNode();
 	go->node->setParent(rootScene);
 
-	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)));
+	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)));	
 	go->setCamera(cam);
 	currentCamera = cam->node;
 	this->addObject(go);
@@ -104,7 +104,7 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 		go->node = smgr->addEmptySceneNode();
 		go->node->setParent(rootScene);
 
-		p->x += go->width / 2;
+		p->x -= go->width / 2;
 		p->z += go->length / 2;
 		
 		for(int i=0;i < go->tile_i; i++)
@@ -112,7 +112,9 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 			for(int j=0; j < go->tile_j; j++)
 			{
 				m = go->objs->at(go->board[i][j]->idx);
-				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,IDFlag_IsPickable,vector3df((p->x-(i*go->tile_width)),p->y,(p->z-(j*go->tile_length))));
+
+				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,IDFlag_IsPickable,vector3df((p->x+(j*go->tile_width)),p->y,(p->z-(i*go->tile_length))));
+
 				go->node->addChild(go->board[i][j]->node);
 				go->board[i][j]->node->setParent(go->node);
 
@@ -120,7 +122,7 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 				go->board[i][j]->node->setTriangleSelector(selector);
 				selector->drop();
 
-				//std::cout << i*go->tile_width << " " << j*go->tile_length << " | ";
+				//std::cout << i << " " << j << " | ";
 			}
 			//std::cout << endl;
 		}
