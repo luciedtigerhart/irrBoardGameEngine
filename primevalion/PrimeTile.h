@@ -70,8 +70,14 @@ public:
 	void setInt(char const * key, int value);
 	int getInt(char const * key);
 
+	void setFloat(char const * key, float value);
+	float getFloat(char const * key);
+
 	void setBool(char const * key, bool value);
 	bool getBool(char const * key);
+
+	void setVector(char const * key, Vector value);
+	Vector getVector(char const * key);
 };
 
 #endif

@@ -105,7 +105,7 @@ void PrimeGameStateManager::ResetPlayers()
 void PrimeGameStateManager::CreateBoard()
 {
 	//Add board to scene
-	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 0.0f, 0.0f));
+	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
 
 	//Create light
 	light = engine->getSceneManager()->addLightSceneNode(board->node, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
@@ -130,6 +130,7 @@ void PrimeGameStateManager::LoadTiles()
 
 void PrimeGameStateManager::LoadTokens()
 {
+	tokensActive = 0;
 	std::list<IrrToken*>::iterator t;
 
 	//Re-initialize players
@@ -149,6 +150,9 @@ void PrimeGameStateManager::LoadTokens()
 		for(t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player1));
+			
+			//Count active tokens
+			tokensActive++;
 		}
 	}
 
@@ -159,6 +163,9 @@ void PrimeGameStateManager::LoadTokens()
 		for(t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player2));
+
+			//Count active tokens
+			if (!player1.isActive) tokensActive++;
 		}
 	}
 
@@ -169,6 +176,10 @@ void PrimeGameStateManager::LoadTokens()
 		for(t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player3));
+
+			//Count active tokens
+			if (!player1.isActive && !player2.isActive)
+				tokensActive++;
 		}
 	}
 
@@ -179,6 +190,10 @@ void PrimeGameStateManager::LoadTokens()
 		for(t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
 		{
 			board->addTokenBehavior((*t), new PrimeToken(player4));
+
+			//Count active tokens
+			if (!player1.isActive && !player2.isActive && !player3.isActive)
+				tokensActive++;
 		}
 	}
 }
@@ -217,18 +232,17 @@ void PrimeGameStateManager::loop()
 		engine->setCurrentScene(match);
 		engine->setCurrentGUI(guimgr.env_match);
 
-		//camera = match->addCamera(new Vector(-15.0f, 12.0f, -15.0f), new Vector(0.0f, 0.0f, 1.0f));
 		//camera = match->addCamera(new Vector(0.0f, 25.0f, 0.0f), new Vector(0.0f, 0.0f, 1.0f));
-		//camera->setName("Match Camera");
+		camera = match->addCamera(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
+		camera->setName("Match Camera");
 
-		ICameraSceneNode* cam = engine->getSceneManager()->addCameraSceneNode();
-		cam->bindTargetAndRotation(true);
-		cam->setTarget(vector3df(0.0f, 0.0f, 0.0f));
-		cam->setPosition(vector3df(0.0f, 25.0f, 0.0f));
-		//cam->setRotation(vector3df(0.0f, 0.0f, -90.0f));
-
-		IrrCamera* irrCam = new IrrCamera(cam);
-		match->setCamera(irrCam);
+			//ICameraSceneNode* cam = engine->getSceneManager()->addCameraSceneNode();
+			//cam->bindTargetAndRotation(true);
+			//cam->setTarget(vector3df(0.0f, 0.0f, 0.0f));
+			//cam->setPosition(vector3df(0.0f, 25.0f, 0.0f));
+			//cam->setRotation(vector3df(0.0f, 0.0f, -90.0f));
+			//IrrCamera* irrCam = new IrrCamera(cam);
+			//match->setCamera(irrCam);
 
 		//Initialize game elements
 		CreateBoard();
@@ -237,7 +251,7 @@ void PrimeGameStateManager::loop()
 		//board->setRotation(Vector(0.0f,-90.0f,0.0f));
 
 		//Initialize play state
-		playState.Initialize(engine->getInput(), playersActive,
+		playState.Initialize(engine, playersActive, tokensActive,
 							 player1, player2, player3, player4,
 							 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
 
@@ -284,5 +298,5 @@ void PrimeGameStateManager::loop()
 
 	//----------------------------------------------
 
-	delete irrCam;
+	//delete irrCam;
 }

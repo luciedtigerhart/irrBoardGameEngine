@@ -113,12 +113,14 @@ void PrimeToken::init()
 		//Enable transparency
 		token->node->getMaterial(0).MaterialType = EMT_TRANSPARENT_ADD_COLOR;
 	}
+
+	//Startup stuff that will help during trap death animation
+	then = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
+	deathCounter = 0.0f;
 }
 
 void PrimeToken::update()
 {
-	float deltaTime = IrrEngine::getInstance()->getDeltaTime();
-
 	//Disable transparency
 	if (!isGhost) token->node->getMaterial(0).MaterialType = EMT_SOLID;
 
@@ -128,6 +130,15 @@ void PrimeToken::update()
 		//If still attached to parent...
 		if (!orphan)
 		{
+			//If killed by trap or attack...
+			if (isTargeted || isGonnaBeTrapped)
+			{
+				deathCounter = 0.0f; //Reset counter
+
+				//Reset position after falling into trap
+				if (isGonnaBeTrapped) token->node->setPosition(vector3df(0,0,0));
+			}
+
 			//Store pointer to old parent
 			IrrTile* oldParent;
 			oldParent = token->parentNode;
@@ -240,6 +251,89 @@ void PrimeToken::update()
 			token->node->getMaterial(0).SpecularColor.set(255,100,100,100);
 		}
 	}
+
+	//Death animation management
+	if (isTargeted || (isGonnaBeTrapped && !isGonnaBePushed))
+	{
+		if (isAnimStarted && isAnimRunning)
+		{
+			//Calculate frame-independent time
+			now = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
+			deltaTime = (float)(now - then) / 1000.f;
+
+			//Increment death counter
+			deathCounter += 1.0f * deltaTime;
+
+			//Attack death animation
+			if (isTargeted)
+			{
+				//Run animation
+				//...
+
+				//When animation is over...
+				//if (animation over)
+				//{
+					//isAnimRunning = false;
+					//isAnimFinished = true;
+				//}
+			}
+
+			//Periodically change material to simulate
+			//bleeding and disappearance
+
+			if ((deathCounter > 0.2f && deathCounter <= 0.3f)
+				|| (deathCounter > 0.4f && deathCounter <= 0.5f)
+				|| (deathCounter > 0.6f && deathCounter <= 0.7f))
+			{
+				//Red
+				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).EmissiveColor.set(255,255,0,0);
+				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
+			}
+
+			else if ((deathCounter > 1.5f && deathCounter <= 1.6f)
+					|| (deathCounter > 1.7f && deathCounter <= 1.8f)
+					|| (deathCounter > 1.9f && deathCounter <= 2.0f)
+					|| (deathCounter > 2.1f && deathCounter <= 2.2f)
+					|| (deathCounter > 2.3f && deathCounter <= 2.4f))
+			{
+				//Light Red
+				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).EmissiveColor.set(255,150,0,0);
+				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
+			}
+
+			else if ((deathCounter > 0.8f && deathCounter <= 0.9f)
+					|| (deathCounter > 1.0f && deathCounter <= 1.1f)
+					|| (deathCounter > 1.2f && deathCounter <= 1.3f)
+					|| (deathCounter > 1.4f && deathCounter <= 1.5f))
+			{
+				//Transparent red
+				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).EmissiveColor.set(255,255,0,0);
+				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
+
+				//Enable transparency
+				token->node->getMaterial(0).MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+			}
+
+			else if ((deathCounter > 1.6f && deathCounter <= 1.7f)
+					|| (deathCounter > 1.8f && deathCounter <= 1.9f)
+					|| (deathCounter > 2.0f && deathCounter <= 2.1f)
+					|| (deathCounter > 2.2f && deathCounter <= 2.3f))
+			{
+				//Transparent white
+				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
+				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
+
+				//Enable transparency
+				token->node->getMaterial(0).MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+			}
+		}
+	}
+
+	then = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
 }
 
 void PrimeToken::PaintVanilla()
@@ -258,6 +352,7 @@ void PrimeToken::ResetActionStates()
 	isTargeted = false;
 	isGonnaMove = false;
 	isGonnaBePushed = false;
+	isGonnaBeTrapped = false;
 	isAnimStarted = false;
 	isAnimRunning = false;
 	isAnimFinished = false;
@@ -287,6 +382,28 @@ int PrimeToken::getInt(char const * key)
 	else return 0;
 }
 
+void PrimeToken::setFloat(char const * key, float value)
+{
+	if (key == "originPosition.x") originPosition.x = value;
+	else if (key == "originPosition.y") originPosition.y = value;
+	else if (key == "originPosition.z") originPosition.z = value;
+	else if (key == "destPosition.x") destPosition.x = value;
+	else if (key == "destPosition.y") destPosition.y = value;
+	else if (key == "destPosition.z") destPosition.z = value;
+}
+
+float PrimeToken::getFloat(char const * key)
+{
+	if (key == "originPosition.x") return originPosition.x;
+	else if (key == "originPosition.y") return originPosition.y;
+	else if (key == "originPosition.z") return originPosition.z;
+	else if (key == "destPosition.x") return destPosition.x;
+	else if (key == "destPosition.y") return destPosition.y;
+	else if (key == "destPosition.z") return destPosition.z;
+
+	else return 0;
+}
+
 void PrimeToken::setBool(char const * key, bool value)
 {
 	if (key == "isGhost") isGhost = value;
@@ -298,6 +415,7 @@ void PrimeToken::setBool(char const * key, bool value)
 	else if (key == "isTargeted") isTargeted = value;
 	else if (key == "isGonnaMove") isGonnaMove = value;
 	else if (key == "isGonnaBePushed") isGonnaBePushed = value;
+	else if (key == "isGonnaBeTrapped") isGonnaBeTrapped = value;
 
 	else if (key == "isAnimStarted") isAnimStarted = value;
 	else if (key == "isAnimRunning") isAnimRunning = value;
@@ -316,6 +434,7 @@ bool PrimeToken::getBool(char const * key)
 	else if (key == "isTargeted") return isTargeted;
 	else if (key == "isGonnaMove") return isGonnaMove;
 	else if (key == "isGonnaBePushed") return isGonnaBePushed;
+	else if (key == "isGonnaBeTrapped") return isGonnaBeTrapped;
 
 	else if (key == "isAnimStarted") return isAnimStarted;
 	else if (key == "isAnimRunning") return isAnimRunning;
@@ -323,4 +442,18 @@ bool PrimeToken::getBool(char const * key)
 	else if (key == "isAnimClosed") return isAnimClosed;
 
 	else return false;
+}
+
+void PrimeToken::setVector(char const * key, Vector value)
+{
+	if (key == "originPosition") originPosition = value;
+	else if (key == "destPosition") destPosition = value;
+}
+
+Vector PrimeToken::getVector(char const * key)
+{
+	if (key == "originPosition") return originPosition;
+	else if (key == "destPosition") return destPosition;
+
+	else return 0;
 }

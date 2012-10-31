@@ -43,9 +43,20 @@ using namespace IrrBoardGameEngine;
 class PrimePlayState
 {
 private:
+	//Time attributes for GUI messages and manual animations
+	float deltaTime;
+	int now;
+	int then;
+	float wait;
+	float sleep;
+	bool awake;
+	
 	//Animation speed
 	float animSpeed;
 	
+	//Animations to be executed
+	bool animSimpleMove, animPushMove, animTrapDeath, animAttackDeath;
+
 	//Destination tile position (translation animation)
 	int iDest, jDest;
 
@@ -53,6 +64,13 @@ private:
 	int iWest, jWest, iEast, jEast, iNorth, jNorth, iSouth, jSouth;
 	int iNorthwest, jNorthwest, iNortheast, jNortheast;
 	int iSouthwest, jSouthwest, iSoutheast, jSoutheast;
+
+	//Ressurrection phase skipping (very special case, unlikely to happen!)
+	int deadTokensNotRevived, safeZoneTilesMax;
+	int safeZone1TilesOccupied, safeZone2TilesOccupied;
+	int safeZone3TilesOccupied, safeZone4TilesOccupied;
+	bool safeZone1Full, safeZone2Full, safeZone3Full, safeZone4Full;
+	bool skipRessurrection;
 
 	//Input from engine
 	IrrInput * input;
@@ -89,16 +107,23 @@ public:
 	int turn; //Current match turn
 	int turnPlayer; //Which player the current turn belongs to
 	int playersActive; //Amount of active players in current match
+	int tokensActive; //Amount of tokens in each team
 	int phase; //Which phase the current turn is at (ressurrection, token selection, etc.)
 
 	//Token selected to move
 	IrrToken* selectedToken;
 
 	//Initialize this match's play state
-	void Initialize(IrrInput* engineInput, int players,
+	void Initialize(IrrEngine* engine, int players, int tokens,
 					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4);
+
+	//Update "Wait" mini-engine
+	void Wait();
+
+	//Activate wait and return "true" when done
+	bool Wait(float seconds);
 
 	//Find out which player this turn belongs to
 	void SetTurnPlayer(int turn);
@@ -110,7 +135,11 @@ public:
 	bool PlayIsValid(int play, int dir, IrrBoard* board, int i, int j);
 
 	//Translate token with every call and returns "true" when it reaches the destination
-	bool TokenHasTranslated(IrrToken* token, Vector origin, Vector destination, float speed);
+	bool TokenHasTranslated(IrrToken* token, float speed);
+
+	//Snap pushed tokens to their new tile, in order contrary to the push direction,
+	//and returns "true" when all of them have been successfully reallocated
+	bool PushedTokensSnapped(IrrBoard* board);
 
 	//Execute a token's animations
 	void AnimateToken(IrrToken* token, IrrBoard* board, float speed);
@@ -118,11 +147,17 @@ public:
 	//Place a dead token on a safe zone tile
 	void RessurrectToken(IrrToken* token, IrrBoard* board, int i, int j);
 
+	//Check for ressurrection phase skipping condition
+	void VerifySafeZoneOccupation(IrrBoard* board);
+
 	//Clear highlights off every tile and token
 	void ClearHighlights(IrrBoard* board);
 
 	//Count tokens and advance phases when conditions are met
-	void SwapPhase();
+	void SwapPhase(IrrBoard* board);
+
+	//Advance phases according to token or tile which was clicked
+	void SwapPhaseOnClick(IrrBoard* board, int i, int j);
 
 	//Get tiles adjacent to selected token
 	void GetAdjacentTiles();

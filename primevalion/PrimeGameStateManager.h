@@ -53,6 +53,7 @@ private:
 
 	int turn; //Match turn counter
 	int playersActive; //How many players are playing
+	int tokensActive; //How many tokens each player controls
 
 	//Auxiliary methods
 	void ResetPlayers();

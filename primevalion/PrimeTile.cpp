@@ -186,8 +186,6 @@ void PrimeTile::init()
 
 void PrimeTile::update()
 {
-	float deltaTime = IrrEngine::getInstance()->getDeltaTime();
-
 	//Ghost token is normally invisible
 	if (ghost != NULL) ghost->setActive(false);
 
@@ -244,6 +242,15 @@ int PrimeTile::getInt(char const * key)
 	return 0;
 }
 
+void PrimeTile::setFloat(char const * key, float value)
+{
+}
+
+float PrimeTile::getFloat(char const * key)
+{
+	return 0;
+}
+
 void PrimeTile::setBool(char const * key, bool value)
 {
 }
@@ -251,4 +258,13 @@ void PrimeTile::setBool(char const * key, bool value)
 bool PrimeTile::getBool(char const * key)
 {
 	return false;
+}
+
+void PrimeTile::setVector(char const * key, Vector value)
+{
+}
+
+Vector PrimeTile::getVector(char const * key)
+{
+	return 0;
 }

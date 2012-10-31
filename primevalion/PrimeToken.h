@@ -34,6 +34,7 @@ private:
 	bool isTargeted; //Whether this token has been targeted for an attack
 	bool isGonnaMove; //Whether this token will move to an empty tile
 	bool isGonnaBePushed; //Whether this token will be pushed with the next move
+	bool isGonnaBeTrapped; //Whether this token will fall onto a trap when pushed
 
 	bool isAnimStarted; //This token has started an animation this turn
 	bool isAnimRunning; //One of this token's animations is running
@@ -49,8 +50,12 @@ private:
 
 	// Variables used during translation animation
 
+	float deathCounter; //Used during trap death animation
+	float deltaTime; //Also used in trap death animation
+	int now, then; //...Same thing.
+
 	int iDest, jDest; //'i' and 'j' positions of destination tile
-	Vector destPosition; //World coordinates of destination tile
+	Vector destPosition; //World coordinates of destination
 	Vector originPosition; //World coordinates of this token before moving
 
 	//3D model and texture path storages
@@ -78,8 +83,14 @@ public:
 	void setInt(char const * key, int value);
 	int getInt(char const * key);
 
+	void setFloat(char const * key, float value);
+	float getFloat(char const * key);
+
 	void setBool(char const * key, bool value);
 	bool getBool(char const * key);
+
+	void setVector(char const * key, Vector value);
+	Vector getVector(char const * key);
 };
 
 #endif
