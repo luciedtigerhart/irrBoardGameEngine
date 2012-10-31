@@ -68,10 +68,9 @@ bool IrrInput::OnEvent(const SEvent& event)
         }
     }
 
-	if (event.EventType == EET_GUI_EVENT) 
+	if (event.EventType == EET_GUI_EVENT)
 	{
 		s32 id = event.GUIEvent.Caller->getID();
-		gui->resetPressed();
 		switch(event.GUIEvent.EventType)
 		{
 			case EGET_ELEMENT_HOVERED:
@@ -79,10 +78,6 @@ bool IrrInput::OnEvent(const SEvent& event)
 				break;
 			case EGET_ELEMENT_LEFT:
 				gui->setMouseOver(id, false);
-				break;
-
-			case EGET_BUTTON_CLICKED:
-				gui->setButtonPressed(id, true);
 				break;
 		}
 	}

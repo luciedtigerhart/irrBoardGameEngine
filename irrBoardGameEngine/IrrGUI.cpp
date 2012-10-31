@@ -128,25 +128,6 @@ void IrrGUI::setMouseOver(s32 id, bool value)
 		(*it).second.mouseOver = value;
 }
 
-void IrrGUI::resetPressed()
-{
-	std::map<s32, EState>::iterator it = elementState.begin();
-    while(it != elementState.end())
-	{		
-		(*it).second.clicked = false;
-		it++;
-	}
-}
-
-void IrrGUI::setButtonPressed(s32 id, bool value)
-{
-	std::map<s32, EState>::iterator it = elementState.find(id);
-    if(it != elementState.end())
-	{
-		(*it).second.clicked = value;
-	}
-}
-
 EState IrrGUI::getElementState(s32 id)
 {
 	std::map<s32, EState>::iterator it = elementState.find(id);
@@ -157,6 +138,28 @@ EState IrrGUI::getElementState(s32 id)
 	else
 	{
 		return EState();
+	}
+}
+
+void IrrGUI::setPressedButton(s32 id, bool value)
+{
+	std::map<s32, IGUIButton*>::iterator it = buttons.find(id);
+    if(it != buttons.end())
+	{
+		(*it).second->setPressed(value);
+	}
+}
+
+bool IrrGUI::isPressedButton(s32 id)
+{
+	std::map<s32, IGUIButton*>::iterator it = buttons.find(id);
+    if(it != buttons.end())
+	{
+		return (*it).second->isPressed();
+	}
+	else
+	{
+		return false;
 	}
 }
 

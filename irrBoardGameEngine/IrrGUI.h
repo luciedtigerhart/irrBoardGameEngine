@@ -15,6 +15,9 @@ using namespace irrklang;
 using namespace gui;
 
 namespace IrrBoardGameEngine {
+	//
+	// TESTE para pegar quando o mouse estiver sobre o elemento
+	//
 	struct EState
 	{
 		bool mouseOver;
@@ -29,13 +32,11 @@ namespace IrrBoardGameEngine {
 		IrrGUI(IrrlichtDevice *);
 		~IrrGUI(void);
 
-		void resetPressed();
-		void setButtonPressed(s32 id, bool value);
+		void setPressedButton(s32 id, bool value);
+		bool isPressedButton(s32 id);
+
 		void setMouseOver(s32 id, bool value);
-
-
-		EState getElementState(s32 id);	
-		//bool getMouseOver(s32 id);
+		EState getElementState(s32 id);
 
 		//TEXTOS
 		void addLabel(s32 id, char *text, int minX, int minY, int maxX, int maxY);

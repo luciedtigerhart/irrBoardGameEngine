@@ -129,6 +129,7 @@ bool IrrBoard::addToken(int i, int j, IrrToken * token)
 			token->node->setParent(board[i][j]->node);
 		}
 		board[i][j]->token = token;
+		token->parentNode = board[i][j];
 		return true;
 	}
 	else
