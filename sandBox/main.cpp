@@ -21,7 +21,7 @@ enum
 
 int main()
 {
-	IrrEngine *engine = IrrEngine::getInstance(video::EDT_SOFTWARE, dimension2d<u32>(800, 600), 16, false, false, false,L"Jogo Dummy");
+	IrrEngine *engine = IrrEngine::getInstance(video::EDT_SOFTWARE, dimension2d<u32>(1024, 768), 16, false, false, false,L"Jogo Dummy");
     
 	IrrScene *scene = engine->getScene();
 

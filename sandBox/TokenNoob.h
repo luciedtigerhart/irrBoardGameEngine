@@ -12,6 +12,10 @@ private:
 public:
 	void init();
 	void update();
+<<<<<<< HEAD
+=======
+
+>>>>>>> Ajuste da GUI com a resolução do projeto
 	void reset();
 	
 	void setInt(char const * key, int value);

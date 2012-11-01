@@ -63,6 +63,9 @@
     <ClInclude Include="IrrTileBehavior.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IrrParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IrrEngine.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IrrGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IrrParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

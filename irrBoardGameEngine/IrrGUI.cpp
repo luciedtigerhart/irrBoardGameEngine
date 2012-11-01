@@ -9,9 +9,13 @@ IrrGUI::IrrGUI(IrrlichtDevice * device)
 	driver = device->getVideoDriver();
 	guienv = device->getGUIEnvironment();
 
+
+	irr::core::dimension2d<u32> d = driver->getScreenSize();
 	//rootGUI = new IGUIElement(EGUIET_WINDOW,guienv,0,-1,rect<s32>(0, 0, 50, 50)); //guienv->addGUIElement(irr::gui::EGUI_ELEMENT_TYPE.EGUIET_ELEMENT);
-	//rootGUI = guienv->addModalScreen(guienv->getRootGUIElement());
-	rootGUI = guienv->addStaticText(L"",rect<s32>(0, 0, 800, 600));
+	//rootGUI = guienv->addModalScreen(guienv->getRootGUIElement
+	rootGUI = guienv->addStaticText(L"",rect<s32>(0, 0, d.Width, d.Height));
+
+	//std::cout << d.Width << " " << d.Height;
 }
 
 IrrGUI::~IrrGUI(void)
