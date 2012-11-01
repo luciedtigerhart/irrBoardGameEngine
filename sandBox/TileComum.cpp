@@ -18,14 +18,9 @@ void TileComum::init(void)
 	//tile->node->setMaterialTexture(0, driver->getTexture("obj/texturas/grama.jpg"));
 }
 
-<<<<<<< HEAD
 void TileComum::reset(void)
 {
-=======
-void TileComum::reset()
-{
 
->>>>>>> Ajuste da GUI com a resolução do projeto
 }
 
 void TileComum::update(void)

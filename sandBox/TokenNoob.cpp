@@ -36,11 +36,6 @@ void TokenNoob::update(void)
 	}
 }
 
-void TokenNoob::reset()
-{
-
-}
-
 void TokenNoob::setInt(char const * key, int value)
 {
 	//

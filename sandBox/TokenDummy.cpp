@@ -29,11 +29,6 @@ void TokenDummy::update(void)
 	}
 }
 
-void TokenDummy::reset()
-{
-
-}
-
 void TokenDummy::setInt(char const * key, int value)
 {
 	//

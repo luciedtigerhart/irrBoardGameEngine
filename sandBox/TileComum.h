@@ -18,8 +18,6 @@ public:
 	void update();
 	void reset();
 
-	void reset();
-
 	void setInt(char const * key, int value);
 	int getInt(char const * key);
 
