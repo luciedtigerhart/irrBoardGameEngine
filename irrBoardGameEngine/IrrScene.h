@@ -16,6 +16,7 @@
 
 #include "IrrLoader.h"
 #include "IrrMesh.h"
+#include "IrrParticleSystem.h"
 #include "IrrCamera.h"
 
 using namespace irr;
@@ -71,6 +72,8 @@ namespace IrrBoardGameEngine {
 		IrrBoard *addBoard(std::string src,Vector*);
 		IrrGameObject *addCamera(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
+
+		IrrParticleSystem * addParticleSystem();
 
 		//construtora
 		IrrScene(IrrlichtDevice *,ISoundEngine *,IrrInput *);

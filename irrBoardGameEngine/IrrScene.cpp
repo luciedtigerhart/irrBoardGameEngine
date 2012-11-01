@@ -47,6 +47,11 @@ IrrScene::~IrrScene(void)
 	delete objects;
 }
 
+IrrParticleSystem * IrrScene::addParticleSystem()
+{
+	return new IrrParticleSystem(smgr);
+}
+
 void IrrScene::addObject(IrrGameObject *o){
 	newObjects.push(o);
 }
