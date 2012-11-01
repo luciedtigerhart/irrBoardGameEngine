@@ -16,6 +16,24 @@ PrimeGUIManager::~PrimeGUIManager()
 	delete env_match;
 };
 
+void PrimeGUIManager::EnableEndTurnButton(bool enable)
+{
+	//Swap enabled button for its unclickable
+	//disabled image, or vice-versa.
+
+	env_match->setButton(BUTTON_END_TURN, enable);
+	env_match->setImage(IMAGE_END_TURN_DISABLED, !enable);
+}
+
+void PrimeGUIManager::EnableEndMatchButton(bool enable)
+{
+	//Swap enabled button for its unclickable
+	//disabled image, or vice-versa.
+	
+	env_match->setButton(BUTTON_END_MATCH, enable);
+	env_match->setImage(IMAGE_END_MATCH_DISABLED, !enable);
+}
+
 void PrimeGUIManager::SetTurnCount(bool show, int turn)
 {
 	std::string turnCount;
@@ -123,15 +141,15 @@ void PrimeGUIManager::SetGenericMessage(bool sortMessage, bool turnMessage, int 
 	}
 }
 
-void PrimeGUIManager::ShowVictoryMessage(PrimePlayState playState)
+void PrimeGUIManager::ShowVictoryMessage(PrimePlayState* playState)
 {
 	int playersVictorious = 0;
 
 	//Count how many players won the match (Draw)
-	if (playState.player1.isVictorious) playersVictorious++;
-	if (playState.player2.isVictorious) playersVictorious++;
-	if (playState.player3.isVictorious) playersVictorious++;
-	if (playState.player4.isVictorious) playersVictorious++;
+	if (playState->player1.isVictorious) playersVictorious++;
+	if (playState->player2.isVictorious) playersVictorious++;
+	if (playState->player3.isVictorious) playersVictorious++;
+	if (playState->player4.isVictorious) playersVictorious++;
 
 	//Check victory condition and display messages accordingly
 
@@ -140,10 +158,10 @@ void PrimeGUIManager::ShowVictoryMessage(PrimePlayState playState)
 	{
 		env_match->setImage(MESSAGE_VICTORY_SINGLE, true);
 
-		if (playState.player1.isVictorious) env_match->setImage(MESSAGE_VICTORY_P1_SINGLE, true);
-		else if (playState.player2.isVictorious) env_match->setImage(MESSAGE_VICTORY_P2_SINGLE, true);
-		else if (playState.player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_SINGLE, true);
-		else if (playState.player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_SINGLE, true);
+		if (playState->player1.isVictorious) env_match->setImage(MESSAGE_VICTORY_P1_SINGLE, true);
+		else if (playState->player2.isVictorious) env_match->setImage(MESSAGE_VICTORY_P2_SINGLE, true);
+		else if (playState->player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_SINGLE, true);
+		else if (playState->player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_SINGLE, true);
 	}
 
 	//Two winners...
@@ -151,22 +169,22 @@ void PrimeGUIManager::ShowVictoryMessage(PrimePlayState playState)
 	{
 		env_match->setImage(MESSAGE_VICTORY_DOUBLE, true);
 
-		if (playState.player1.isVictorious)
+		if (playState->player1.isVictorious)
 		{
 			env_match->setImage(MESSAGE_VICTORY_P1_DOUBLE_TOP, true);
-			if (playState.player2.isVictorious) env_match->setImage(MESSAGE_VICTORY_P2_DOUBLE_BOTTOM, true);
-			else if (playState.player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM, true);
-			else if (playState.player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM, true);
+			if (playState->player2.isVictorious) env_match->setImage(MESSAGE_VICTORY_P2_DOUBLE_BOTTOM, true);
+			else if (playState->player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM, true);
+			else if (playState->player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM, true);
 		}
 
-		else if (playState.player2.isVictorious)
+		else if (playState->player2.isVictorious)
 		{
 			env_match->setImage(MESSAGE_VICTORY_P2_DOUBLE_TOP, true);
-			if (playState.player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM, true);
-			else if (playState.player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM, true);
+			if (playState->player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM, true);
+			else if (playState->player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM, true);
 		}
 
-		else if (playState.player3.isVictorious)
+		else if (playState->player3.isVictorious)
 		{
 			env_match->setImage(MESSAGE_VICTORY_P3_DOUBLE_TOP, true);
 			env_match->setImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM, true);
@@ -178,25 +196,25 @@ void PrimeGUIManager::ShowVictoryMessage(PrimePlayState playState)
 	{
 		env_match->setImage(MESSAGE_VICTORY_TRIPLE, true);
 
-		if (playState.player1.isVictorious)
+		if (playState->player1.isVictorious)
 		{
 			env_match->setImage(MESSAGE_VICTORY_P1_TRIPLE_TOP, true);
 			
-			if (playState.player2.isVictorious)
+			if (playState->player2.isVictorious)
 			{
 				env_match->setImage(MESSAGE_VICTORY_P2_TRIPLE_MIDDLE, true);
-				if (playState.player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_TRIPLE_BOTTOM, true);
-				else if (playState.player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_TRIPLE_BOTTOM, true);
+				if (playState->player3.isVictorious) env_match->setImage(MESSAGE_VICTORY_P3_TRIPLE_BOTTOM, true);
+				else if (playState->player4.isVictorious) env_match->setImage(MESSAGE_VICTORY_P4_TRIPLE_BOTTOM, true);
 			}
 
-			else if (playState.player3.isVictorious)
+			else if (playState->player3.isVictorious)
 			{
 				env_match->setImage(MESSAGE_VICTORY_P3_TRIPLE_MIDDLE, true);
 				env_match->setImage(MESSAGE_VICTORY_P4_TRIPLE_BOTTOM, true);
 			}
 		}
 
-		else if (playState.player2.isVictorious)
+		else if (playState->player2.isVictorious)
 		{
 			env_match->setImage(MESSAGE_VICTORY_P2_TRIPLE_TOP, true);
 			env_match->setImage(MESSAGE_VICTORY_P3_TRIPLE_MIDDLE, true);
@@ -248,13 +266,13 @@ void PrimeGUIManager::HideVictoryMessage()
 	env_match->setImage(MESSAGE_VICTORY_P4_QUADRUPLE_BOTTOM, false);
 }
 
-void PrimeGUIManager::ShowTurnMarkers(PrimePlayState playState)
+void PrimeGUIManager::ShowTurnMarkers(PrimePlayState* playState)
 {
 	//Get turn order
-	int p1 = playState.player1.assignedTurn;
-	int p2 = playState.player2.assignedTurn;
-	int p3 = playState.player3.assignedTurn;
-	int p4 = playState.player4.assignedTurn;
+	int p1 = playState->player1.assignedTurn;
+	int p2 = playState->player2.assignedTurn;
+	int p3 = playState->player3.assignedTurn;
+	int p4 = playState->player4.assignedTurn;
 
 	//Show turn markers according to player turn order
 	switch (p1)
@@ -515,51 +533,610 @@ void PrimeGUIManager::HideResourceIndicators()
 	env_match->setText(LABEL_RESOURCES_3RD_ODD, "0");
 }
 
+void PrimeGUIManager::ShowPlayerIndicators(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+{
+	//Show or hide player ON/OFF indicators
+
+	if (p1->isActive) { env_title->setImage(INDICATOR_PLAYER_1_ON, true); env_title->setImage(INDICATOR_PLAYER_1_OFF, false); }
+	else if (!p1->isActive) { env_title->setImage(INDICATOR_PLAYER_1_ON, false); env_title->setImage(INDICATOR_PLAYER_1_OFF, true); }
+
+	if (p2->isActive) { env_title->setImage(INDICATOR_PLAYER_2_ON, true); env_title->setImage(INDICATOR_PLAYER_2_OFF, false); }
+	else if (!p2->isActive) { env_title->setImage(INDICATOR_PLAYER_2_ON, false); env_title->setImage(INDICATOR_PLAYER_2_OFF, true); }
+
+	if (p3->isActive) { env_title->setImage(INDICATOR_PLAYER_3_ON, true); env_title->setImage(INDICATOR_PLAYER_3_OFF, false); }
+	else if (!p3->isActive) { env_title->setImage(INDICATOR_PLAYER_3_ON, false); env_title->setImage(INDICATOR_PLAYER_3_OFF, true); }
+
+	if (p4->isActive) { env_title->setImage(INDICATOR_PLAYER_4_ON, true); env_title->setImage(INDICATOR_PLAYER_4_OFF, false); }
+	else if (!p4->isActive) { env_title->setImage(INDICATOR_PLAYER_4_ON, false); env_title->setImage(INDICATOR_PLAYER_4_OFF, true); }
+
+}
+
+void PrimeGUIManager::ShowPlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+{
+	//Hide and show activation/deactivation buttons, based on active teams
+
+	if (p1->isActive) { env_title->setButton(BUTTON_PLAYER_1_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, true); }
+	else if (!p1->isActive) { env_title->setButton(BUTTON_PLAYER_1_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, false); }
+
+	if (p2->isActive) { env_title->setButton(BUTTON_PLAYER_2_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, true); }
+	else if (!p2->isActive) { env_title->setButton(BUTTON_PLAYER_2_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, false); }
+
+	if (p3->isActive) { env_title->setButton(BUTTON_PLAYER_3_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, true); }
+	else if (!p3->isActive) { env_title->setButton(BUTTON_PLAYER_3_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, false); }
+
+	if (p4->isActive) { env_title->setButton(BUTTON_PLAYER_4_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, true); }
+	else if (!p4->isActive) { env_title->setButton(BUTTON_PLAYER_4_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, false); }
+}
+
+void PrimeGUIManager::ShowRaces(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+{
+	//By default, hide all selected, unselected and
+	//unselectable race images and buttons
+	
+	HideSelectedRaces();
+	HideUnselectedRaces();
+	HideUnselectableRaces();
+
+	//For ACTIVE players, show all of their unselected race buttons,
+	//then show their selected race image and hide their respective
+	//unselected race button.
+
+	//Player 1...
+	if (p1->isActive)
+	{
+		ShowUnselectedRaces(p1->idx);
+
+		if (p1->assignedRace == KOBOLD) { env_title->setImage(IMAGE_PLAYER_1_KOBOLD, true);
+										  env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P1, false); }
+		else if (p1->assignedRace == GNOLL) { env_title->setImage(IMAGE_PLAYER_1_GNOLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_GNOLL_P1, false); }
+		else if (p1->assignedRace == TROLL) { env_title->setImage(IMAGE_PLAYER_1_TROLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_TROLL_P1, false); }
+		else if (p1->assignedRace == HOG) { env_title->setImage(IMAGE_PLAYER_1_HOG, true);
+										    env_title->setButton(BUTTON_UNSELECTED_HOG_P1, false); }
+	}
+
+	//Player 2...
+	if (p2->isActive)
+	{
+		ShowUnselectedRaces(p2->idx);
+
+		if (p2->assignedRace == KOBOLD) { env_title->setImage(IMAGE_PLAYER_2_KOBOLD, true);
+										  env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P2, false); }
+		else if (p2->assignedRace == GNOLL) { env_title->setImage(IMAGE_PLAYER_2_GNOLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_GNOLL_P2, false); }
+		else if (p2->assignedRace == TROLL) { env_title->setImage(IMAGE_PLAYER_2_TROLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_TROLL_P2, false); }
+		else if (p2->assignedRace == HOG) { env_title->setImage(IMAGE_PLAYER_2_HOG, true);
+										    env_title->setButton(BUTTON_UNSELECTED_HOG_P2, false); }
+	}
+
+	//Player 3...
+	if (p3->isActive)
+	{
+		ShowUnselectedRaces(p3->idx);
+
+		if (p3->assignedRace == KOBOLD) { env_title->setImage(IMAGE_PLAYER_3_KOBOLD, true);
+										  env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P3, false); }
+		else if (p3->assignedRace == GNOLL) { env_title->setImage(IMAGE_PLAYER_3_GNOLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_GNOLL_P3, false); }
+		else if (p3->assignedRace == TROLL) { env_title->setImage(IMAGE_PLAYER_3_TROLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_TROLL_P3, false); }
+		else if (p3->assignedRace == HOG) { env_title->setImage(IMAGE_PLAYER_3_HOG, true);
+										    env_title->setButton(BUTTON_UNSELECTED_HOG_P3, false); }
+	}
+
+	//Player 4...
+	if (p4->isActive)
+	{
+		ShowUnselectedRaces(p4->idx);
+
+		if (p4->assignedRace == KOBOLD) { env_title->setImage(IMAGE_PLAYER_4_KOBOLD, true);
+										  env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P4, false); }
+		else if (p4->assignedRace == GNOLL) { env_title->setImage(IMAGE_PLAYER_4_GNOLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_GNOLL_P4, false); }
+		else if (p4->assignedRace == TROLL) { env_title->setImage(IMAGE_PLAYER_4_TROLL, true);
+											  env_title->setButton(BUTTON_UNSELECTED_TROLL_P4, false); }
+		else if (p4->assignedRace == HOG) { env_title->setImage(IMAGE_PLAYER_4_HOG, true);
+										    env_title->setButton(BUTTON_UNSELECTED_HOG_P4, false); }
+	}
+
+	//For INACTIVE players, replace unselected race buttons
+	//with unselectable race images.
+
+	if (!p1->isActive) ShowUnselectableRaces(p1->idx);
+	if (!p2->isActive) ShowUnselectableRaces(p2->idx);
+	if (!p3->isActive) ShowUnselectableRaces(p3->idx);
+	if (!p4->isActive) ShowUnselectableRaces(p4->idx);
+}
+
+void PrimeGUIManager::ShowUnselectedRaces(int player)
+{
+	//Show a player's unselected race buttons
+
+	if (player == 1)
+	{
+		env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P1, true);
+		env_title->setButton(BUTTON_UNSELECTED_GNOLL_P1, true);
+		env_title->setButton(BUTTON_UNSELECTED_TROLL_P1, true);
+		env_title->setButton(BUTTON_UNSELECTED_HOG_P1, true);
+	}
+
+	else if (player == 2)
+	{
+		env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P2, true);
+		env_title->setButton(BUTTON_UNSELECTED_GNOLL_P2, true);
+		env_title->setButton(BUTTON_UNSELECTED_TROLL_P2, true);
+		env_title->setButton(BUTTON_UNSELECTED_HOG_P2, true);
+	}
+
+	else if (player == 3)
+	{
+		env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P3, true);
+		env_title->setButton(BUTTON_UNSELECTED_GNOLL_P3, true);
+		env_title->setButton(BUTTON_UNSELECTED_TROLL_P3, true);
+		env_title->setButton(BUTTON_UNSELECTED_HOG_P3, true);
+	}
+
+	else if (player == 4)
+	{
+		env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P4, true);
+		env_title->setButton(BUTTON_UNSELECTED_GNOLL_P4, true);
+		env_title->setButton(BUTTON_UNSELECTED_TROLL_P4, true);
+		env_title->setButton(BUTTON_UNSELECTED_HOG_P4, true);
+	}
+}
+
+void PrimeGUIManager::ShowUnselectableRaces(int player)
+{
+	//Show a player's unselectable race images
+
+	if (player == 1)
+	{
+		env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P1, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P1, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P1, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_HOG_P1, true);
+	}
+
+	else if (player == 2)
+	{
+		env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P2, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P2, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P2, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_HOG_P2, true);
+	}
+
+	else if (player == 3)
+	{
+		env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P3, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P3, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P3, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_HOG_P3, true);
+	}
+
+	else if (player == 4)
+	{
+		env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P4, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P4, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P4, true);
+		env_title->setImage(IMAGE_UNSELECTABLE_HOG_P4, true);
+	}
+}
+
+void PrimeGUIManager::HideUnselectableRaces()
+{
+	//Hide all players' unselectable images
+
+	env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P1, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P2, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P3, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_KOBOLD_P4, false);
+
+	env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P1, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P2, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P3, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_GNOLL_P4, false);
+
+	env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P1, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P2, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P3, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_TROLL_P4, false);
+
+	env_title->setImage(IMAGE_UNSELECTABLE_HOG_P1, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_HOG_P2, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_HOG_P3, false);
+	env_title->setImage(IMAGE_UNSELECTABLE_HOG_P4, false);
+}
+
+void PrimeGUIManager::HideUnselectedRaces()
+{
+	//Hide all players' unselected race buttons
+
+	env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P1, false);
+	env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P2, false);
+	env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P3, false);
+	env_title->setButton(BUTTON_UNSELECTED_KOBOLD_P4, false);
+
+	env_title->setButton(BUTTON_UNSELECTED_GNOLL_P1, false);
+	env_title->setButton(BUTTON_UNSELECTED_GNOLL_P2, false);
+	env_title->setButton(BUTTON_UNSELECTED_GNOLL_P3, false);
+	env_title->setButton(BUTTON_UNSELECTED_GNOLL_P4, false);
+
+	env_title->setButton(BUTTON_UNSELECTED_TROLL_P1, false);
+	env_title->setButton(BUTTON_UNSELECTED_TROLL_P2, false);
+	env_title->setButton(BUTTON_UNSELECTED_TROLL_P3, false);
+	env_title->setButton(BUTTON_UNSELECTED_TROLL_P4, false);
+
+	env_title->setButton(BUTTON_UNSELECTED_HOG_P1, false);
+	env_title->setButton(BUTTON_UNSELECTED_HOG_P2, false);
+	env_title->setButton(BUTTON_UNSELECTED_HOG_P3, false);
+	env_title->setButton(BUTTON_UNSELECTED_HOG_P4, false);
+}
+
+void PrimeGUIManager::HideSelectedRaces()
+{
+	//Hide all players' selected race images
+
+	env_title->setImage(IMAGE_PLAYER_1_KOBOLD, false);
+	env_title->setImage(IMAGE_PLAYER_2_KOBOLD, false);
+	env_title->setImage(IMAGE_PLAYER_3_KOBOLD, false);
+	env_title->setImage(IMAGE_PLAYER_4_KOBOLD, false);
+
+	env_title->setImage(IMAGE_PLAYER_1_GNOLL, false);
+	env_title->setImage(IMAGE_PLAYER_2_GNOLL, false);
+	env_title->setImage(IMAGE_PLAYER_3_GNOLL, false);
+	env_title->setImage(IMAGE_PLAYER_4_GNOLL, false);
+
+	env_title->setImage(IMAGE_PLAYER_1_TROLL, false);
+	env_title->setImage(IMAGE_PLAYER_2_TROLL, false);
+	env_title->setImage(IMAGE_PLAYER_3_TROLL, false);
+	env_title->setImage(IMAGE_PLAYER_4_TROLL, false);
+
+	env_title->setImage(IMAGE_PLAYER_1_HOG, false);
+	env_title->setImage(IMAGE_PLAYER_2_HOG, false);
+	env_title->setImage(IMAGE_PLAYER_3_HOG, false);
+	env_title->setImage(IMAGE_PLAYER_4_HOG, false);
+}
+
+void PrimeGUIManager::SetTutorialPage(int page)
+{
+	//Manually specify a page to draw
+	tutorialPage = page;
+}
+
+void PrimeGUIManager::FlipTutorialPages()
+{
+	//Draw elements according to tutorial page
+	switch (tutorialPage)
+	{
+		case 1: //Page ONE
+		{
+			env_tutorial->setButton(BUTTON_PREVIOUS, false);
+			env_tutorial->setButton(BUTTON_NEXT, true);
+
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, true);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
+
+			break;
+		}
+
+		case 2: //Page TWO
+		{
+			env_tutorial->setButton(BUTTON_PREVIOUS, true);
+			env_tutorial->setButton(BUTTON_NEXT, true);
+
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, true);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
+
+			break;
+		}
+
+		case 3: //Page THREE
+		{
+			env_tutorial->setButton(BUTTON_PREVIOUS, true);
+			env_tutorial->setButton(BUTTON_NEXT, true);
+
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, true);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
+
+			break;
+		}
+
+		case 4: //Page FOUR
+		{
+			env_tutorial->setButton(BUTTON_PREVIOUS, true);
+			env_tutorial->setButton(BUTTON_NEXT, true);
+
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, true);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
+
+			break;
+		}
+
+		case 5: //Page FIVE
+		{
+			env_tutorial->setButton(BUTTON_PREVIOUS, true);
+			env_tutorial->setButton(BUTTON_NEXT, false);
+
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
+			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, true);
+
+			break;
+		}
+	}
+}
+
+void PrimeGUIManager::VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+{
+	//Activate teams when activation buttons are pressed
+
+	if (env_title->isPressedButton(BUTTON_PLAYER_1_ACTIVATE)) { p1->isActive = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_2_ACTIVATE)) { p2->isActive = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_3_ACTIVATE)) { p3->isActive = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_4_ACTIVATE)) { p4->isActive = true; }
+
+	//Deactivate teams when deactivation buttons are pressed
+
+	if (env_title->isPressedButton(BUTTON_PLAYER_1_DEACTIVATE)) { p1->isActive = false; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_2_DEACTIVATE)) { p2->isActive = false; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_3_DEACTIVATE)) { p3->isActive = false; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_4_DEACTIVATE)) { p4->isActive = false; }
+}
+
+void PrimeGUIManager::VerifyTitleRaceButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+{
+	//Set player races when buttons are pressed
+	
+	if (p1->isActive)
+	{
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P1)) { p1->assignedRace = KOBOLD; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P1)) { p1->assignedRace = GNOLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P1)) { p1->assignedRace = TROLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P1)) { p1->assignedRace = HOG; }
+	}
+
+	if (p2->isActive)
+	{
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P2)) { p2->assignedRace = KOBOLD; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P2)) { p2->assignedRace = GNOLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P2)) { p2->assignedRace = TROLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P2)) { p2->assignedRace = HOG; }
+	}
+
+	if (p3->isActive)
+	{
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P3)) { p3->assignedRace = KOBOLD; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P3)) { p3->assignedRace = GNOLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P3)) { p3->assignedRace = TROLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P3)) { p3->assignedRace = HOG; }
+	}
+
+	if (p4->isActive)
+	{
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P4)) { p4->assignedRace = KOBOLD; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P4)) { p4->assignedRace = GNOLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P4)) { p4->assignedRace = TROLL; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P4)) { p4->assignedRace = HOG; }
+	}
+}
+
+bool PrimeGUIManager::VerifyTitleStartMatchButton(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+{
+	bool buttonPressed = false;
+	int playersOn = 0;
+
+	//Count active players
+	if (p1->isActive) playersOn++;
+	if (p2->isActive) playersOn++;
+	if (p3->isActive) playersOn++;
+	if (p4->isActive) playersOn++;
+
+	//Enable "Start Match" button if at least 2 players are active
+	if (playersOn >= 2)
+	{
+		env_title->setButton(BUTTON_START_MATCH, true);
+		env_title->setImage(IMAGE_START_MATCH_DISABLED, false);
+
+		//Check if this button has been pressed
+		if (env_title->isPressedButton(BUTTON_START_MATCH)) buttonPressed = true;
+	}
+
+	//Otherwise, disable it and show a grayed out image instead
+	else if (playersOn < 2)
+	{
+		env_title->setButton(BUTTON_START_MATCH, false);
+		env_title->setImage(IMAGE_START_MATCH_DISABLED, true);
+	}
+
+	//Return button state
+	return buttonPressed;
+}
+
+bool PrimeGUIManager::VerifyTitleTutorialButton()
+{
+	//Check if this button has been pressed
+	if (env_title->isPressedButton(BUTTON_TUTORIAL)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyTitleCreditsButton()
+{
+	//Check if this button has been pressed
+	if (env_title->isPressedButton(BUTTON_CREDITS)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyTutorialNextButtonPressed()
+{
+	//Check if this button has been pressed
+	if (env_tutorial->isPressedButton(BUTTON_NEXT)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyTutorialNextButtonReleased()
+{
+	//Check if this button is NOT pressed
+	if (env_tutorial->isPressedButton(BUTTON_NEXT)) return false;
+	else return true;
+}
+
+bool PrimeGUIManager::VerifyTutorialPreviousButtonPressed()
+{
+	//Check if this button has been pressed
+	if (env_tutorial->isPressedButton(BUTTON_PREVIOUS)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyTutorialPreviousButtonReleased()
+{
+	//Check if this button is NOT pressed
+	if (env_tutorial->isPressedButton(BUTTON_PREVIOUS)) return false;
+	else return true;
+}
+
+bool PrimeGUIManager::VerifyTutorialBackToTitleButton()
+{
+	//Check if this button has been pressed
+	if (env_tutorial->isPressedButton(BUTTON_BACK_TO_TITLE_TUTORIAL)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyCreditsBackToTitleButton()
+{
+	//Check if this button has been pressed
+	if (env_credits->isPressedButton(BUTTON_BACK_TO_TITLE_CREDITS)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyMatchEndTurnButton()
+{
+	//Check if this button has been pressed
+	if (env_match->isPressedButton(BUTTON_END_TURN)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyMatchEndMatchButton()
+{
+	//Check if this button has been pressed
+	if (env_match->isPressedButton(BUTTON_END_MATCH)) return true;
+	else return false;
+}
+
 void PrimeGUIManager::BuildGUITitleScreen()
 {
 	//Backgrounds
 	env_title->addImage(BACKGROUND_TITLE_SCREEN,"gui/outgame/background_title.jpg",0,0);
 
-	//Player indicators
-	env_title->addImage(INDICATOR_PLAYER_1,"gui/outgame/team_player1.jpg",230,160);
-	env_title->addImage(INDICATOR_PLAYER_2,"gui/outgame/team_player2.jpg",650,160);
-	env_title->addImage(INDICATOR_PLAYER_3,"gui/outgame/team_player3.jpg",230,380);
-	env_title->addImage(INDICATOR_PLAYER_4,"gui/outgame/team_player4.jpg",650,380);
+	//Active player indicators
+	env_title->addImage(INDICATOR_PLAYER_1_ON,"gui/outgame/team_player1.jpg",230,160);
+	env_title->addImage(INDICATOR_PLAYER_2_ON,"gui/outgame/team_player2.jpg",650,160);
+	env_title->addImage(INDICATOR_PLAYER_3_ON,"gui/outgame/team_player3.jpg",230,380);
+	env_title->addImage(INDICATOR_PLAYER_4_ON,"gui/outgame/team_player4.jpg",650,380);
+
+	//Inactive player indicators
+	env_title->addImage(INDICATOR_PLAYER_1_OFF,"gui/outgame/team_player1_off.jpg",230,160);
+	env_title->addImage(INDICATOR_PLAYER_2_OFF,"gui/outgame/team_player2_off.jpg",650,160);
+	env_title->addImage(INDICATOR_PLAYER_3_OFF,"gui/outgame/team_player3_off.jpg",230,380);
+	env_title->addImage(INDICATOR_PLAYER_4_OFF,"gui/outgame/team_player4_off.jpg",650,380);
 
 	//Player activation buttons
-	env_title->addButton(BUTTON_PLAYER_1_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",310,160,29,26);
-	env_title->addButton(BUTTON_PLAYER_2_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",730,160,29,26);
-	env_title->addButton(BUTTON_PLAYER_3_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",310,380,29,26);
-	env_title->addButton(BUTTON_PLAYER_4_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_off.jpg",730,380,29,26);
+	env_title->addButton(BUTTON_PLAYER_1_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",310,160,29,26);
+	env_title->addButton(BUTTON_PLAYER_2_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",730,160,29,26);
+	env_title->addButton(BUTTON_PLAYER_3_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",310,380,29,26);
+	env_title->addButton(BUTTON_PLAYER_4_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",730,380,29,26);
 
-	//Race buttons PLAYER 1
-	env_title->addButton(BUTTON_PLAYER_1_KOBOLD,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",230,190,29,26);
-	env_title->addButton(BUTTON_PLAYER_1_GNOLL,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",260,190,29,26);
-	env_title->addButton(BUTTON_PLAYER_1_TROLL,"gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",290,190,29,26);
-	env_title->addButton(BUTTON_PLAYER_1_HOG,"gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",320,190,29,26);
+	//Player deactivation buttons
+	env_title->addButton(BUTTON_PLAYER_1_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",310,160,29,26);
+	env_title->addButton(BUTTON_PLAYER_2_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",730,160,29,26);
+	env_title->addButton(BUTTON_PLAYER_3_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",310,380,29,26);
+	env_title->addButton(BUTTON_PLAYER_4_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",730,380,29,26);
 
-	//Race buttons PLAYER 2
-	env_title->addButton(BUTTON_PLAYER_2_KOBOLD,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",650,190,29,26);
-	env_title->addButton(BUTTON_PLAYER_2_GNOLL,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",680,190,29,26);
-	env_title->addButton(BUTTON_PLAYER_2_TROLL,"gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",710,190,29,26);
-	env_title->addButton(BUTTON_PLAYER_2_HOG,"gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",740,190,29,26);
+	//Selected race images (for when a race is selected and cannot be clicked anymore)
+	env_title->addImage(IMAGE_PLAYER_1_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",230,190);
+	env_title->addImage(IMAGE_PLAYER_1_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",260,190);
+	env_title->addImage(IMAGE_PLAYER_1_TROLL,"gui/outgame/race_troll_toggled.jpg",290,190);
+	env_title->addImage(IMAGE_PLAYER_1_HOG,"gui/outgame/race_hog_toggled.jpg",320,190);
 
-	//Race buttons PLAYER 3
-	env_title->addButton(BUTTON_PLAYER_3_KOBOLD,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",230,410,29,26);
-	env_title->addButton(BUTTON_PLAYER_3_GNOLL,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",260,410,29,26);
-	env_title->addButton(BUTTON_PLAYER_3_TROLL,"gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",290,410,29,26);
-	env_title->addButton(BUTTON_PLAYER_3_HOG,"gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",320,410,29,26);
+	env_title->addImage(IMAGE_PLAYER_2_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",650,190);
+	env_title->addImage(IMAGE_PLAYER_2_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",680,190);
+	env_title->addImage(IMAGE_PLAYER_2_TROLL,"gui/outgame/race_troll_toggled.jpg",710,190);
+	env_title->addImage(IMAGE_PLAYER_2_HOG,"gui/outgame/race_hog_toggled.jpg",740,190);
 
-	//Race buttons PLAYER 4
-	env_title->addButton(BUTTON_PLAYER_4_KOBOLD,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",650,410,29,26);
-	env_title->addButton(BUTTON_PLAYER_4_GNOLL,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",680,410,29,26);
-	env_title->addButton(BUTTON_PLAYER_4_TROLL,"gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",710,410,29,26);
-	env_title->addButton(BUTTON_PLAYER_4_HOG,"gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",740,410,29,26);
+	env_title->addImage(IMAGE_PLAYER_3_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",230,410);
+	env_title->addImage(IMAGE_PLAYER_3_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",260,410);
+	env_title->addImage(IMAGE_PLAYER_3_TROLL,"gui/outgame/race_troll_toggled.jpg",290,410);
+	env_title->addImage(IMAGE_PLAYER_3_HOG,"gui/outgame/race_hog_toggled.jpg",320,410);
+
+	env_title->addImage(IMAGE_PLAYER_4_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",650,410);
+	env_title->addImage(IMAGE_PLAYER_4_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",680,410);
+	env_title->addImage(IMAGE_PLAYER_4_TROLL,"gui/outgame/race_troll_toggled.jpg",710,410);
+	env_title->addImage(IMAGE_PLAYER_4_HOG,"gui/outgame/race_hog_toggled.jpg",740,410);
+
+	//Unselectable race images (for when a team is deactivated and no race can be selected)
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P1,"gui/outgame/race_kobold_off.jpg",230,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P1,"gui/outgame/race_gnoll_off.jpg",260,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P1,"gui/outgame/race_troll_off.jpg",290,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P1,"gui/outgame/race_hog_off.jpg",320,190);
+
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P2,"gui/outgame/race_kobold_off.jpg",650,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P2,"gui/outgame/race_gnoll_off.jpg",680,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P2,"gui/outgame/race_troll_off.jpg",710,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P2,"gui/outgame/race_hog_off.jpg",740,190);
+
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P3,"gui/outgame/race_kobold_off.jpg",230,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P3,"gui/outgame/race_gnoll_off.jpg",260,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P3,"gui/outgame/race_troll_off.jpg",290,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P3,"gui/outgame/race_hog_off.jpg",320,410);
+
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P4,"gui/outgame/race_kobold_off.jpg",650,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P4,"gui/outgame/race_gnoll_off.jpg",680,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P4,"gui/outgame/race_troll_off.jpg",710,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P4,"gui/outgame/race_hog_off.jpg",740,410);
+
+	//Unselected race buttons (which allow the selection of a race)
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P1,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold.jpg",230,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P1,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll.jpg",260,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P1,"gui/outgame/race_troll.jpg","gui/outgame/race_troll.jpg",290,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P1,"gui/outgame/race_hog.jpg","gui/outgame/race_hog.jpg",320,190,29,26);
+
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P2,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold.jpg",650,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P2,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll.jpg",680,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P2,"gui/outgame/race_troll.jpg","gui/outgame/race_troll.jpg",710,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P2,"gui/outgame/race_hog.jpg","gui/outgame/race_hog.jpg",740,190,29,26);
+
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P3,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold.jpg",230,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P3,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll.jpg",260,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P3,"gui/outgame/race_troll.jpg","gui/outgame/race_troll.jpg",290,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P3,"gui/outgame/race_hog.jpg","gui/outgame/race_hog.jpg",320,410,29,26);
+
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P4,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",650,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P4,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",680,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P4,"gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",710,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P4,"gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",740,410,29,26);
 
 	//Screen transition buttons
 	env_title->addButton(BUTTON_CREDITS,"gui/outgame/button_credits.jpg","gui/outgame/button_credits.jpg",280,650,124,35);
 	env_title->addButton(BUTTON_START_MATCH,"gui/outgame/button_start_match.jpg","gui/outgame/button_start_match.jpg",450,650,124,35);
 	env_title->addButton(BUTTON_TUTORIAL,"gui/outgame/button_tutorial.jpg","gui/outgame/button_tutorial.jpg",620,650,124,35);
+
+	//Disabled "Start Match" button
+	env_title->addImage(IMAGE_START_MATCH_DISABLED,"gui/outgame/button_start_match_disabled.jpg",450,650);
 }
 
 void PrimeGUIManager::BuildGUICreditsScreen()
@@ -594,6 +1171,10 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 	env_match->addButton(BUTTON_END_TURN,"gui/ingame/button_end_turn.jpg","gui/ingame/button_end_turn.jpg",750,10,124,35);
 	env_match->addButton(BUTTON_END_MATCH,"gui/ingame/button_end_match.jpg","gui/ingame/button_end_match.jpg",880,10,124,35);
 
+	//Disabled buttons
+	env_match->addImage(IMAGE_END_TURN_DISABLED,"gui/ingame/button_end_turn_disabled.jpg",750,10);
+	env_match->addImage(IMAGE_END_MATCH_DISABLED,"gui/ingame/button_end_match_disabled.jpg",880,10);
+
 	//Turn indicator
 	env_match->addImage(INDICATOR_TURN_WIDGET,"gui/ingame/turn_widget.png",10,10);
 	env_match->addImage(INDICATOR_TURN_PLAYER_1,"gui/ingame/team_player1.jpg",120,15);
@@ -604,6 +1185,13 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 
 	SetTurnCount(false, 0); //Reset and hide turn count
 	SetPlayerIndicator(false, 0); //Hide player indicators
+
+	//Hide turn indicator widget and match buttons
+	EnableEndTurnButton(false);
+	EnableEndMatchButton(false);
+	env_match->setImage(IMAGE_END_TURN_DISABLED, false);
+	env_match->setImage(IMAGE_END_MATCH_DISABLED, false);
+	env_match->setImage(INDICATOR_TURN_WIDGET, false);
 
 	//Turn markers
 	env_match->addImage(INDICATOR_TURN_MARKER_P1_1ST,"gui/ingame/turn_marker_player1.jpg",20,40);
@@ -715,109 +1303,179 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 	HideVictoryMessage(); //Hide all victory messages
 }
 
-void PrimeGUIManager::ManageGUITitleScreen()
+int PrimeGUIManager::ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
 {
+	int screenTransition = 0;
+
+	//Verify team and race selection button presses
+
+	VerifyTitlePlayerOnOffButtons(p1, p2, p3, p4);
+	VerifyTitleRaceButtons(p1, p2, p3, p4);
+
+	//Update team and race selection indicators and buttons
+
+	ShowPlayerIndicators(p1, p2, p3, p4);
+	ShowPlayerOnOffButtons(p1, p2, p3, p4);
+	ShowRaces(p1, p2, p3, p4);
+
+	//Return screen transition, if any transition button was pressed
+	
+	if (VerifyTitleStartMatchButton(p1, p2, p3, p4)) screenTransition = MATCH_TRANSITION;
+	if (VerifyTitleTutorialButton()) screenTransition = TUTORIAL_TRANSITION;
+	if (VerifyTitleCreditsButton()) screenTransition = CREDITS_TRANSITION;
+	
+	return screenTransition;
 }
 
-void PrimeGUIManager::ManageGUICreditsScreen()
+bool PrimeGUIManager::ManageGUITutorialScreen()
 {
+	//Browse pages when "Next" or "Previous" buttons are pressed
+	if (VerifyTutorialNextButtonPressed()) { if (nextReleased) tutorialPage += 1; }
+	if (VerifyTutorialPreviousButtonPressed()) { if (previousReleased) tutorialPage -= 1; }
+
+	//Get page browsing buttons released state (not pressed)
+	nextReleased = VerifyTutorialNextButtonReleased();
+	previousReleased = VerifyTutorialPreviousButtonReleased();
+
+	//Avoid pages going beyond tutorial limits
+	if (tutorialPage < 1) tutorialPage = 1;
+	if (tutorialPage > 5) tutorialPage = 5;
+
+	//Draw tutorial
+	FlipTutorialPages();
+
+	//Return to title screen when "Back to Title" button is pressed
+	if (VerifyTutorialBackToTitleButton()) return true;
+	else return false;
 }
 
-void PrimeGUIManager::ManageGUITutorialScreen()
+bool PrimeGUIManager::ManageGUICreditsScreen()
 {
-	//Draw elements according to page
-	switch (tutorialPage)
+	//Return to title screen when "Back to Title" button is pressed
+	if (VerifyCreditsBackToTitleButton()) return true;
+	else return false;
+}
+
+void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
+{
+	//Victory message is hidden by default
+	HideVictoryMessage();
+
+	//If match has just begun...
+	if (playState->phase == MATCH_START)
 	{
-		case 1: //Page ONE
+		//Show "Sorting turn order" generic message
+		if (playState->matchStart) SetGenericMessage(SORT_MESSAGE, false, 0);
+	}
+
+	//If match is running...
+	else
+	{
+		//If there are no victors so far...
+		if (playState->phase != MATCH_END)
 		{
-			env_tutorial->setButton(BUTTON_PREVIOUS, false);
-			env_tutorial->setButton(BUTTON_NEXT, true);
+			//Do stuff at the end of one turn and the start of the next
+			if (playState->phase == TURN_START || playState->phase == TURN_END)
+			{
+				//Disable match buttons
+				EnableEndTurnButton(false);
+				EnableEndMatchButton(false);
 
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, true);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
+				if (playState->turnBeginPhase == NO_MESSAGE_AT_ONE
+					|| playState->turnBeginPhase == NO_MESSAGE_AT_THREE)
+				{
+					//Enable turn indicator widget in case it was invisible
+					env_match->setImage(INDICATOR_TURN_WIDGET, true);
 
-			break;
+					//Show no generic messages
+					SetGenericMessage(false, false, 0);
+				}
+
+				else if (playState->turnBeginPhase == TURN_MESSAGE_AT_TWO)
+				{
+					//Show "Player X Turn" generic message
+					SetGenericMessage(false, TURN_MESSAGE, playState->turnPlayer);
+				}
+			}
+
+			//If this is not a transition phase...
+			else
+			{
+				//If no signals have been sent to play state...
+				if (!playState->signalEndMatch && !playState->signalEndTurn)
+				{
+					//Enable "End Match" button
+					EnableEndMatchButton(true);
+
+					//"End Turn" button is enabled only after ressurrection phase
+					if (playState->phase != RESSURRECTION_PLACEMENT)
+					{
+						EnableEndTurnButton(true);
+					}
+				}
+
+				//Otherwise, if a signal has been sent...
+				else
+				{
+					//Disable both match buttons to avoid two
+					//signals being sent in one turn.
+
+					EnableEndTurnButton(false);
+					EnableEndMatchButton(false);
+				}
+			}
+
+			//Verify match button presses and signal play state accordingly
+			if (VerifyMatchEndTurnButton()) playState->signalEndTurn = true;
+			if (VerifyMatchEndMatchButton()) playState->signalEndMatch = true;
+
+			//Update match GUI!
+			//---------------------------------------
+
+				//Update turn count
+				SetTurnCount(true, turn);
+	
+				//Show player indicator according to turn
+				SetPlayerIndicator(true, playState->turnPlayer);
+
+				//Show turn markers in their correct order
+				ShowTurnMarkers(playState);
+
+				//Show resource indicators according to active players and play order
+				ShowResourceIndicators(playState->playersActive, 
+									   playState->player1, playState->player2, playState->player3, playState->player4);
+
+			//---------------------------------------
 		}
 
-		case 2: //Page TWO
+		//If someone has finally won the game...
+		else if (playState->phase == MATCH_END)
 		{
-			env_tutorial->setButton(BUTTON_PREVIOUS, true);
-			env_tutorial->setButton(BUTTON_NEXT, true);
+			//First step: hide the HUD!
+			if (!playState->matchOver)
+			{
+				//Disable match buttons
+				EnableEndTurnButton(false);
+				EnableEndMatchButton(false);
 
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, true);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
+				//Hide everything again
+				env_match->setImage(IMAGE_END_TURN_DISABLED, false);
+				env_match->setImage(IMAGE_END_MATCH_DISABLED, false);
+				env_match->setImage(INDICATOR_TURN_WIDGET, false);
 
-			break;
-		}
+				HideResourceIndicators();
+				HideTurnMarkers();
 
-		case 3: //Page THREE
-		{
-			env_tutorial->setButton(BUTTON_PREVIOUS, true);
-			env_tutorial->setButton(BUTTON_NEXT, true);
+				SetTurnCount(false, 0); //Hide turn label
+				SetPlayerIndicator(false, 0); //Hide player indicator
+				SetGenericMessage(false, false, 0); //Hide generic messages
+			}
 
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, true);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
-
-			break;
-		}
-
-		case 4: //Page FOUR
-		{
-			env_tutorial->setButton(BUTTON_PREVIOUS, true);
-			env_tutorial->setButton(BUTTON_NEXT, true);
-
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, true);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, false);
-
-			break;
-		}
-
-		case 5: //Page FIVE
-		{
-			env_tutorial->setButton(BUTTON_PREVIOUS, true);
-			env_tutorial->setButton(BUTTON_NEXT, false);
-
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4, false);
-			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5, true);
-
-			break;
+			//Second step: show victory message!
+			else if (playState->matchOver && !playState->signalEndMatch)
+			{
+				ShowVictoryMessage(playState);
+			}
 		}
 	}
-}
-
-void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState playState)
-{
-	//Update turn count
-	SetTurnCount(true, turn);
-	
-	//Show player indicator according to turn
-	SetPlayerIndicator(true, playState.turnPlayer);
-
-	//Show turn markers in their correct order
-	ShowTurnMarkers(playState);
-
-	//Show resource indicators according to active players and play order
-	ShowResourceIndicators(playState.playersActive, playState.player1, playState.player2, playState.player3, playState.player4);
-
-	//Show a generic match message
-	//SetGenericMessage(SORT_MESSAGE, false, 0);
-	//SetGenericMessage(false, TURN_MESSAGE, playState.turnPlayer);
-
-	//Show victory message
-	//ShowVictoryMessage(playState);
 }

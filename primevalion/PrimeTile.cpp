@@ -1,5 +1,8 @@
 #include "PrimeTile.h"
 
+#define GRASS_1 0
+#define GRASS_2 1
+
 PrimeTile::PrimeTile(PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4)
 {
 	//No ghost token by default
@@ -148,8 +151,37 @@ void PrimeTile::turnOnHighlight(int type)
 	}
 }
 
+void PrimeTile::paintSafeZone()
+{
+	//Change tile texture according to team, if its a safe zone tile
+
+	if (tile->inf == SAFE_ZONE_TEAM_1)
+	{
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t1.jpg"));
+		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t1_b.jpg"));
+	}
+	else if (tile->inf == SAFE_ZONE_TEAM_2)
+	{
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t2.jpg"));
+		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t2_b.jpg"));
+	}
+	else if (tile->inf == SAFE_ZONE_TEAM_3)
+	{
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t3.jpg"));
+		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t3_b.jpg"));
+	}
+	else if (tile->inf == SAFE_ZONE_TEAM_4)
+	{
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t4.jpg"));
+		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t4_b.jpg"));
+	}
+}
+
 void PrimeTile::init()
 {
+	//Re-texture and paint this tile if its a safe zone
+	paintSafeZone();
+
 	//Highlight plane has tranparent texture
 	matPlaneNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/tileHighlight.jpg"));
 	matPlaneNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR;

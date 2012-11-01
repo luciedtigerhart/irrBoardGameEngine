@@ -17,13 +17,7 @@
 	#define SOUTHWEST 7
 	#define SOUTHEAST 8
 
-//Valid move definitions
-//----------------------------
-
-	#define TOKEN -2
-	#define FREE -3
-
-//Phase definitions
+//General phase definitions
 //----------------------------
 
 	#define MATCH_START 1
@@ -35,6 +29,29 @@
 		#define TURN_END 6
 
 	#define MATCH_END 7
+
+//Turn begin phase definitions
+//----------------------------
+
+	#define NO_MESSAGE_AT_ONE 1
+	#define TURN_MESSAGE_AT_TWO 2
+	#define NO_MESSAGE_AT_THREE 3
+
+//Other helpful definitions
+//----------------------------
+
+	#define TOKEN -2
+	#define FREE -3
+
+	#define CLICKED true
+	#define ONLY_HIGHLIGHT false
+
+	#define DEAD_TOKENS true
+	#define FINISHED_TOKENS true
+	#define ANIMATED_TOKENS true
+
+	#define I_TILE true
+	#define J_TILE false
 
 //----------------------------
 
@@ -100,7 +117,16 @@ public:
 	std::list<IrrToken*>* tokensTeam4;
 	std::list<IrrToken*>::iterator t;
 
+	bool signalBackToTitle; //If "true", match has finished completely and game should return to title screen
+	bool signalEndTurn; //If "true", GUI has reported the "End Turn" button has been pressed
+	bool signalEndMatch; //If "true", GUI has reported the "End Match" button has been pressed
+	bool matchStart; //If "true", then "Sorting turn order" message is shown
+	bool matchOver; //If "true", then victory messages are shown
 	bool turnOver; //If "true", then current turn is over
+
+	int turnBeginPhase; //1: A new turn has just begun, no messages are shown
+						//2: "Player X Turn" message is being shown
+						//3: Ressurrection phase about to start, no messages are shown
 
 	int turn; //Current match turn
 	int turnPlayer; //Which player the current turn belongs to
@@ -169,6 +195,9 @@ public:
 
 	//Find tokens with certain attribute in the current turn
 	int GetRemainingTokens(bool dead, bool finished, bool animated);
+
+	//Set all tokens as finished, ending turn prematurely
+	void FinishTokens();
 
 	//Clear token action states at the end of a turn phase
 	void ResetTokenActionStates();

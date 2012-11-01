@@ -1,13 +1,5 @@
 #include "PrimePlayState.h"
 
-#define CLICKED true
-#define DEAD_TOKENS true
-#define FINISHED_TOKENS true
-#define ANIMATED_TOKENS true
-#define I_TILE true
-#define J_TILE false
-#define ONLY_HIGHLIGHT false
-
 PrimePlayState::PrimePlayState() {};
 PrimePlayState::~PrimePlayState() {};
 
@@ -75,8 +67,13 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 	player4.assignedTurn = p4.assignedTurn;
 	player4.primevalium = p4.primevalium;
 
+	//Initialize signals
+	signalEndTurn = signalEndMatch = signalBackToTitle = false;
+
 	//Initialize match phase
 	phase = MATCH_START;
+	matchStart = matchOver = false;
+	turnBeginPhase = 0;
 
 	//Initialize goal
 	resourcesGoal = goal;
@@ -874,19 +871,19 @@ void PrimePlayState::VerifyResourceExtraction(IrrBoard* board)
 				else if (board->board[i][j]->token->player == player2.idx)
 				{
 					player2.primevalium += 100;
-					if (player2.assignedRace == KOBOLD) player1.primevalium += 60;
+					if (player2.assignedRace == KOBOLD) player2.primevalium += 60;
 				}
 
 				else if (board->board[i][j]->token->player == player3.idx)
 				{
 					player3.primevalium += 100;
-					if (player3.assignedRace == KOBOLD) player1.primevalium += 60;
+					if (player3.assignedRace == KOBOLD) player3.primevalium += 60;
 				}
 
 				else if (board->board[i][j]->token->player == player4.idx)
 				{
 					player4.primevalium += 100;
-					if (player4.assignedRace == KOBOLD) player1.primevalium += 60;
+					if (player4.assignedRace == KOBOLD) player4.primevalium += 60;
 				}
 
 				resourcesExtracted = true;
@@ -927,21 +924,42 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 {
 	int remainingTokens = 0, finishedTokens = 0;
 
+	//Begin the battle
 	if (phase == MATCH_START)
 	{
-		phase = TURN_START;
+		//Start match for real only after 2 seconds,
+		//during which "Sorting turn order" message is shown.
+
+		if (!matchStart && Wait(0.5f)) matchStart = true;
+
+		else if (matchStart && Wait(2.0f))
+		{
+			phase = TURN_START;
+			matchStart = false;
+		}
 	}
 
 	//Show new turn messages and begin turn
 	else if (phase == TURN_START)
 	{
 		//Turn has begun!
-		turnOver = false;
+		if (turnBeginPhase == 0)
+		{
+			turnOver = false;
+			turnBeginPhase = NO_MESSAGE_AT_ONE;
+		}
 
-		if (Wait(0.5f))
+		//...Actually, it only really begins after 3 seconds,
+		//during which the "Player X Turn" message is shown.
+		
+		else if (turnBeginPhase == NO_MESSAGE_AT_ONE && Wait(0.5f)) turnBeginPhase = TURN_MESSAGE_AT_TWO;
+		else if (turnBeginPhase == TURN_MESSAGE_AT_TWO && Wait(2.5f)) turnBeginPhase = NO_MESSAGE_AT_THREE;
+		else if (turnBeginPhase == NO_MESSAGE_AT_THREE && Wait(0.5f))
 		{
 			//First step of a new turn is to ressurrect dead tokens
 			phase = RESSURRECTION_PLACEMENT;
+
+			turnBeginPhase = 0;
 		}
 	}
 
@@ -974,6 +992,14 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 	//Find tokens which have moved and decide if turn is over
 	else if (phase == PLAY_SELECTION)
 	{
+		//If player has pressed the "End Turn" button...
+		if (signalEndTurn || signalEndMatch)
+		{
+			//Set all of current player's tokens as finished
+			FinishTokens();
+		}
+
+		//Count finished tokens
 		finishedTokens = GetRemainingTokens(false, FINISHED_TOKENS, false);
 
 		//If all tokens are finished, go to next phase
@@ -982,6 +1008,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			//Wait for half a second
 			if (Wait(0.4f))
 			{
+				//Reset signal
+				signalEndTurn = false;
+
 				//Don't forget to reset action states
 				ResetTokenActionStates();
 
@@ -1028,50 +1057,67 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 	//Extract resources and check for a victory condition
 	else if (phase == TURN_END)
 	{
-		if (!resourcesVerified && Wait(0.8f))
+		//If "End Match" button has been pressed...
+		if (signalEndMatch)
 		{
-			//Perform resource extraction
-			VerifyResourceExtraction(board);
-
-			resourcesVerified = true;
+			//Advance straight to match end
+			phase = MATCH_END;
 		}
 
-		else if (resourcesVerified && (!resourcesExtracted || (resourcesExtracted && Wait(2.0f))))
+		//Otherwise...
+		else
 		{
-			//Reset extraction state for all tokens
-
-			for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
-			for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
-			for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
-			for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
-
-			//Check for victory condition
-			if (player1.isVictorious || player2.isVictorious || player3.isVictorious || player4.isVictorious)
+			if (!resourcesVerified && Wait(0.8f))
 			{
-				//End match if there's one or more victors
-				phase = MATCH_END;
+				//Perform resource extraction
+				VerifyResourceExtraction(board);
+
+				resourcesVerified = true;
 			}
 
-			//If no victors so far, go on with game...
-			else
+			else if (resourcesVerified && (!resourcesExtracted || (resourcesExtracted && Wait(2.0f))))
 			{
-				//Current turn is over!
-				turnOver = true;
+				//Reset extraction state for all tokens
 
-				//Advance to next turn
-				phase = TURN_START;
+				for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
+				for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
+				for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
+				for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) (*t)->getBehavior(0)->setBool("isExtracting", false);
+
+				//Check for victory condition
+				if (player1.isVictorious || player2.isVictorious || player3.isVictorious || player4.isVictorious)
+				{
+					//End match if there's one or more victors
+					phase = MATCH_END;
+				}
+
+				//If no victors so far, go on with game...
+				else
+				{
+					//Current turn is over!
+					turnOver = true;
+
+					//Advance to next turn
+					phase = TURN_START;
+				}
+
+				//Reset auxiliary variables
+				resourcesVerified = false;
+				resourcesExtracted = false;
 			}
-
-			//Reset auxiliary variables
-			resourcesVerified = false;
-			resourcesExtracted = false;
 		}
 	}
 
 	//Show victory messages and finish up match
 	else if (phase == MATCH_END)
 	{
-		if (Wait(1.0f))
+		//Wait until victory song is over,
+		//meanwhile displaying victory message.
+
+		if (!matchOver && Wait(1.0f)) matchOver = true;
+
+		//Once victory song has finished...
+		else if (matchOver && !signalBackToTitle && ((signalEndMatch && Wait(0.1f)) || (!signalEndMatch && Wait(7.0f))))
 		{
 			//Drop tokens which were dead by the end of match (still floating in limbo)
 
@@ -1080,12 +1126,13 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
 			for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) { if (!(*t)->isActive()) (*t)->node->drop(); }
 
-			//TEMPORARY: EXIT GAME
-			//----------------------
-				
-				IrrEngine::getInstance()->getDevice()->closeDevice();
-			
-			//----------------------
+			//Reset signal
+			signalEndMatch = false;
+
+			//Inform game state manager the match is over
+			signalBackToTitle = true;
+
+			//IrrEngine::getInstance()->getDevice()->closeDevice(); //Exit application
 		}
 	}
 }
@@ -1337,6 +1384,31 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 
 	//Return amout of dead or finished tokens
 	return remainingTokens;
+}
+
+void PrimePlayState::FinishTokens()
+{
+	//Find current player and end its turn by manually finishing all token moves
+
+	if (turnPlayer == player1.idx)
+	{
+		for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", true);
+	}
+
+	else if (turnPlayer == player2.idx)
+	{
+		for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", true);
+	}
+
+	else if (turnPlayer == player3.idx)
+	{
+		for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", true);
+	}
+
+	else if (turnPlayer == player4.idx)
+	{
+		for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) (*t)->getBehavior(0)->setBool("isFinished", true);
+	}
 }
 
 void PrimePlayState::ResetTokenActionStates()

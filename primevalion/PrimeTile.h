@@ -65,6 +65,7 @@ public:
 	void turnOnHighlight(int type); //Activates a type of highlight, or deactivate it with param "NONE"
 	void addGhostBehavior(IrrTokenBehavior * behavior); //Activate ghost token
 	void loadGhost(); //Load ghost token if this is a safe zone tile
+	void paintSafeZone(); //Re-texture safe zone tiles according to team
 
 	//Behavior get/set override
 

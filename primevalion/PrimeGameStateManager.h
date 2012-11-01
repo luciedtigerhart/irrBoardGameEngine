@@ -47,23 +47,30 @@ private:
 	std::list<IrrToken*>* tokensTeam3;
 	std::list<IrrToken*>* tokensTeam4;
 
-	//Other data
+	//Game flow data
 
 	int turn; //Match turn counter
 	int gameGoal; //Amount of resources needed to win
 	int playersActive; //How many players are playing
 	int tokensActive; //How many tokens each player controls
 
-	//Auxiliary methods
-	void ResetPlayers();
-	void CreateBoard();
-	void LoadTiles();
-	void LoadTokens();
-	void SortTurnOrder();
+	//Method to set up a match
+	void SetupMatch();
+
+		//Sub-methods which compose "SetupMatch()"
+		void ResetPlayers();
+		void CreateBoard();
+		void LoadTiles();
+		void LoadTokens();
+		void SortTurnOrder();
 
 	//Scene management methods
 	void ManageTitleScreen();
+	void ManageTutorialScreen();
+	void ManageCreditsScreen();
 	void ManageMatch();
+
+	void Update(); //Update game states
 
 public:
 	PrimeGameStateManager();

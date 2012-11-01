@@ -11,8 +11,8 @@ ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
 
 PrimeGameStateManager::PrimeGameStateManager()
 {
-	//Set game goal, in resources
-	gameGoal = 2000;
+	//Specify game goal, in resources
+	gameGoal = 400;
 
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );
@@ -33,10 +33,13 @@ PrimeGameStateManager::PrimeGameStateManager()
 	guimgr.BuildGUIMatchScreen();
 
 	//Initialize scenes
-	//title = engine->createScene();
-	//credits = engine->createScene();
-	//tutorial = engine->createScene();
+	title = engine->createScene();
+	credits = engine->createScene();
+	tutorial = engine->createScene();
 	match = engine->createScene();
+	
+	//Initialize board
+	board = NULL;
 
 	//Initialize players
 	
@@ -47,36 +50,15 @@ PrimeGameStateManager::PrimeGameStateManager()
 	player3.idx = 3;
 	player4.idx = 4;
 
+	player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
+	player1.isActive = player2.isActive = player3.isActive = player4.isActive = true;
+	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = KOBOLD;
+
 	ResetPlayers();
 
-	//----- FOR TESTING PURPOSES, DELETE LATER -----
-
-		player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
-		player1.assignedTurn = player2.assignedTurn = player3.assignedTurn = player4.assignedTurn = -1;
-
-		player1.isActive = true;
-		player2.isActive = true;
-		player3.isActive = false;
-		player4.isActive = false;
-
-		player1.isVictorious = false;
-		player2.isVictorious = false;
-		player3.isVictorious = false;
-		player4.isVictorious = false;
-
-		player1.assignedRace = KOBOLD;
-		player2.assignedRace = GNOLL;
-		player3.assignedRace = TROLL;
-		player4.assignedRace = HOG;
-
-		player1.primevalium = 0;
-		player2.primevalium = 0;
-		player3.primevalium = 0;
-		player4.primevalium = 0;
-
-		turn = 1;
-
-	//----------------------------------------------
+	//Specify initial scene and GUI (Title Screen)
+	engine->setCurrentScene(title);
+	engine->setCurrentGUI(guimgr.env_title);
 };
 
 PrimeGameStateManager::~PrimeGameStateManager()
@@ -95,19 +77,48 @@ PrimeGameStateManager::~PrimeGameStateManager()
 	delete camera;
 };
 
+void PrimeGameStateManager::SetupMatch()
+{
+	//Reset game flow data
+	turn = 1;
+	tokensActive = 0;
+	playersActive = 0;
+
+	//Change scene and GUI
+	engine->setCurrentScene(match);
+	engine->setCurrentGUI(guimgr.env_match);
+
+	//Configure camera
+	//camera = match->addCamera(new Vector(0.0f, 25.0f, 0.0f), new Vector(0.0f, 0.0f, 1.0f));
+	camera = match->addCamera(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
+	camera->setName("Match Camera");
+
+	//Initialize game elements
+	CreateBoard();
+
+	//Initialize play state
+	playState.Initialize(engine, playersActive, tokensActive, gameGoal,
+						 player1, player2, player3, player4,
+						 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
+}
+
 void PrimeGameStateManager::ResetPlayers()
 {
-	player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
-	player1.isActive = player2.isActive = player3.isActive = player4.isActive = true;
 	player1.isVictorious = player2.isVictorious = player3.isVictorious = player4.isVictorious = false;
 	player1.assignedTurn = player2.assignedTurn = player3.assignedTurn = player4.assignedTurn = -1;
-	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = KOBOLD;
 	player1.primevalium = player2.primevalium = player3.primevalium = player4.primevalium = 0;
 }
 
 void PrimeGameStateManager::CreateBoard()
 {
-	//Add board to scene
+	//Deactivate old board
+	if (board != NULL)
+	{
+		board->node->grab();
+		board->node->remove();
+	}
+
+	//Add new board to scene
 	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
 
 	//Create light
@@ -137,7 +148,7 @@ void PrimeGameStateManager::LoadTokens()
 	std::list<IrrToken*>::iterator t;
 
 	//Re-initialize players
-	//ResetPlayers();
+	ResetPlayers();
 
 	//Sort turns
 	SortTurnOrder();
@@ -228,80 +239,126 @@ void PrimeGameStateManager::SortTurnOrder()
 	}
 }
 
+void PrimeGameStateManager::ManageTitleScreen()
+{
+	int transition = 0;
+
+	//Update title screen and return a possible screen transition
+	transition = guimgr.ManageGUITitleScreen(&player1, &player2, &player3, &player4);
+
+	//Transfer to Match screen
+	if (transition == MATCH_TRANSITION)
+	{
+		//Initialize match
+		SetupMatch();
+	}
+
+	//Transfer to Tutorial screen
+	else if (transition == TUTORIAL_TRANSITION)
+	{
+		//Initialize Tutorial
+		guimgr.SetTutorialPage(1);
+		
+		//Change scene and GUI
+		engine->setCurrentScene(tutorial);
+		engine->setCurrentGUI(guimgr.env_tutorial);
+	}
+
+	//Transfer to Credits screen
+	else if (transition == CREDITS_TRANSITION)
+	{
+		//Change scene and GUI
+		engine->setCurrentScene(credits);
+		engine->setCurrentGUI(guimgr.env_credits);
+	}
+}
+
+void PrimeGameStateManager::ManageTutorialScreen()
+{
+	//Manage tutorial screen and return to title when
+	//"Back to Title" button is pressed.
+
+	if (guimgr.ManageGUITutorialScreen())
+	{
+		//Change scene and GUI
+		engine->setCurrentScene(title);
+		engine->setCurrentGUI(guimgr.env_title);
+	}
+}
+
+void PrimeGameStateManager::ManageCreditsScreen()
+{
+	//Manage credits screen and return to title when
+	//"Back to Title" button is pressed.
+
+	if (guimgr.ManageGUICreditsScreen())
+	{
+		//Change scene and GUI
+		engine->setCurrentScene(title);
+		engine->setCurrentGUI(guimgr.env_title);
+	}
+}
+
+void PrimeGameStateManager::ManageMatch()
+{
+	//While play state hasn't signaled match termination...
+	if (!playState.signalBackToTitle)
+	{
+		//Update play state
+		playState.Update(board, turn);
+
+		//Update match interface
+		//!! Must come AFTER play state updates, otherwise game breaks !!
+		guimgr.ManageGUIMatchScreen(turn, &playState);
+
+		//When a turn is over, go to the next one
+		if (playState.turnOver) turn++;
+	}
+
+	//If play state signaled match has ended, head back to title screen
+	else if (playState.signalBackToTitle)
+	{
+		//Change scene and GUI
+		engine->setCurrentScene(title);
+		engine->setCurrentGUI(guimgr.env_title);
+	}
+}
+
+void PrimeGameStateManager::Update()
+{
+	//Manage game states/scenes
+	IrrScene* currentScene = engine->getScene();
+
+	if (currentScene == title) ManageTitleScreen();
+	else if (currentScene == tutorial) ManageTutorialScreen();
+	else if (currentScene == credits) ManageCreditsScreen();
+	else if (currentScene == match) ManageMatch();
+}
+
 void PrimeGameStateManager::loop()
 {
-	//----- FOR TESTING PURPOSES, DELETE LATER -----
+	//Run game!
+	while(engine->getDevice()->run())
+	{
+		//Update engine
+		engine->getScene()->update();
+		engine->getGUI()->update();
+		engine->getInput()->update();
 
-		engine->setCurrentScene(match);
-		engine->setCurrentGUI(guimgr.env_match);
+		//Update game state
+		Update();
 
-		//camera = match->addCamera(new Vector(0.0f, 25.0f, 0.0f), new Vector(0.0f, 0.0f, 1.0f));
-		camera = match->addCamera(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
-		camera->setName("Match Camera");
+		//Begin frame...
+		engine->getDriver()->beginScene(true, true, SColor(255,100,101,140));
 
-			//ICameraSceneNode* cam = engine->getSceneManager()->addCameraSceneNode();
-			//cam->bindTargetAndRotation(true);
-			//cam->setTarget(vector3df(0.0f, 0.0f, 0.0f));
-			//cam->setPosition(vector3df(0.0f, 25.0f, 0.0f));
-			//cam->setRotation(vector3df(0.0f, 0.0f, -90.0f));
-			//IrrCamera* irrCam = new IrrCamera(cam);
-			//match->setCamera(irrCam);
+			//Draw stuff!
+			engine->getSceneManager()->drawAll();
+			engine->getGUIenv()->drawAll();
 
-		//Initialize game elements
-		CreateBoard();
+		//...End frame.
+		engine->getDriver()->endScene();
+	}
 
-		// ----> TEMPORARY BOARD ROTATION FIX!
-		//board->setRotation(Vector(0.0f,-90.0f,0.0f));
-
-		//Initialize play state
-		playState.Initialize(engine, playersActive, tokensActive, gameGoal,
-							 player1, player2, player3, player4,
-							 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
-
-	//----------------------------------------------
-
-	//Run game
-	//engine->loop();
-
-	//----- FOR TESTING PURPOSES, DELETE LATER -----
-
-		while(engine->getDevice()->run())
-		{
-			//Engine updates
-			engine->getScene()->update();
-			engine->getGUI()->update();
-			engine->getInput()->update();
-
-			//My updates...
-			//---------------------------------------------
-
-			cout<<engine->getInput()->getMouseState().position.X<<", "<<engine->getInput()->getMouseState().position.Y<<endl;
-
-				//Update play state
-				playState.Update(board, turn);
-
-				//Update match interface (must come AFTER playState updates)
-				guimgr.ManageGUIMatchScreen(turn, playState);
-				
-				//When a turn is over, go to the next one
-				if (playState.turnOver) turn++;
-
-			//---------------------------------------------
-
-			//Begin frame...
-			engine->getDriver()->beginScene(true, true, SColor(255,100,101,140));
-
-				//Draw stuff!
-				engine->getSceneManager()->drawAll();
-				engine->getGUIenv()->drawAll();
-
-			//...End frame.
-			engine->getDriver()->endScene();
-		}
-
-		engine->getDevice()->drop();
-
-	//----------------------------------------------
-
-	//delete irrCam;
+	//Close game!
+	engine->getDevice()->drop();
 }

@@ -5,16 +5,25 @@
 #include <sstream>
 #include "PrimePlayState.h"
 
-#define SORT_MESSAGE true
-#define TURN_MESSAGE true
+//Some GUI definitions
+//----------------------------
+
+	#define SORT_MESSAGE true
+	#define TURN_MESSAGE true
+	#define MATCH_TRANSITION 1
+	#define TUTORIAL_TRANSITION 2
+	#define CREDITS_TRANSITION 3
+
+//----------------------------
 
 using namespace IrrBoardGameEngine;
 
 class PrimeGUIManager
 {
 private:
+	int playersActive; //Amount of players active in a match
 	int tutorialPage; //Current tutorial page
-	int playersActive; //Amount of players active in match
+	bool nextReleased, previousReleased; //Tutorial buttons released state storages
 
 	//GUI element names:
 	enum
@@ -32,11 +41,17 @@ private:
 		// TITLE SCREEN
 		//------------------
 
-		//Player indicators
-		INDICATOR_PLAYER_1,
-		INDICATOR_PLAYER_2,
-		INDICATOR_PLAYER_3,
-		INDICATOR_PLAYER_4,
+		//Active player indicators
+		INDICATOR_PLAYER_1_ON,
+		INDICATOR_PLAYER_2_ON,
+		INDICATOR_PLAYER_3_ON,
+		INDICATOR_PLAYER_4_ON,
+
+		//Inactive player indicators
+		INDICATOR_PLAYER_1_OFF,
+		INDICATOR_PLAYER_2_OFF,
+		INDICATOR_PLAYER_3_OFF,
+		INDICATOR_PLAYER_4_OFF,
 
 		//Player activation buttons
 		BUTTON_PLAYER_1_ACTIVATE,
@@ -44,34 +59,85 @@ private:
 		BUTTON_PLAYER_3_ACTIVATE,
 		BUTTON_PLAYER_4_ACTIVATE,
 
-		//Race buttons PLAYER 1
-		BUTTON_PLAYER_1_KOBOLD,
-		BUTTON_PLAYER_1_GNOLL,
-		BUTTON_PLAYER_1_TROLL,
-		BUTTON_PLAYER_1_HOG,
+		//Player deactivation buttons
+		BUTTON_PLAYER_1_DEACTIVATE,
+		BUTTON_PLAYER_2_DEACTIVATE,
+		BUTTON_PLAYER_3_DEACTIVATE,
+		BUTTON_PLAYER_4_DEACTIVATE,
+
+		//Selected race PLAYER 1
+		IMAGE_PLAYER_1_KOBOLD,
+		IMAGE_PLAYER_1_GNOLL,
+		IMAGE_PLAYER_1_TROLL,
+		IMAGE_PLAYER_1_HOG,
 		
-		//Race buttons PLAYER 2
-		BUTTON_PLAYER_2_KOBOLD,
-		BUTTON_PLAYER_2_GNOLL,
-		BUTTON_PLAYER_2_TROLL,
-		BUTTON_PLAYER_2_HOG,
+		//Selected race PLAYER 2
+		IMAGE_PLAYER_2_KOBOLD,
+		IMAGE_PLAYER_2_GNOLL,
+		IMAGE_PLAYER_2_TROLL,
+		IMAGE_PLAYER_2_HOG,
 
-		//Race buttons PLAYER 3
-		BUTTON_PLAYER_3_KOBOLD,
-		BUTTON_PLAYER_3_GNOLL,
-		BUTTON_PLAYER_3_TROLL,
-		BUTTON_PLAYER_3_HOG,
+		//Selected race PLAYER 3
+		IMAGE_PLAYER_3_KOBOLD,
+		IMAGE_PLAYER_3_GNOLL,
+		IMAGE_PLAYER_3_TROLL,
+		IMAGE_PLAYER_3_HOG,
 
-		//Race buttons PLAYER 4
-		BUTTON_PLAYER_4_KOBOLD,
-		BUTTON_PLAYER_4_GNOLL,
-		BUTTON_PLAYER_4_TROLL,
-		BUTTON_PLAYER_4_HOG,
+		//Selected race PLAYER 4
+		IMAGE_PLAYER_4_KOBOLD,
+		IMAGE_PLAYER_4_GNOLL,
+		IMAGE_PLAYER_4_TROLL,
+		IMAGE_PLAYER_4_HOG,
+
+		//Unselected race buttons
+		BUTTON_UNSELECTED_KOBOLD_P1,
+		BUTTON_UNSELECTED_KOBOLD_P2,
+		BUTTON_UNSELECTED_KOBOLD_P3,
+		BUTTON_UNSELECTED_KOBOLD_P4,
+		
+		BUTTON_UNSELECTED_GNOLL_P1,
+		BUTTON_UNSELECTED_GNOLL_P2,
+		BUTTON_UNSELECTED_GNOLL_P3,
+		BUTTON_UNSELECTED_GNOLL_P4,
+		
+		BUTTON_UNSELECTED_TROLL_P1,
+		BUTTON_UNSELECTED_TROLL_P2,
+		BUTTON_UNSELECTED_TROLL_P3,
+		BUTTON_UNSELECTED_TROLL_P4,
+
+		BUTTON_UNSELECTED_HOG_P1,
+		BUTTON_UNSELECTED_HOG_P2,
+		BUTTON_UNSELECTED_HOG_P3,
+		BUTTON_UNSELECTED_HOG_P4,
+
+		//Unselectable race images
+		IMAGE_UNSELECTABLE_KOBOLD_P1,
+		IMAGE_UNSELECTABLE_KOBOLD_P2,
+		IMAGE_UNSELECTABLE_KOBOLD_P3,
+		IMAGE_UNSELECTABLE_KOBOLD_P4,
+
+		IMAGE_UNSELECTABLE_GNOLL_P1,
+		IMAGE_UNSELECTABLE_GNOLL_P2,
+		IMAGE_UNSELECTABLE_GNOLL_P3,
+		IMAGE_UNSELECTABLE_GNOLL_P4,
+
+		IMAGE_UNSELECTABLE_TROLL_P1,
+		IMAGE_UNSELECTABLE_TROLL_P2,
+		IMAGE_UNSELECTABLE_TROLL_P3,
+		IMAGE_UNSELECTABLE_TROLL_P4,
+
+		IMAGE_UNSELECTABLE_HOG_P1,
+		IMAGE_UNSELECTABLE_HOG_P2,
+		IMAGE_UNSELECTABLE_HOG_P3,
+		IMAGE_UNSELECTABLE_HOG_P4,
 
 		//Screen transition buttons
 		BUTTON_CREDITS,
 		BUTTON_START_MATCH,
 		BUTTON_TUTORIAL,
+
+		//Disabled buttons
+		IMAGE_START_MATCH_DISABLED,
 
 		//------------------
 		// CREDITS SCREEN
@@ -98,6 +164,10 @@ private:
 		//Buttons
 		BUTTON_END_TURN,
 		BUTTON_END_MATCH,
+
+		//Disabled buttons
+		IMAGE_END_TURN_DISABLED,
+		IMAGE_END_MATCH_DISABLED,
 
 		//Turn indicator
 		INDICATOR_TURN_WIDGET,
@@ -219,16 +289,21 @@ public:
 	IrrGUI* env_tutorial;
 	IrrGUI* env_match;
 
-	void SetTurnCount(bool show, int turn); //Show, hide, reset or update turn count
-	void SetPlayerIndicator(bool show, int turnPlayer); //Show, hide or update player turn indicator
+	//Enable or disable match buttons
+	void EnableEndTurnButton(bool enable);
+	void EnableEndMatchButton(bool enable);
+
+	//Show, hide, reset or update turn count and player turn indicator
+	void SetTurnCount(bool show, int turn);
+	void SetPlayerIndicator(bool show, int turnPlayer);
 
 	//Show and hide match messages
 	void SetGenericMessage(bool sortMessage, bool turnMessage, int player);
-	void ShowVictoryMessage(PrimePlayState playState);
+	void ShowVictoryMessage(PrimePlayState* playState);
 	void HideVictoryMessage();
 
 	//Show and hide player turn markers
-	void ShowTurnMarkers(PrimePlayState playState);
+	void ShowTurnMarkers(PrimePlayState* playState);
 	void HideTurnMarkers();
 
 	//Show, hide and update resource indicators and labels
@@ -236,17 +311,57 @@ public:
 	void ShowResourceIndicators(int players, PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
 	void HideResourceIndicators();
 
+	//Show or hide player indicators and "On/Off" buttons in title screen
+	void ShowPlayerIndicators(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+	void ShowPlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+
+	//Show or hide race buttons in title screen
+	void ShowRaces(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+	void ShowUnselectedRaces(int player);
+	void ShowUnselectableRaces(int player);
+	void HideUnselectableRaces();
+	void HideUnselectedRaces();
+	void HideSelectedRaces();
+
+	//Set pages manually or flip pages automatically in tutorial screen
+	void SetTutorialPage(int page);
+	void FlipTutorialPages();
+
+	//Button press verification methods
+
+		//Title screen
+		void VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+		void VerifyTitleRaceButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+		bool VerifyTitleStartMatchButton(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+		bool VerifyTitleTutorialButton();
+		bool VerifyTitleCreditsButton();
+
+		//Tutorial screen
+		bool VerifyTutorialNextButtonPressed();
+		bool VerifyTutorialNextButtonReleased();
+		bool VerifyTutorialPreviousButtonPressed();
+		bool VerifyTutorialPreviousButtonReleased();
+		bool VerifyTutorialBackToTitleButton();
+
+		//Credits screen
+		bool VerifyCreditsBackToTitleButton();
+
+		//Match screen
+		bool VerifyMatchEndTurnButton();
+		bool VerifyMatchEndMatchButton();
+
+
 	//Methods that create GUI elements
 	void BuildGUITitleScreen();
-	void BuildGUICreditsScreen();
 	void BuildGUITutorialScreen();
+	void BuildGUICreditsScreen();
 	void BuildGUIMatchScreen();
 
 	//Methods that manage screens
-	void ManageGUITitleScreen();
-	void ManageGUICreditsScreen();
-	void ManageGUITutorialScreen();
-	void ManageGUIMatchScreen(int turn, PrimePlayState playState);
+	int ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+	bool ManageGUICreditsScreen();
+	bool ManageGUITutorialScreen();
+	void ManageGUIMatchScreen(int turn, PrimePlayState* playState);
 };
 
 #endif
