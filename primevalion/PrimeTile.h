@@ -60,6 +60,7 @@ public:
 
 	void init(); //Initializes tile
 	void update(); //Updates highlight when necessary
+	void reset(); //Reset attributes
 
 	void turnOnHighlight(int type); //Activates a type of highlight, or deactivate it with param "NONE"
 	void addGhostBehavior(IrrTokenBehavior * behavior); //Activate ghost token

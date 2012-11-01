@@ -12,6 +12,10 @@ void TokenNoob::init(void)
 	flag_cor = false;
 }
 
+void TokenNoob::reset(void)
+{
+}
+
 void TokenNoob::update(void)
 {
 	// Movimentação

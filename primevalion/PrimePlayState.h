@@ -65,7 +65,15 @@ private:
 	int iNorthwest, jNorthwest, iNortheast, jNortheast;
 	int iSouthwest, jSouthwest, iSoutheast, jSoutheast;
 
+	//Auxiliary variables
+
+	bool tokenRessurrected; //If "true", a token has been ressurrected
+	bool resourcesVerified; //If "true", resource extraction has been verified
+	bool resourcesExtracted; //If "true", then resources have been extracted
+	int resourcesGoal; //Amount of resources needed to win the match
+
 	//Ressurrection phase skipping (very special case, unlikely to happen!)
+
 	int deadTokensNotRevived, safeZoneTilesMax;
 	int safeZone1TilesOccupied, safeZone2TilesOccupied;
 	int safeZone3TilesOccupied, safeZone4TilesOccupied;
@@ -74,16 +82,6 @@ private:
 
 	//Input from engine
 	IrrInput * input;
-
-	// TEST STUFF, DELETE LATER
-	//--------------------------
-
-		bool test, test2, test3;
-		int iOld, jOld;
-		Vector destPosition;
-		Vector originPosition;
-	
-	//--------------------------
 
 public:
 	PrimePlayState();
@@ -114,7 +112,7 @@ public:
 	IrrToken* selectedToken;
 
 	//Initialize this match's play state
-	void Initialize(IrrEngine* engine, int players, int tokens,
+	void Initialize(IrrEngine* engine, int players, int tokens, int goal,
 					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4);
@@ -149,6 +147,10 @@ public:
 
 	//Check for ressurrection phase skipping condition
 	void VerifySafeZoneOccupation(IrrBoard* board);
+
+	//Check for tiles on the extraction point and
+	//if any team has reached resource goal
+	void VerifyResourceExtraction(IrrBoard* board);
 
 	//Clear highlights off every tile and token
 	void ClearHighlights(IrrBoard* board);

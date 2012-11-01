@@ -10,6 +10,10 @@ void TokenDummy::init(void)
 	selector->drop();
 }
 
+void TokenDummy::reset(void)
+{
+}
+
 void TokenDummy::update(void)
 {
 	// Movimentação

@@ -27,12 +27,6 @@
     <ClCompile Include="PrimeToken.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PrimeTokenManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PrimeTileManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PrimePlayState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,13 +44,7 @@
     <ClInclude Include="PrimeTile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PrimeTileManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PrimeToken.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PrimeTokenManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PrimeTeam.h">

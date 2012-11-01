@@ -184,6 +184,10 @@ void PrimeTile::init()
 	tile->node->setMaterialFlag(EMF_LIGHTING, true);
 }
 
+void PrimeTile::reset()
+{
+};
+
 void PrimeTile::update()
 {
 	//Ghost token is normally invisible

@@ -11,6 +11,9 @@ ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
 
 PrimeGameStateManager::PrimeGameStateManager()
 {
+	//Set game goal, in resources
+	gameGoal = 2000;
+
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );
 
@@ -18,15 +21,15 @@ PrimeGameStateManager::PrimeGameStateManager()
 	engine = IrrEngine::getInstance(video::EDT_OPENGL, dimension2d<u32>(1024,768), 16, WINDOWED, false, false,L"Primevalion");
 
 	//Initialize GUI environments
-	//guimgr.env_title = engine->createGUI();
-	//guimgr.env_credits = engine->createGUI();
-	//guimgr.env_tutorial = engine->createGUI();
+	guimgr.env_title = engine->createGUI();
+	guimgr.env_credits = engine->createGUI();
+	guimgr.env_tutorial = engine->createGUI();
 	guimgr.env_match = engine->createGUI();
 
 	//Build GUI environments
-	//guimgr.BuildGUITitleScreen();
-	//guimgr.BuildGUICreditsScreen();
-	//guimgr.BuildGUITutorialScreen();
+	guimgr.BuildGUITitleScreen();
+	guimgr.BuildGUICreditsScreen();
+	guimgr.BuildGUITutorialScreen();
 	guimgr.BuildGUIMatchScreen();
 
 	//Initialize scenes
@@ -53,8 +56,8 @@ PrimeGameStateManager::PrimeGameStateManager()
 
 		player1.isActive = true;
 		player2.isActive = true;
-		player3.isActive = true;
-		player4.isActive = true;
+		player3.isActive = false;
+		player4.isActive = false;
 
 		player1.isVictorious = false;
 		player2.isVictorious = false;
@@ -66,10 +69,10 @@ PrimeGameStateManager::PrimeGameStateManager()
 		player3.assignedRace = TROLL;
 		player4.assignedRace = HOG;
 
-		player1.primevalium = 100;
-		player2.primevalium = 200;
-		player3.primevalium = 300;
-		player4.primevalium = 400;
+		player1.primevalium = 0;
+		player2.primevalium = 0;
+		player3.primevalium = 0;
+		player4.primevalium = 0;
 
 		turn = 1;
 
@@ -251,7 +254,7 @@ void PrimeGameStateManager::loop()
 		//board->setRotation(Vector(0.0f,-90.0f,0.0f));
 
 		//Initialize play state
-		playState.Initialize(engine, playersActive, tokensActive,
+		playState.Initialize(engine, playersActive, tokensActive, gameGoal,
 							 player1, player2, player3, player4,
 							 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
 
@@ -271,6 +274,8 @@ void PrimeGameStateManager::loop()
 
 			//My updates...
 			//---------------------------------------------
+
+			cout<<engine->getInput()->getMouseState().position.X<<", "<<engine->getInput()->getMouseState().position.Y<<endl;
 
 				//Update play state
 				playState.Update(board, turn);

@@ -7,8 +7,8 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
-#include "PrimeTileManager.h"
-#include "PrimeTokenManager.h"
+
+#include "PrimePlayState.h"
 #include "PrimeGUIManager.h"
 
 using namespace IrrBoardGameEngine;
@@ -31,8 +31,6 @@ private:
 	ILightSceneNode *light;
 
 	//Managers
-	PrimeTileManager tilemgr;
-	PrimeTokenManager tokenmgr;
 	PrimeGUIManager guimgr;
 
 	//Play State
@@ -52,6 +50,7 @@ private:
 	//Other data
 
 	int turn; //Match turn counter
+	int gameGoal; //Amount of resources needed to win
 	int playersActive; //How many players are playing
 	int tokensActive; //How many tokens each player controls
 

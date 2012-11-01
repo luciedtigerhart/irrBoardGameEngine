@@ -26,6 +26,7 @@ private:
 	bool isGhost; //Whether this token is just a ressurrection indicator
 	bool isDead; //Whether this token has been killed
 	bool isFinished; //Whether this token has already moved
+	bool isExtracting; //Whether this token is on an extraction tile
 	bool isAbilityActive; //Whether this token's race ability is active
 
 	// Turn action states
@@ -63,20 +64,27 @@ private:
 	const char* pathOBJ; //OBJ file path
 	const char* pathTEX; //Normal texture (colored texture) path
 	const char* pathTEXHL; //Highlight texture (gray texture) path
+	const char* pathBBEXT; //Extraction billboard texture
+	const char* pathBBICO; //Ability icon billboard texture
 
 	// Token materials
 
 	SMaterial matHighlight;
 	SMaterial matNormal;
 
+	// Resource extraction and ability icon billboards
+
+	ISceneNode* billboardExtraction;
+	ISceneNode* billboardAbility;
+
 public:
 	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
 
 	void init(); //Initializes token
 	void update(); //Updates this token's visuals
+	void reset(); //Reset attributes
 
 	void PaintVanilla(); //Color token with original color
-	void ResetActionStates(); //Reset token's turn action states
 
 	//Behavior get/set override
 

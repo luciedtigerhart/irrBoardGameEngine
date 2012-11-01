@@ -19,6 +19,9 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 		//Highlight texture
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+
+		//Ability icon texture
+		pathBBICO = "gui/ingame/billboard_ability_kobold.png";
 	}
 
 	else if (race == GNOLL)
@@ -33,6 +36,9 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 		//Highlight texture
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+
+		//Ability icon texture
+		pathBBICO = "gui/ingame/billboard_ability_gnoll.png";
 	}
 
 	else if (race == TROLL)
@@ -47,6 +53,9 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 		//Highlight texture
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+
+		//Ability icon texture
+		pathBBICO = "gui/ingame/billboard_ability_troll.png";
 	}
 
 	else if (race == HOG)
@@ -61,11 +70,31 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 		//Highlight texture
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+
+		//Ability icon texture
+		pathBBICO = "gui/ingame/billboard_ability_hog.png";
+	}
+
+	//Billboard textures
+	if (race == KOBOLD)
+	{
+		if (team == 1) pathBBEXT = "gui/ingame/billboard_extraction_team1_kobold.png";
+		else if (team == 2) pathBBEXT = "gui/ingame/billboard_extraction_team2_kobold.png";
+		else if (team == 3) pathBBEXT = "gui/ingame/billboard_extraction_team3_kobold.png";
+		else if (team == 4) pathBBEXT = "gui/ingame/billboard_extraction_team4_kobold.png";
+	}
+	else
+	{
+		if (team == 1) pathBBEXT = "gui/ingame/billboard_extraction_team1.png";
+		else if (team == 2) pathBBEXT = "gui/ingame/billboard_extraction_team2.png";
+		else if (team == 3) pathBBEXT = "gui/ingame/billboard_extraction_team3.png";
+		else if (team == 4) pathBBEXT = "gui/ingame/billboard_extraction_team4.png";
 	}
 
 	//Set initial states
 	isDead = false;
 	isFinished = false;
+	isExtracting = false;
 	isAbilityActive = false;
 	
 	//The team score is a secret identifier for ghost tokens
@@ -73,7 +102,7 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 	else isGhost = false;
 
 	//Reset other attributes
-	ResetActionStates();
+	reset();
 };
 
 void PrimeToken::init()
@@ -93,6 +122,20 @@ void PrimeToken::init()
 	//Update graph parent and team
 	token->node->setParent(token->parentNode->node);
 	token->player = team;
+
+	//Create extraction billboard
+	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
+	billboardExtraction->getMaterial(0).setTexture(0, driver->getTexture(pathBBEXT));
+	billboardExtraction->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	billboardExtraction->getMaterial(0).Lighting = false;
+	billboardExtraction->setVisible(false);
+
+	//Create ability icon billboard
+	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
+	billboardAbility->getMaterial(0).setTexture(0, driver->getTexture(pathBBICO));
+	billboardAbility->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	billboardAbility->getMaterial(0).Lighting = false;
+	billboardAbility->setVisible(false);
 
 	//Attach triangle selector if this isn't a ghost token
 	if (!isGhost)
@@ -119,10 +162,39 @@ void PrimeToken::init()
 	deathCounter = 0.0f;
 }
 
+void PrimeToken::reset()
+{
+	//Reset action states
+
+	isSelected = false;
+	isTargeted = false;
+	isGonnaMove = false;
+	isGonnaBePushed = false;
+	isGonnaBeTrapped = false;
+	isAnimStarted = false;
+	isAnimRunning = false;
+	isAnimFinished = false;
+	isAnimClosed = false;
+
+	moveDir = -1; //Reset move direction as well
+
+	//...And translation animation variables too
+	iDest = jDest = -1;
+	destPosition.x = destPosition.y = destPosition.z = 0.0f;
+	originPosition.x = originPosition.y = originPosition.z = 0.0f;
+}
+
 void PrimeToken::update()
 {
 	//Disable transparency
 	if (!isGhost) token->node->getMaterial(0).MaterialType = EMT_SOLID;
+
+	//Billboard visualization management
+	if (isExtracting) billboardExtraction->setVisible(true);
+	else if (!isExtracting) billboardExtraction->setVisible(false);
+
+	if (isAbilityActive) billboardAbility->setVisible(true);
+	else if (!isAbilityActive) billboardAbility->setVisible(false);
 
 	//If token dies...
 	if (isDead)
@@ -344,28 +416,6 @@ void PrimeToken::PaintVanilla()
 	token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
 }
 
-void PrimeToken::ResetActionStates()
-{
-	//Do exactly what the method name says
-
-	isSelected = false;
-	isTargeted = false;
-	isGonnaMove = false;
-	isGonnaBePushed = false;
-	isGonnaBeTrapped = false;
-	isAnimStarted = false;
-	isAnimRunning = false;
-	isAnimFinished = false;
-	isAnimClosed = false;
-
-	moveDir = -1; //Reset move direction as well
-
-	//...And translation animation variables too
-	iDest = jDest = -1;
-	destPosition.x = destPosition.y = destPosition.z = 0.0f;
-	originPosition.x = originPosition.y = originPosition.z = 0.0f;
-}
-
 void PrimeToken::setInt(char const * key, int value)
 {
 	if (key == "moveDir") moveDir = value;
@@ -409,6 +459,7 @@ void PrimeToken::setBool(char const * key, bool value)
 	if (key == "isGhost") isGhost = value;
 	else if (key == "isDead") isDead = value;
 	else if (key == "isFinished") isFinished = value;
+	else if (key == "isExtracting") isExtracting = value;
 	else if (key == "isAbilityActive") isAbilityActive = value;
 
 	else if (key == "isSelected") isSelected = value;
@@ -428,6 +479,7 @@ bool PrimeToken::getBool(char const * key)
 	if (key == "isGhost") return isGhost;
 	else if (key == "isDead") return isDead;
 	else if (key == "isFinished") return isFinished;
+	else if (key == "isExtracting") return isExtracting;
 	else if (key == "isAbilityActive") return isAbilityActive;
 
 	else if (key == "isSelected") return isSelected;
