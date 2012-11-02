@@ -48,6 +48,8 @@ private:
 	int race; //Race of this token
 	int team; //Team of this token
 	int moveDir; //Direction this tile is moving or being pushed to
+	int abilityCooldown; //Counter that prevents ability from activating, measured in turns
+	float abilityBlink; //Counter for the "blink" effect from ability activation
 
 	// Variables used during translation animation
 

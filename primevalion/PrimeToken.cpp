@@ -101,6 +101,10 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 	if (myTeam.primevalium == -6969) isGhost = true;
 	else isGhost = false;
 
+	//Reset ability-related attributes
+	abilityCooldown = 0;
+	abilityBlink = -1.0f;
+
 	//Reset other attributes
 	reset();
 };
@@ -123,19 +127,19 @@ void PrimeToken::init()
 	token->node->setParent(token->parentNode->node);
 	token->player = team;
 
-	//Create extraction billboard
-	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
-	billboardExtraction->getMaterial(0).setTexture(0, driver->getTexture(pathBBEXT));
-	billboardExtraction->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
-	billboardExtraction->getMaterial(0).Lighting = false;
-	billboardExtraction->setVisible(false);
-
 	//Create ability icon billboard
 	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
 	billboardAbility->getMaterial(0).setTexture(0, driver->getTexture(pathBBICO));
 	billboardAbility->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
 	billboardAbility->getMaterial(0).Lighting = false;
 	billboardAbility->setVisible(false);
+
+	//Create extraction billboard
+	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
+	billboardExtraction->getMaterial(0).setTexture(0, driver->getTexture(pathBBEXT));
+	billboardExtraction->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	billboardExtraction->getMaterial(0).Lighting = false;
+	billboardExtraction->setVisible(false);
 
 	//Attach triangle selector if this isn't a ghost token
 	if (!isGhost)
@@ -189,13 +193,6 @@ void PrimeToken::update()
 	//Disable transparency
 	if (!isGhost) token->node->getMaterial(0).MaterialType = EMT_SOLID;
 
-	//Billboard visualization management
-	if (isExtracting) billboardExtraction->setVisible(true);
-	else if (!isExtracting) billboardExtraction->setVisible(false);
-
-	if (isAbilityActive) billboardAbility->setVisible(true);
-	else if (!isAbilityActive) billboardAbility->setVisible(false);
-
 	//If token dies...
 	if (isDead)
 	{
@@ -205,7 +202,8 @@ void PrimeToken::update()
 			//If killed by trap or attack...
 			if (isTargeted || isGonnaBeTrapped)
 			{
-				deathCounter = 0.0f; //Reset counter
+				deathCounter = 0.0f; //Reset death animation counter
+				abilityBlink = -1.0f; //Reset "blink" effect counter
 
 				//Reset position after falling into trap
 				if (isGonnaBeTrapped) token->node->setPosition(vector3df(0,0,0));
@@ -324,6 +322,40 @@ void PrimeToken::update()
 		}
 	}
 
+	//Ability activation/deactivation management
+	if (isAbilityActive)
+	{
+		//Show billboard
+		billboardAbility->setVisible(true);
+
+		if (abilityBlink >= 0.0f && abilityBlink < 0.1f)
+		{
+			//Calculate frame-independent time
+			now = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
+			deltaTime = (float)(now - then) / 1000.f;
+
+			//Blink briefly, indicating ability is "On"
+			token->node->getMaterial(0) = matHighlight;
+			token->node->getMaterial(0).EmissiveColor.set(200,255,255,255);
+			token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
+
+			//Increment "blink" effect counter
+			abilityBlink += 1.0f * deltaTime;
+		}
+
+		else if (abilityBlink < 0.0f) abilityBlink = 0.0f;
+	}
+	else if (!isAbilityActive)
+	{
+		//Deactivate billboard and reset "blink" effect
+		billboardAbility->setVisible(false);
+		abilityBlink = -1.0f;
+	}
+
+	//Resouce extraction billboard management
+	if (isExtracting) { billboardExtraction->setVisible(true); billboardAbility->setVisible(false); }
+	else if (!isExtracting) billboardExtraction->setVisible(false);
+
 	//Death animation management
 	if (isTargeted || (isGonnaBeTrapped && !isGonnaBePushed))
 	{
@@ -405,6 +437,7 @@ void PrimeToken::update()
 		}
 	}
 
+	//Update time
 	then = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
 }
 
@@ -421,6 +454,7 @@ void PrimeToken::setInt(char const * key, int value)
 	if (key == "moveDir") moveDir = value;
 	else if (key == "iDest") iDest = value;
 	else if (key == "jDest") jDest = value;
+	else if (key == "abilityCooldown") abilityCooldown = value;
 }
 
 int PrimeToken::getInt(char const * key)
@@ -428,6 +462,9 @@ int PrimeToken::getInt(char const * key)
 	if (key == "moveDir") return moveDir;
 	else if (key == "iDest") return iDest;
 	else if (key == "jDest") return jDest;
+	else if (key == "race") return race;
+	else if (key == "team") return team;
+	else if (key == "abilityCooldown") return abilityCooldown;
 
 	else return 0;
 }

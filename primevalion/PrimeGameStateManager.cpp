@@ -12,7 +12,7 @@ ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
 PrimeGameStateManager::PrimeGameStateManager()
 {
 	//Specify game goal, in resources
-	gameGoal = 400;
+	gameGoal = 2000;
 
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );

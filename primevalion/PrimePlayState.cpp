@@ -250,6 +250,7 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 	int lastTileFound = 0;
 	int tilesChecked = 0;
 	int freeTiles = 0;
+	int heavyTokens = 0;
 
 	//Validate Push move
 	if (play == PUSH)
@@ -266,8 +267,6 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 		//Find obstacles and tokens in a line, starting at token to be pushed
 		while (!breakScan)
 		{
-			//cout<<"tile: "<<iTile<<", "<<jTile;
-
 			//If an obstacle has been found...
 			if (board->board[iTile][jTile]->inf == RUINS)
 			{
@@ -316,12 +315,34 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 			{
 				lastTileFound = FREE;
 				freeTiles++;
+
+				//Free tiles inbetween heavy tokens enable pushing
+				if (heavyTokens > 0) --heavyTokens;
 			}
 
 			//If a token has been found...
 			else if (board->board[iTile][jTile]->token != NULL)
 			{
 				lastTileFound = TOKEN;
+
+				//If this token is a Troll with its ability activated,
+				//and its not in the current player's team...
+				if (board->board[iTile][jTile]->token->getBehavior(0)->getInt("race") == TROLL
+					&& board->board[iTile][jTile]->token->getBehavior(0)->getBool("isAbilityActive")
+					&& board->board[iTile][jTile]->token->player != turnPlayer)
+				{
+					heavyTokens++;
+
+					//If more than one of these have been found in a line...
+					if (heavyTokens >= 2)
+					{
+						//Cannot push 2 or more aligned Trolls
+						isValid = false;
+
+						//Break "while" loop
+						breakScan = true;
+					}
+				}
 			}
 
 			//If "iBreak" or "jBreak" has been achieved, it means the board's
@@ -335,8 +356,9 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 					isValid = false;
 				}
 
-				//Else, if free tiles have been found...
-				else if (freeTiles > 0)
+				//Else, if free tiles have been found
+				//and no heavy tokens disallow movement...
+				else if (freeTiles > 0 && heavyTokens < 2)
 				{
 					//If at least 1 free tile has been found
 					//between tokens, then they can be pushed
@@ -350,8 +372,6 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 			//Iterate scan
 			iTile += iAdd;
 			jTile += jAdd;
-
-			//cout<<" - last: "<<lastTileFound<<endl;
 		}
 	}
 
@@ -505,6 +525,9 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Kill token!
 			token->getBehavior(0)->setBool("isDead", true);
+
+			//Set this token as the "killed token"
+			killedToken = token;
 		}
 
 		//If animation is done, inform the other tokens
@@ -657,6 +680,9 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Kill token!
 			token->getBehavior(0)->setBool("isDead", true);
+
+			//Set this token as the "killed token"
+			killedToken = token;
 		}
 
 		//If animation is done, inform the other tokens
@@ -770,6 +796,96 @@ bool PrimePlayState::PushedTokensSnapped(IrrBoard* board)
 	if (foundTokens == snappedTokens) everyTokenSnapped = true;
 
 	return everyTokenSnapped;
+}
+
+bool PrimePlayState::EnemyTokenKilled(IrrBoard* board)
+{
+	bool enemyWillDie = false;
+
+	//If a token was killed by an Attack or died by falling into a trap
+	if (killedToken != NULL)
+	{
+		//Only tokens of enemy teams are valid (killing allies doesn't count)
+		if (killedToken->player != turnPlayer) enemyWillDie = true;
+	}
+
+	return enemyWillDie;
+}
+
+bool PrimePlayState::TrollBesideMe(IrrToken* token, IrrBoard* board)
+{
+	bool trollBesideMe = false;
+
+	//Grab adjacent tile positions
+	int up[2] = { token->parentNode->posi - 1, token->parentNode->posj };
+	int down[2] = { token->parentNode->posi + 1, token->parentNode->posj };
+	int left[2] = { token->parentNode->posi, token->parentNode->posj - 1 };
+	int right[2] = { token->parentNode->posi, token->parentNode->posj + 1 };
+
+	//Checking if adjacent tiles are valid and if there's a token on them
+
+	if (up[0] > -1 && up[0] < 10 && up[1] > -1 && up[1] < 10)
+	{
+		if (board->board[up[0]][up[1]]->token != NULL)
+		{
+			//If adjacent token is a Troll from the same team, which is not dying...
+			if (board->board[up[0]][up[1]]->token->getBehavior(0)->getInt("race") == TROLL
+				&& !board->board[up[0]][up[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
+				&& !board->board[up[0]][up[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& board->board[up[0]][up[1]]->token->player == token->player)
+			{
+				trollBesideMe = true;
+			}
+		}
+	}
+
+	if (down[0] > -1 && down[0] < 10 && down[1] > -1 && down[1] < 10)
+	{
+		if (board->board[down[0]][down[1]]->token != NULL)
+		{
+			//If adjacent token is a Troll from the same team, which is not dying...
+			if (board->board[down[0]][down[1]]->token->getBehavior(0)->getInt("race") == TROLL
+				&& !board->board[down[0]][down[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
+				&& !board->board[down[0]][down[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& board->board[down[0]][down[1]]->token->player == token->player)
+			{
+				trollBesideMe = true;
+			}
+		}
+	}
+
+	if (left[0] > -1 && left[0] < 10 && left[1] > -1 && left[1] < 10)
+	{
+		if (board->board[left[0]][left[1]]->token != NULL)
+		{
+			//If adjacent token is a Troll from the same team, which is not dying...
+			if (board->board[left[0]][left[1]]->token->getBehavior(0)->getInt("race") == TROLL
+				&& !board->board[left[0]][left[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
+				&& !board->board[left[0]][left[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& board->board[left[0]][left[1]]->token->player == token->player)
+			{
+				trollBesideMe = true;
+			}
+		}
+	}
+
+	if (right[0] > -1 && right[0] < 10 && right[1] > -1 && right[1] < 10)
+	{
+		if (board->board[right[0]][right[1]]->token != NULL)
+		{
+			//If adjacent token is a Troll from the same team, which is not dying...
+			if (board->board[right[0]][right[1]]->token->getBehavior(0)->getInt("race") == TROLL
+				&& !board->board[right[0]][right[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
+				&& !board->board[right[0]][right[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& board->board[right[0]][right[1]]->token->player == token->player)
+			{
+				trollBesideMe = true;
+			}
+		}
+	}
+
+	//Return whether there's a big, scary Troll beside me
+	return trollBesideMe;
 }
 
 void PrimePlayState::RessurrectToken(IrrToken* token, IrrBoard* board, int i, int j)
@@ -956,6 +1072,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 		else if (turnBeginPhase == TURN_MESSAGE_AT_TWO && Wait(2.5f)) turnBeginPhase = NO_MESSAGE_AT_THREE;
 		else if (turnBeginPhase == NO_MESSAGE_AT_THREE && Wait(0.5f))
 		{
+			//Decrement ability cooldown for all units
+			UpdateCooldown();
+
 			//First step of a new turn is to ressurrect dead tokens
 			phase = RESSURRECTION_PLACEMENT;
 
@@ -971,9 +1090,12 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 		//Check if there's at least 1 free safe zone tile
 		VerifySafeZoneOccupation(board);
 
+		//Force ressurrection skipping if "End Match" button is pressed
+		if (signalEndMatch) skipRessurrection = true;
+
 		//If there are no dead tokens or ressurrection can't be performed
 		//because all safe zone tiles are occupied, go to next phase
-		if (remainingTokens == 0 || skipRessurrection)
+		if (!tokenRessurrected && (remainingTokens == 0 || skipRessurrection))
 		{
 			//Store how many dead tokens could not be revived, in case of skipping
 			if (skipRessurrection)	
@@ -1039,12 +1161,17 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 		if (remainingTokens == 0)
 		{
 			//Disable future moves for selected token, in this turn
-			selectedToken->getBehavior(0)->setBool("isFinished", true);
+			if (selectedToken->getBehavior(0)->getBool("isSelected"))
+			{
+				selectedToken->getBehavior(0)->setBool("isFinished", true);
+				selectedToken->getBehavior(0)->setBool("isSelected", false);
+			}
 
 			if (Wait(0.3f))
 			{
-				//Reset selected token
+				//Reset selected token and killed token
 				selectedToken = NULL;
+				killedToken = NULL;
 
 				//Don't forget to reset action states
 				ResetTokenActionStates();
@@ -1386,6 +1513,37 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 	return remainingTokens;
 }
 
+void PrimePlayState::UpdateCooldown()
+{
+	int currentCooldown = -1;
+
+	//Decrease cooldown time for all units
+
+	for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
+	{
+		currentCooldown = (*t)->getBehavior(0)->getInt("abilityCooldown");
+		if (currentCooldown > 0) (*t)->getBehavior(0)->setInt("abilityCooldown", currentCooldown - 1);
+	}
+
+	for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
+	{
+		currentCooldown = (*t)->getBehavior(0)->getInt("abilityCooldown");
+		if (currentCooldown > 0) (*t)->getBehavior(0)->setInt("abilityCooldown", currentCooldown - 1);
+	}
+
+	for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
+	{
+		currentCooldown = (*t)->getBehavior(0)->getInt("abilityCooldown");
+		if (currentCooldown > 0) (*t)->getBehavior(0)->setInt("abilityCooldown", currentCooldown - 1);
+	}
+
+	for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
+	{
+		currentCooldown = (*t)->getBehavior(0)->getInt("abilityCooldown");
+		if (currentCooldown > 0) (*t)->getBehavior(0)->setInt("abilityCooldown", currentCooldown - 1);
+	}
+}
+
 void PrimePlayState::FinishTokens()
 {
 	//Find current player and end its turn by manually finishing all token moves
@@ -1411,12 +1569,6 @@ void PrimePlayState::FinishTokens()
 	}
 }
 
-void PrimePlayState::ManageRaceAbilities()
-{
-	//Activate or deactivate abilities, when conditions are met
-	//...
-}
-
 void PrimePlayState::ResetTokenActionStates()
 {
 	//Reset action states for all tokens of all teams
@@ -1425,6 +1577,97 @@ void PrimePlayState::ResetTokenActionStates()
 	for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) (*t)->getBehavior(0)->reset();
 	for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) (*t)->getBehavior(0)->reset();
 	for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) (*t)->getBehavior(0)->reset();
+}
+
+void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
+{
+	//Activate or deactivate abilities, when conditions are met!
+	
+	//KOBOLDs...
+	if (token->getBehavior(0)->getInt("race") == KOBOLD)
+	{
+		//ADVANCED PROSPECTION activates when a Kobold unit is placed on an extraction tile
+		if (board->board[token->parentNode->posi][token->parentNode->posj]->inf == RESOURCE)
+		{
+			if (!token->getBehavior(0)->getBool("isAbilityActive"))
+			{
+				//Activate ability and show special effect
+				token->getBehavior(0)->setBool("isAbilityActive", true);
+			}
+		}
+
+		else token->getBehavior(0)->setBool("isAbilityActive", false);
+	}
+
+	//GNOLLs...
+	else if (token->getBehavior(0)->getInt("race") == GNOLL)
+	{
+		//RECOVERY RUSH activates when a dead Gnoll unit is placed back on the field
+		if (tokenRessurrected && !token->getBehavior(0)->getBool("isDead") && token->getBehavior(0)->getBool("isFinished"))
+		{
+			if (!token->getBehavior(0)->getBool("isAbilityActive"))
+			{
+				//Activate ability and show special effect
+				token->getBehavior(0)->setBool("isAbilityActive", true);
+				token->getBehavior(0)->setBool("isFinished", false);
+			}
+		}
+
+		else if (!tokenRessurrected && token->getBehavior(0)->getBool("isFinished"))
+		{
+			token->getBehavior(0)->setBool("isAbilityActive", false);
+		}
+	}
+
+	//TROLLs...
+	else if (token->getBehavior(0)->getInt("race") == TROLL)
+	{
+		//HEAVYWEIGHT activates when there's 2 or more trolls beside one another...
+		if (TrollBesideMe(token, board))
+		{
+			//...As long as neither of them is dying.
+			if (!token->getBehavior(0)->getBool("isGonnaBeTrapped") && !token->getBehavior(0)->getBool("isTargeted"))
+			{
+				if (!token->getBehavior(0)->getBool("isAbilityActive"))
+				{
+					//Activate ability and show special effect
+					token->getBehavior(0)->setBool("isAbilityActive", true);
+				}
+			}
+		}
+
+		else token->getBehavior(0)->setBool("isAbilityActive", false);
+	}
+
+	//HOGs...
+	else if (token->getBehavior(0)->getInt("race") == HOG)
+	{
+		//If this is the selected token and its animation has finished...
+		if (token == selectedToken && token->getBehavior(0)->getBool("isAnimClosed"))
+		{
+			if (token->getBehavior(0)->getBool("isFinished") && token->getBehavior(0)->getInt("abilityCooldown") == 0)
+			{
+				//KILL RUSH activates when a Hog unit kills an enemy unit
+				if (EnemyTokenKilled(board))
+				{
+					if (!token->getBehavior(0)->getBool("isAbilityActive"))
+					{
+						//Activate ability and show special effect
+						token->getBehavior(0)->setBool("isAbilityActive", true);
+						token->getBehavior(0)->setBool("isFinished", false);
+
+						//This ability cannot be activated again for 3 rounds
+						token->getBehavior(0)->setInt("abilityCooldown", (3 * playersActive));
+					}
+				}
+			}
+		}
+
+		else if (token->getBehavior(0)->getBool("isFinished"))
+		{
+			token->getBehavior(0)->setBool("isAbilityActive", false);
+		}
+	}
 }
 
 void PrimePlayState::ManageRessurrection(IrrBoard* board, int i, int j)
@@ -1630,13 +1873,6 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	bool tokenSelected = false;
 	bool mouseClickedOnHighlight = false;
 
-	//FOR TEST PURPOSES
-	//------------------
-	if (input->getMouseState().leftButtonDown)
-	{
-		//phase = PLAY_SELECTION;
-	}
-
 	//Advance phases when conditions are met
 	SwapPhase(board);
 
@@ -1735,6 +1971,19 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 			}
 		}
 	}
+
+
+	//-------------------------------------------
+	//-------- RACE ABILITY MANAGEMENT ----------
+	//-------------------------------------------
+
+
+	//Activate or deactivate abilities when necessary
+
+	for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++) ManageRaceAbilities((*t), board);
+	for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++) ManageRaceAbilities((*t), board);
+	for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++) ManageRaceAbilities((*t), board);
+	for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++) ManageRaceAbilities((*t), board);
 
 
 	//-------------------------------------------

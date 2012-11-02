@@ -134,8 +134,9 @@ public:
 	int tokensActive; //Amount of tokens in each team
 	int phase; //Which phase the current turn is at (ressurrection, token selection, etc.)
 
-	//Token selected to move
+	//Token storages
 	IrrToken* selectedToken;
+	IrrToken* killedToken;
 
 	//Initialize this match's play state
 	void Initialize(IrrEngine* engine, int players, int tokens, int goal,
@@ -164,6 +165,14 @@ public:
 	//Snap pushed tokens to their new tile, in order contrary to the push direction,
 	//and returns "true" when all of them have been successfully reallocated
 	bool PushedTokensSnapped(IrrBoard* board);
+
+	//Auxiliary method for the Hog race's special ability,
+	//checks whether an enemy unit was killed with a move
+	bool EnemyTokenKilled(IrrBoard* board);
+
+	//Auxiliary method for the Troll race's special ability,
+	//checks if there's a friendly Troll on an adjacent tile
+	bool TrollBesideMe(IrrToken* token, IrrBoard* board);
 
 	//Execute a token's animations
 	void AnimateToken(IrrToken* token, IrrBoard* board, float speed);
@@ -196,15 +205,16 @@ public:
 	//Find tokens with certain attribute in the current turn
 	int GetRemainingTokens(bool dead, bool finished, bool animated);
 
+	//Update cooldown for all units
+	void UpdateCooldown();
+
 	//Set all tokens as finished, ending turn prematurely
 	void FinishTokens();
-
-	//Activate or deactivate race abilities when conditions are met
-	void ManageRaceAbilities();
 
 	//Clear token action states at the end of a turn phase
 	void ResetTokenActionStates();
 
+	void ManageRaceAbilities(IrrToken* token, IrrBoard* board); //Activate or deactivate race abilities when conditions are met
 	void ManageRessurrection(IrrBoard* board, int i, int j); //Manage Ressurrection Placement phase
 	void ManageTokenSelection(IrrBoard* board, int i, int j); //Manage token selection phase (Play Selection sub-phase 1)
 	void ManageMoveSelection(IrrBoard* board, int i, int j); //Manage move selection phase (Play Selection sub-phase 2)
