@@ -199,6 +199,9 @@ public:
 	//Set all tokens as finished, ending turn prematurely
 	void FinishTokens();
 
+	//Activate or deactivate race abilities when conditions are met
+	void ManageRaceAbilities();
+
 	//Clear token action states at the end of a turn phase
 	void ResetTokenActionStates();
 

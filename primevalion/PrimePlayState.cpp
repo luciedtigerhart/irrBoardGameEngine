@@ -1411,6 +1411,12 @@ void PrimePlayState::FinishTokens()
 	}
 }
 
+void PrimePlayState::ManageRaceAbilities()
+{
+	//Activate or deactivate abilities, when conditions are met
+	//...
+}
+
 void PrimePlayState::ResetTokenActionStates()
 {
 	//Reset action states for all tokens of all teams
