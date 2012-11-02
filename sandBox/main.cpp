@@ -21,16 +21,18 @@ enum
 
 int main()
 {
-	IrrEngine *engine = IrrEngine::getInstance(video::EDT_SOFTWARE, dimension2d<u32>(1024, 768), 16, false, false, false,L"Jogo Dummy");
+	IrrEngine *engine = IrrEngine::getInstance(video::EDT_OPENGL, dimension2d<u32>(1024, 768), 16, false, false, false,L"Jogo Dummy");
     
 	IrrScene *scene = engine->getScene();
 
-	IrrGameObject *cam = scene->addCamera(new Vector(0.0f, 20.0f, 0.0f),new Vector(0.0f, 0.0f, 1.0f));
+	IrrGameObject *cam = scene->addCamera(new Vector(20.0f, 20.0f, 20.0f),new Vector(0.0f, 0.0f, 1.0f));
 	cam->setName("Camera principal");
-	
+
 	IrrBoard * board = scene->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
 
-	//engine->getSceneManager()->addLightSceneNode(board->node, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+	scene->addLightSceneNode(vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+
+	//
 	
 	//
 	// CONFIGURA TILES
@@ -60,6 +62,28 @@ int main()
 	{
 		board->addTokenBehavior((*t), new TokenDummy());
 	}
+
+	//
+	//
+	//
+
+	IrrParticleSystem * ps = scene->addParticleSystem();
+
+	IParticleEmitter * em = ps->createEmitter(2,core::aabbox3d<f32>(-2,0,-2,2,1,2), // emitter size
+                core::vector3df(0.0f,0.06f,0.0f),   // initial direction
+                20,30,                             // emit rate
+                video::SColor(0,255,255,255),       // darkest color
+                video::SColor(0,255,255,255),       // brightest color
+                100,260,25,                         // min and max age, angle
+                core::dimension2df(1.f,1.f),      // min size
+                core::dimension2df(2.f,2.f));     // max size
+
+	//ps->setPosition(new Vector(0.0f,0.0f,0.0f));
+	//ps->setScale(new Vector(-3,-3,-3));
+	ps->setMaterialFlag(video::EMF_LIGHTING, false);
+	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, true);
+	ps->setMaterialTexture(0,"texturas/blue.jpg");
+	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
 
 	/*
 	IrrScene *scene_dois = engine->createScene();
@@ -110,7 +134,7 @@ int main()
 	delete engine;
 	delete gui;
 	delete cam;
-	delete board;
+	
 
 	return 0;
 }

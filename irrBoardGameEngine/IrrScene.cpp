@@ -23,6 +23,9 @@ IrrScene::IrrScene(IrrlichtDevice *device, ISoundEngine *se, IrrInput *inp)
 	//pega o SceneManager
 	smgr = device->getSceneManager();
 
+	//pega drive
+	driver = device->getVideoDriver();
+
 	//cria o node root da scena
 	rootScene = smgr->addEmptySceneNode();
 
@@ -38,7 +41,6 @@ IrrScene::IrrScene(IrrlichtDevice *device, ISoundEngine *se, IrrInput *inp)
 
 	objects = new vector<IrrGameObject*>();
 
-
 	//bola = addSphere(new Vector(0.0f, 0.0f, 0.0f));
 }
 
@@ -49,7 +51,19 @@ IrrScene::~IrrScene(void)
 
 IrrParticleSystem * IrrScene::addParticleSystem()
 {
-	return new IrrParticleSystem(smgr);
+	IrrParticleSystem * ps = new IrrParticleSystem(smgr, driver);
+	rootScene->addChild(ps->node);
+	ps->node->setParent(rootScene);
+	return ps;
+}
+void  IrrScene::addLightSceneNode(const core::vector3df& position,video::SColorf color,f32 radius)
+{
+	addLightSceneNode(rootScene,-1,position,color,radius);
+}
+
+void  IrrScene::addLightSceneNode(ISceneNode* parent, s32 id, const core::vector3df& position,video::SColorf color,f32 radius)
+{
+	smgr->addLightSceneNode(parent, position, color, radius, id);
 }
 
 void IrrScene::addObject(IrrGameObject *o){
@@ -220,6 +234,30 @@ void IrrScene::update()
 	}
 }
 
+void IrrScene::removeBoard()
+{
+	removeBoard(currentBoard);
+	currentBoard = NULL;
+}
+
+void IrrScene::removeBoard(IrrBoard * board)
+{	
+	vector<IrrGameObject*>::iterator i;
+
+	for(i=objects->begin(); i!=objects->end(); i++)
+	{
+		if(board == (*i))
+		{			
+			break;
+		}
+	}
+
+	if(i != objects->end())
+	{
+		objects->erase(i);		
+		delete board;
+	}
+}
 
 void IrrScene::setCamera(IrrCamera * camera)
 {

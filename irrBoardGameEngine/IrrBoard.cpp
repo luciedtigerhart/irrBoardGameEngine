@@ -19,6 +19,8 @@ IrrBoard::~IrrBoard(void)
 			delete board[i][j];
 		}
 	}
+
+	node->removeAll();
 }
 
 void IrrBoard::addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior)

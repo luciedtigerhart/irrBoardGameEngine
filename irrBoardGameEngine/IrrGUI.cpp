@@ -4,6 +4,35 @@
 
 using namespace IrrBoardGameEngine;
 
+/*
+
+há fazer:::
+
+Pelo menos em teoria é bem simples: vamos supor que temos a imagem de hover para quando o botão está em estado normal, 
+que chamamos "ImageHoverNormal". Também temos uma imagem de hover para quando o botão está em estado "pressed", 
+que vamos chamar de "ImageHoverPressed". Ambas essas imagens tem que ser um ITexture*, que é o que o IGUIButton 
+usa como textura (é bem simples criar um ITexture, só passar o caminho da imagem no construtor).
+
+Tudo beleza até aqui? Para trocar a imagem, 
+quando o mouse estiver sobre o botão (você diz que tem como saber quando isso acontece) é só verificar o "isPressed" desse botão:
+
+-> Se "isPressed == false", então muda a imagem para "ImageHoverNormal" com o método "setImage()" do IGUIButton.
+-> Se "isPressed == true", então muda a imagem para "ImageHoverPressed" com o método "setPressedImage()" do IGUIButton.
+
+Fácil não? Só tem que lembrar de fazer as imagens 
+trocarem de volta para as normais (não-hover) 
+quando o mouse não estiver sobre o botão. 
+A moral então seria ter um método para o programador de jogo 
+setar quais são essas "ImageHoverNormal" e "ImageHoverPressed", 
+e um método que é sempre chamado no update que faz a verificação 
+de mouse sobre botão e a troca de imagens.
+
+Seria legal ter um fader padrão já na GUI do motor, do tamanho da tela (que o motor já sabe). 
+Aí é só criar métodos para dar fadeIn e fadeOut nesse fader 
+(passando como parâmetro o tempo) e um método que retorna se ele já terminou (verifica o atributo "isReady").
+http://irrlicht.sourceforge.net/docu/classirr_1_1gui_1_1_i_g_u_i_in_out_fader.html
+*/
+
 IrrGUI::IrrGUI(IrrlichtDevice * device)
 {	
 	driver = device->getVideoDriver();

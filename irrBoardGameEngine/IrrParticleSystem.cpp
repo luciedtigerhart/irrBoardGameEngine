@@ -2,10 +2,11 @@
 
 using namespace IrrBoardGameEngine;
 
-IrrParticleSystem::IrrParticleSystem(ISceneManager * s)
+IrrParticleSystem::IrrParticleSystem(ISceneManager * s, IVideoDriver * d)
 {
 	smgr = s;
-	ps = smgr->addParticleSystemSceneNode(false);
+	driver = d;
+	node = smgr->addParticleSystemSceneNode(false);
 }
 
 
@@ -13,23 +14,35 @@ IrrParticleSystem::~IrrParticleSystem(void)
 {
 }
 
-IParticleEmitter * IrrParticleSystem::createEmitter(s32 id)
+IParticleEmitter * IrrParticleSystem::createEmitter(s32 id,const core::aabbox3df& box,
+		const core::vector3df& direction,
+		u32 minParticlesPerSecond,
+		u32 maxParticlesPerSecond,
+		const video::SColor& minStartColor,
+		const video::SColor& maxStartColor,
+		u32 lifeTimeMin, u32 lifeTimeMax,
+		s32 maxAngleDegrees,
+		const core::dimension2df& minStartSize,
+		const core::dimension2df& maxStartSize)
 {
-	IParticleEmitter * em = ps->createBoxEmitter();
+	IParticleEmitter * em = node->createBoxEmitter(box,direction,
+		minParticlesPerSecond,maxParticlesPerSecond,minStartColor,
+		maxStartColor,lifeTimeMin,lifeTimeMax,maxAngleDegrees,
+		minStartSize,maxStartSize);
 	
 	emitters.insert(pair<s32, IParticleEmitter*>(id,em));
 
 	// this grabs the emitter
-	ps->setEmitter(em);
+	node->setEmitter(em);
 
 	// so we can drop it here without deleting it
-    em->drop();
+    //em->drop();
 
-    scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
+    scene::IParticleAffector* paf = node->createFadeOutParticleAffector();
 
 	// same goes for the affector
-    ps->addAffector(paf);
-    paf->drop();
+    node->addAffector(paf);
+    //paf->drop();
 
 	return em;
 }
@@ -42,7 +55,7 @@ void IrrParticleSystem::removeEmitter(s32 id)
 	//
     std::map<s32, IParticleEmitter*>::iterator it = emitters.find(id);
     if(it != emitters.end())
-		(*it).second->drop();
+		(*it).second->grab();
 }
 
 IParticleEmitter * IrrParticleSystem::getEmitter(s32 id)
@@ -60,12 +73,18 @@ IParticleEmitter * IrrParticleSystem::getEmitter(s32 id)
 
 IBillboardSceneNode* IrrParticleSystem::addBillboard(s32 id)
 {
-	IBillboardSceneNode* nm = smgr->addBillboardSceneNode();
+	addBillboard(id, node);
+}
+
+IBillboardSceneNode* IrrParticleSystem::addBillboard(s32 id, ISceneNode * node)
+{
+	IBillboardSceneNode* nm = smgr->addBillboardSceneNode(node);
 
 	billboards.insert(pair<s32, IBillboardSceneNode*>(id,nm));
 
 	return nm;
 }
+
 IBillboardSceneNode * IrrParticleSystem::getBillboard(s32 id)
 {
 	std::map<s32, IBillboardSceneNode*>::iterator it = billboards.find(id);
@@ -77,4 +96,33 @@ IBillboardSceneNode * IrrParticleSystem::getBillboard(s32 id)
 	{
 		return NULL;
 	}
+}
+
+void IrrParticleSystem::setParent(ISceneNode * node)
+{
+	node->setParent(node);
+}
+
+void IrrParticleSystem::setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue)
+{
+	node->setMaterialFlag(flag, newvalue);
+}
+
+void IrrParticleSystem::setMaterialTexture(u32 textureLayer, const char * src)
+{
+	node->setMaterialTexture(textureLayer,  driver->getTexture(src));
+}
+
+void IrrParticleSystem::setMaterialType(video::E_MATERIAL_TYPE newType)
+{
+	node->setMaterialType(newType);
+}
+
+void IrrParticleSystem::setPosition(Vector*p)
+{
+	node->setPosition(vector3df(p->x,p->y,p->z));
+}
+void IrrParticleSystem::setScale(Vector*p)
+{
+	node->setScale(vector3df(p->x,p->y,p->z));
 }
