@@ -44,6 +44,11 @@ private:
 	int raceP3, idxP3;
 	int raceP4, idxP4;
 
+	//Highlight rotation variables
+	float angle;
+	float deltaTime;
+	int now, then;
+
 public:
 	PrimeTile(PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
 	~PrimeTile();
@@ -66,6 +71,7 @@ public:
 	void addGhostBehavior(IrrTokenBehavior * behavior); //Activate ghost token
 	void loadGhost(); //Load ghost token if this is a safe zone tile
 	void paintSafeZone(); //Re-texture safe zone tiles according to team
+	void rotateHighlight(float speed); //Constantly rotate highlight planes
 
 	//Behavior get/set override
 

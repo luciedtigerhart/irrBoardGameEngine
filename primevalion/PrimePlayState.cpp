@@ -3,13 +3,55 @@
 PrimePlayState::PrimePlayState() {};
 PrimePlayState::~PrimePlayState() {};
 
-void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int goal,
+void PrimePlayState::Initialize(IrrEngine* engine, IParticleSystemSceneNode* ps, int players, int tokens, int goal,
 								PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 								std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 								std::list<IrrToken*>* team3, std::list<IrrToken*>* team4)
 {
 	//Get input from engine
 	input = engine->getInput();
+
+	// TEMPORARY
+	//-----------------------------------------------------------
+
+		//Get particle system from game state manager
+		particles = ps;
+
+		//Create blood particles
+		IParticleEmitter* particleEmitter = particles->createBoxEmitter(aabbox3d<f32>(-0.5f,-0.5f,-0.5f,0.5f,0.5f,0.5f), // emitter size
+													vector3df(0.0f,0.04f,0.0f),   // direction and PARTICLE TRANSLATION SPEED
+													8,10,                        // emit rate
+													SColor(0,255,255,255),       // darkest color
+													SColor(0,255,255,255),       // brightest color
+													2000,3000,					// min and max age
+													10,							  //angle
+													dimension2df(0.7f,0.7f),      // min size
+													dimension2df(2.0f,2.0f));     // max size
+
+		particles->setEmitter(particleEmitter);
+
+		particles->getMaterial(0).Lighting = false;
+		particles->getMaterial(0).ZWriteEnable = false;
+		particles->getMaterial(0).setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("particles/particle_blood01.png"));
+		particles->getMaterial(0).MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
+
+		IParticleAffector* rotator = particles->createRotationAffector(vector3df(0.0f,-200.0f,0.0f));
+		IParticleAffector* puller = particles->createGravityAffector(vector3df(0.0f,-0.1f,0.0f));
+		IParticleAffector* fader = particles->createFadeOutParticleAffector(SColor(0,0,0,0), 4000); //HIGHER the value, SOONER they fade
+
+		//particles->addAffector(rotator);
+		particles->addAffector(puller);
+		particles->addAffector(fader);
+
+		rotator->drop();
+		puller->drop();
+		fader->drop();
+
+		particleEmitter->drop();
+
+		particles->setVisible(false);
+
+	//-----------------------------------------------------------
 
 	//Initializa token lists
 
@@ -497,6 +539,12 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Start animation!
 			token->getBehavior(0)->setBool("isAnimRunning", true);
+
+			particles->setPosition(vector3df(token->node->getAbsolutePosition().X,
+											 token->node->getAbsolutePosition().Y + 2.5f,
+											 token->node->getAbsolutePosition().Z));
+
+			particles->setVisible(true);
 		}
 
 		//If this token's animation is currently running...
@@ -528,6 +576,8 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Set this token as the "killed token"
 			killedToken = token;
+
+			particles->setVisible(false);
 		}
 
 		//If animation is done, inform the other tokens
@@ -655,6 +705,12 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Start animation!
 			token->getBehavior(0)->setBool("isAnimRunning", true);
+
+			particles->setPosition(vector3df(token->node->getAbsolutePosition().X,
+											 token->node->getAbsolutePosition().Y + 2.5f,
+											 token->node->getAbsolutePosition().Z));
+
+			particles->setVisible(true);
 		}
 
 		//If this token's animation is currently running...
@@ -683,6 +739,8 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Set this token as the "killed token"
 			killedToken = token;
+
+			particles->setVisible(false);
 		}
 
 		//If animation is done, inform the other tokens

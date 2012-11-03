@@ -93,11 +93,14 @@ void PrimeGameStateManager::SetupMatch()
 	camera = match->addCamera(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
 	camera->setName("Match Camera");
 
+	//Add particle system to scene
+	IParticleSystemSceneNode* ps = engine->getSceneManager()->addParticleSystemSceneNode(false);
+
 	//Initialize game elements
 	CreateBoard();
 
 	//Initialize play state
-	playState.Initialize(engine, playersActive, tokensActive, gameGoal,
+	playState.Initialize(engine, ps, playersActive, tokensActive, gameGoal,
 						 player1, player2, player3, player4,
 						 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
 }

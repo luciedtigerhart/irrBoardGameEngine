@@ -100,6 +100,10 @@ private:
 	//Input from engine
 	IrrInput * input;
 
+	//Particle system
+	IrrParticleSystem* particleSystem;
+	IParticleSystemSceneNode* particles;
+
 public:
 	PrimePlayState();
 	~PrimePlayState();
@@ -139,7 +143,7 @@ public:
 	IrrToken* killedToken;
 
 	//Initialize this match's play state
-	void Initialize(IrrEngine* engine, int players, int tokens, int goal,
+	void Initialize(IrrEngine* engine, IParticleSystemSceneNode* ps, int players, int tokens, int goal,
 					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4);

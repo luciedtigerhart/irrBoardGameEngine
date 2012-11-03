@@ -25,10 +25,12 @@ private:
 	IrrScene* tutorial;
 	IrrScene* match;
 
-	//Game board, camera and light
+	//Game board, camera, light and particle system
 	IrrBoard* board;
 	IrrGameObject* camera;
-	ILightSceneNode *light;
+	ILightSceneNode* light;
+
+	IrrParticleSystem* particles;
 
 	//Managers
 	PrimeGUIManager guimgr;

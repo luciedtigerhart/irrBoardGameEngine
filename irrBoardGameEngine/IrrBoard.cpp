@@ -20,7 +20,7 @@ IrrBoard::~IrrBoard(void)
 		}
 	}
 
-	node->removeAll();
+	//node->removeAll();
 }
 
 void IrrBoard::addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior)
