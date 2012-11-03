@@ -56,14 +56,14 @@ IrrParticleSystem * IrrScene::addParticleSystem()
 	ps->node->setParent(rootScene);
 	return ps;
 }
-void  IrrScene::addLightSceneNode(const core::vector3df& position,video::SColorf color,f32 radius)
+ILightSceneNode* IrrScene::addLightSceneNode(const core::vector3df& position,video::SColorf color,f32 radius)
 {
-	addLightSceneNode(rootScene,-1,position,color,radius);
+	return addLightSceneNode(rootScene,-1,position,color,radius);
 }
 
-void  IrrScene::addLightSceneNode(ISceneNode* parent, s32 id, const core::vector3df& position,video::SColorf color,f32 radius)
+ILightSceneNode* IrrScene::addLightSceneNode(ISceneNode* parent, s32 id, const core::vector3df& position,video::SColorf color,f32 radius)
 {
-	smgr->addLightSceneNode(parent, position, color, radius, id);
+	return smgr->addLightSceneNode(parent, position, color, radius, id);
 }
 
 void IrrScene::addObject(IrrGameObject *o){

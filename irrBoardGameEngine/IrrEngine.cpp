@@ -72,17 +72,17 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	return 0;
 }
 
-void IrrEngine::loop()
+void IrrEngine::loop(void(*f)())
 {
-	this->loop(this->currentScene,this->currentGUI);
+	this->loop(f,this->currentScene,this->currentGUI);
 }
 
-void IrrEngine::loop(IrrGUI * gui)
+void IrrEngine::loop(void(*f)(),IrrGUI * gui)
 {
-	this->loop(this->currentScene,gui);
+	this->loop(f,this->currentScene,gui);
 }
 
-void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
+void IrrEngine::loop(void(*f)(),IrrScene * scene, IrrGUI * gui) {
 	// Qual foi a ultima fatia de tempo
 	u32 then = device->getTimer()->getTime();
 	int lastFPS = -1;
@@ -117,6 +117,7 @@ void IrrEngine::loop(IrrScene * scene, IrrGUI * gui) {
 		//z
 		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
 		*/
+		(*f)();
 
 		//Atualiza o input
 		input->update();

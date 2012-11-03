@@ -74,11 +74,11 @@ namespace IrrBoardGameEngine {
 		IrrGameObject *addCamera(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 
-		void addLightSceneNode(const core::vector3df& position = core::vector3df(0,0,0),
+		ILightSceneNode * addLightSceneNode(const core::vector3df& position = core::vector3df(0,0,0),
 			video::SColorf color = video::SColorf(1.0f, 1.0f, 1.0f),
 			f32 radius=100.0f);
 
-		void addLightSceneNode(ISceneNode* parent = 0, s32 id=-1, const core::vector3df& position = core::vector3df(0,0,0),
+		ILightSceneNode * addLightSceneNode(ISceneNode* parent = 0, s32 id=-1, const core::vector3df& position = core::vector3df(0,0,0),
 			video::SColorf color = video::SColorf(1.0f, 1.0f, 1.0f),
 			f32 radius=100.0f);
 

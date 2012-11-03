@@ -10,4 +10,5 @@ IrrToken::IrrToken(void)
 
 IrrToken::~IrrToken(void)
 {
+	node->removeAll();
 }

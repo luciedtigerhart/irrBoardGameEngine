@@ -11,7 +11,11 @@ IrrTile::IrrTile(void)
 
 IrrTile::~IrrTile(void)
 {
-	if(token != NULL) delete token;
+	if(token != NULL)
+	{
+		delete token;
+		node->removeAll();
+	}
 }
 
 
