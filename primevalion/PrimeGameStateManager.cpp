@@ -117,8 +117,11 @@ void PrimeGameStateManager::CreateBoard()
 	//Deactivate old board
 	if (board != NULL)
 	{
-		board->node->grab();
-		board->node->remove();
+		match->removeBoard();
+		board = NULL;
+
+		//board->node->grab();
+		//board->node->remove();
 	}
 
 	//Add new board to scene
@@ -340,6 +343,8 @@ void PrimeGameStateManager::Update()
 
 void PrimeGameStateManager::loop()
 {
+	//engine->loop(Update);
+
 	//Run game!
 	while(engine->getDevice()->run())
 	{

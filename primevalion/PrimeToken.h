@@ -79,14 +79,14 @@ private:
 	ISceneNode* billboardExtraction;
 	ISceneNode* billboardAbility;
 
+	void PaintVanilla(); //Color token with original color
+
 public:
 	PrimeToken(PrimeTeam myTeam); //Loads mesh and texture
 
 	void init(); //Initializes token
 	void update(); //Updates this token's visuals
 	void reset(); //Reset attributes
-
-	void PaintVanilla(); //Color token with original color
 
 	//Behavior get/set override
 

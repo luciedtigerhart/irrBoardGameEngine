@@ -21,7 +21,10 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
 
 		//Ability icon texture
-		pathBBICO = "gui/ingame/billboard_ability_kobold.png";
+		if (team == 1) pathBBICO = "billboard/ability/billboard_kobold_icon_t1.png";
+		else if (team == 2) pathBBICO = "billboard/ability/billboard_kobold_icon_t2.png";
+		else if (team == 3) pathBBICO = "billboard/ability/billboard_kobold_icon_t3.png";
+		else if (team == 4) pathBBICO = "billboard/ability/billboard_kobold_icon_t4.png";
 	}
 
 	else if (race == GNOLL)
@@ -38,7 +41,10 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
 
 		//Ability icon texture
-		pathBBICO = "gui/ingame/billboard_ability_gnoll.png";
+		if (team == 1) pathBBICO = "billboard/ability/billboard_gnoll_icon_t1.png";
+		else if (team == 2) pathBBICO = "billboard/ability/billboard_gnoll_icon_t2.png";
+		else if (team == 3) pathBBICO = "billboard/ability/billboard_gnoll_icon_t3.png";
+		else if (team == 4) pathBBICO = "billboard/ability/billboard_gnoll_icon_t4.png";
 	}
 
 	else if (race == TROLL)
@@ -55,7 +61,10 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
 
 		//Ability icon texture
-		pathBBICO = "gui/ingame/billboard_ability_troll.png";
+		if (team == 1) pathBBICO = "billboard/ability/billboard_troll_icon_t1.png";
+		else if (team == 2) pathBBICO = "billboard/ability/billboard_troll_icon_t2.png";
+		else if (team == 3) pathBBICO = "billboard/ability/billboard_troll_icon_t3.png";
+		else if (team == 4) pathBBICO = "billboard/ability/billboard_troll_icon_t4.png";
 	}
 
 	else if (race == HOG)
@@ -72,23 +81,26 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
 
 		//Ability icon texture
-		pathBBICO = "gui/ingame/billboard_ability_hog.png";
+		if (team == 1) pathBBICO = "billboard/ability/billboard_hog_icon_t1.png";
+		else if (team == 2) pathBBICO = "billboard/ability/billboard_hog_icon_t2.png";
+		else if (team == 3) pathBBICO = "billboard/ability/billboard_hog_icon_t3.png";
+		else if (team == 4) pathBBICO = "billboard/ability/billboard_hog_icon_t4.png";
 	}
 
 	//Billboard textures
 	if (race == KOBOLD)
 	{
-		if (team == 1) pathBBEXT = "gui/ingame/billboard_extraction_team1_kobold.png";
-		else if (team == 2) pathBBEXT = "gui/ingame/billboard_extraction_team2_kobold.png";
-		else if (team == 3) pathBBEXT = "gui/ingame/billboard_extraction_team3_kobold.png";
-		else if (team == 4) pathBBEXT = "gui/ingame/billboard_extraction_team4_kobold.png";
+		if (team == 1) pathBBEXT = "billboard/resource/billboard_extract_160_t1.png";
+		else if (team == 2) pathBBEXT = "billboard/resource/billboard_extract_160_t2.png";
+		else if (team == 3) pathBBEXT = "billboard/resource/billboard_extract_160_t3.png";
+		else if (team == 4) pathBBEXT = "billboard/resource/billboard_extract_160_t4.png";
 	}
 	else
 	{
-		if (team == 1) pathBBEXT = "gui/ingame/billboard_extraction_team1.png";
-		else if (team == 2) pathBBEXT = "gui/ingame/billboard_extraction_team2.png";
-		else if (team == 3) pathBBEXT = "gui/ingame/billboard_extraction_team3.png";
-		else if (team == 4) pathBBEXT = "gui/ingame/billboard_extraction_team4.png";
+		if (team == 1) pathBBEXT = "billboard/resource/billboard_extract_100_t1.png";
+		else if (team == 2) pathBBEXT = "billboard/resource/billboard_extract_100_t2.png";
+		else if (team == 3) pathBBEXT = "billboard/resource/billboard_extract_100_t3.png";
+		else if (team == 4) pathBBEXT = "billboard/resource/billboard_extract_100_t4.png";
 	}
 
 	//Set initial states
@@ -109,6 +121,14 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 	reset();
 };
 
+void PrimeToken::PaintVanilla()
+{
+	//Color token normally (Full White)
+	token->node->getMaterial(0) = matNormal;
+	token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
+	token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
+}
+
 void PrimeToken::init()
 {
 	//Highlight material uses a gray texture
@@ -128,7 +148,7 @@ void PrimeToken::init()
 	token->player = team;
 
 	//Create ability icon billboard
-	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
+	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(1.5f, 1.5f), vector3df(0.0f,5.0f,0.0f));
 	billboardAbility->getMaterial(0).setTexture(0, driver->getTexture(pathBBICO));
 	billboardAbility->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
 	billboardAbility->getMaterial(0).Lighting = false;
@@ -439,14 +459,6 @@ void PrimeToken::update()
 
 	//Update time
 	then = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
-}
-
-void PrimeToken::PaintVanilla()
-{
-	//Color token normally (Full White)
-	token->node->getMaterial(0) = matNormal;
-	token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
-	token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
 }
 
 void PrimeToken::setInt(char const * key, int value)

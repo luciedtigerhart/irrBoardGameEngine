@@ -20,19 +20,19 @@ void PrimePlayState::Initialize(IrrEngine* engine, IParticleSystemSceneNode* ps,
 		//Create blood particles
 		IParticleEmitter* particleEmitter = particles->createBoxEmitter(aabbox3d<f32>(-0.5f,-0.5f,-0.5f,0.5f,0.5f,0.5f), // emitter size
 													vector3df(0.0f,0.04f,0.0f),   // direction and PARTICLE TRANSLATION SPEED
-													8,10,                        // emit rate
+													20,50,                        // emit rate
 													SColor(0,255,255,255),       // darkest color
 													SColor(0,255,255,255),       // brightest color
 													2000,3000,					// min and max age
 													10,							  //angle
-													dimension2df(0.7f,0.7f),      // min size
-													dimension2df(2.0f,2.0f));     // max size
+													dimension2df(0.2f,0.2f),      // min size
+													dimension2df(0.7f,0.7f));     // max size
 
 		particles->setEmitter(particleEmitter);
 
 		particles->getMaterial(0).Lighting = false;
 		particles->getMaterial(0).ZWriteEnable = false;
-		particles->getMaterial(0).setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("particles/particle_blood01.png"));
+		particles->getMaterial(0).setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_blood02.png"));
 		particles->getMaterial(0).MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
 
 		IParticleAffector* rotator = particles->createRotationAffector(vector3df(0.0f,-200.0f,0.0f));
