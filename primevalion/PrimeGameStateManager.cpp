@@ -70,11 +70,10 @@ PrimeGameStateManager::~PrimeGameStateManager()
 	delete title;
 	delete credits;
 	delete tutorial;	
-	match->removeBoard();
+	match->removeBoard(); //Bye bye board
 	delete match;
 	
-	//Bye bye board and camera!
-	//delete board;
+	//Bye bye camera!
 	delete camera;
 };
 
@@ -120,16 +119,13 @@ void PrimeGameStateManager::CreateBoard()
 	{
 		match->removeBoard();
 		board = NULL;
-
-		//board->node->grab();
-		//board->node->remove();
 	}
 
 	//Add new board to scene
 	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
 
 	//Create light
-	light = engine->getSceneManager()->addLightSceneNode(board->node, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+	light = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 
 	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();
@@ -344,8 +340,12 @@ void PrimeGameStateManager::Update()
 
 void PrimeGameStateManager::loop(void(*f)())
 {
+	//Run game!
 	engine->loop(f);
-	/*
+}
+
+void PrimeGameStateManager::loop()
+{
 	//Run game!
 	while(engine->getDevice()->run())
 	{
@@ -370,5 +370,4 @@ void PrimeGameStateManager::loop(void(*f)())
 
 	//Close game!
 	engine->getDevice()->drop();
-	*/
 }

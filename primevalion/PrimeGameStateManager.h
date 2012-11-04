@@ -76,6 +76,7 @@ public:
 	~PrimeGameStateManager();
 
 	void loop(void(*f)()); //Runs game
+	void loop(); //Runs game
 	void Update(); //Update game states
 };
 
