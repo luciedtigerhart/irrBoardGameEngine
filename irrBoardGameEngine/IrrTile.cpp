@@ -13,8 +13,8 @@ IrrTile::~IrrTile(void)
 {
 	if(token != NULL)
 	{
-		//delete token;
-		//node->removeAll();
+		delete token;
+		node->removeAll();
 	}
 }
 
