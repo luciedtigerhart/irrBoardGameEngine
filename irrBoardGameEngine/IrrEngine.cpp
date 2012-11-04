@@ -67,8 +67,6 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	currentScene = createScene();
 	currentScene->setActive(true);
 
-	
-
 	return 0;
 }
 
@@ -117,7 +115,6 @@ void IrrEngine::loop(void(*f)(),IrrScene * scene, IrrGUI * gui) {
 		//z
 		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
 		*/
-		(*f)();
 
 		//Atualiza o input
 		input->update();
@@ -127,6 +124,9 @@ void IrrEngine::loop(void(*f)(),IrrScene * scene, IrrGUI * gui) {
 
 		//atualiza a gui
 		gui->update();
+
+		//Função do usuario
+		(*f)();
 
 		//Grafo de cena renderiza
 		scene->drawAll();
