@@ -71,14 +71,12 @@ private:
 	void ManageTutorialScreen();
 	void ManageCreditsScreen();
 	void ManageMatch();
-
-	void Update(); //Update game states
-
 public:
 	PrimeGameStateManager();
 	~PrimeGameStateManager();
 
-	void loop(); //Runs game
+	void loop(void(*f)()); //Runs game
+	void Update(); //Update game states
 };
 
 #endif

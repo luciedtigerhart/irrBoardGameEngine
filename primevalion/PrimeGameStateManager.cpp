@@ -69,11 +69,12 @@ PrimeGameStateManager::~PrimeGameStateManager()
 	//Bye bye scenes!
 	delete title;
 	delete credits;
-	delete tutorial;
+	delete tutorial;	
+	match->removeBoard();
 	delete match;
 	
 	//Bye bye board and camera!
-	delete board;
+	//delete board;
 	delete camera;
 };
 
@@ -341,10 +342,10 @@ void PrimeGameStateManager::Update()
 	else if (currentScene == match) ManageMatch();
 }
 
-void PrimeGameStateManager::loop()
+void PrimeGameStateManager::loop(void(*f)())
 {
-	//engine->loop(Update);
-
+	engine->loop(f);
+	/*
 	//Run game!
 	while(engine->getDevice()->run())
 	{
@@ -369,4 +370,5 @@ void PrimeGameStateManager::loop()
 
 	//Close game!
 	engine->getDevice()->drop();
+	*/
 }
