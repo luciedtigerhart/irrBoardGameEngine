@@ -85,7 +85,7 @@ int main()
 
 	IrrParticleSystem * ps = cena->addParticleSystem();
 
-	IParticleEmitter * em = ps->createEmitter(2,core::aabbox3d<f32>(-2,0,-2,2,1,2), // emitter size
+	IParticleEmitter * em = ps->createBoxEmitter(2,core::aabbox3d<f32>(-2,0,-2,2,1,2), // emitter size
                 core::vector3df(0.0f,0.06f,0.0f),   // initial direction
                 20,30,                              // emit rate
                 video::SColor(0,255,255,255),       // darkest color
@@ -100,6 +100,8 @@ int main()
 	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, true);
 	ps->setMaterialTexture(0,"texturas/blue.jpg");
 	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
+
+	ps->addFadeOutAffector(0);
 
 	/*
 	IrrScene *scene_dois = engine->createScene();
