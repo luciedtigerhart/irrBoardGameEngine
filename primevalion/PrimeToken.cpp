@@ -271,8 +271,8 @@ void PrimeToken::update()
 				{
 					//Push target hover highlight (Orange)
 					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,255,70,0);
-					token->node->getMaterial(0).SpecularColor.set(255,255,70,0);
+					token->node->getMaterial(0).EmissiveColor.set(255,210,120,0);
+					token->node->getMaterial(0).SpecularColor.set(255,210,120,0);
 				}
 
 				else if (token->highlight == ATTACK_HOVER)
@@ -300,8 +300,8 @@ void PrimeToken::update()
 				{
 					//Push victim highlight (Orange)
 					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,255,70,0);
-					token->node->getMaterial(0).SpecularColor.set(255,255,70,0);
+					token->node->getMaterial(0).EmissiveColor.set(255,210,120,0);
+					token->node->getMaterial(0).SpecularColor.set(255,210,120,0);
 				}
 
 				else PaintVanilla();

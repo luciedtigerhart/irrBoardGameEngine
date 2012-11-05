@@ -25,12 +25,20 @@ private:
 	IrrScene* tutorial;
 	IrrScene* match;
 
-	//Game board, camera, light and particle system
+	//Game board and camera
 	IrrBoard* board;
 	IrrGameObject* camera;
+
+	//Lights
 	ILightSceneNode* light;
 
-	IrrParticleSystem* particles;
+	//Particle systems
+	IrrParticleSystem* bloodParticles;
+	IrrParticleSystem* abilityParticles;
+	IrrParticleSystem* resourceParticlesNW;
+	IrrParticleSystem* resourceParticlesNE;
+	IrrParticleSystem* resourceParticlesSW;
+	IrrParticleSystem* resourceParticlesSE;
 
 	//Managers
 	PrimeGUIManager guimgr;
@@ -61,6 +69,7 @@ private:
 
 		//Sub-methods which compose "SetupMatch()"
 		void ResetPlayers();
+		void CreateParticles();
 		void CreateBoard();
 		void LoadTiles();
 		void LoadTokens();

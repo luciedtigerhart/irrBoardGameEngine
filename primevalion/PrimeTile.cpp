@@ -124,16 +124,16 @@ void PrimeTile::turnOnHighlight(int type)
 		{
 			//Push highlight (Orange)
 			highlightPlane->getMaterial(0) = matPlaneNormal;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,70,0);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,255,70,0);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,210,120,0);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,210,120,0);
 		}
 
 		else if (type == PUSH_HOVER)
 		{
 			//Push hover highlight (Light Orange)
 			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,110,40);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,255,110,40);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,250,160,80);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,250,160,80);
 		}
 
 		else if (type == ATTACK)

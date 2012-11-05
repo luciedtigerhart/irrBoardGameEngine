@@ -37,6 +37,16 @@
 	#define TURN_MESSAGE_AT_TWO 2
 	#define NO_MESSAGE_AT_THREE 3
 
+//Particle system definitions
+//----------------------------
+
+	#define BLOOD 123
+	#define ABILITY 456
+	#define RESOURCES_NW 789
+	#define RESOURCES_NE 790
+	#define RESOURCES_SW 791
+	#define RESOURCES_SE 792
+
 //Other helpful definitions
 //----------------------------
 
@@ -100,9 +110,24 @@ private:
 	//Input from engine
 	IrrInput * input;
 
-	//Particle system
-	IrrParticleSystem* particleSystem;
-	IParticleSystemSceneNode* particles;
+	//Particle systems
+	IrrParticleSystem* bloodParticles;
+	IrrParticleSystem* abilityParticles;
+	IrrParticleSystem* resourceParticlesNW;
+	IrrParticleSystem* resourceParticlesNE;
+	IrrParticleSystem* resourceParticlesSW;
+	IrrParticleSystem* resourceParticlesSE;
+
+	//Particle materials
+	SMaterial blood, ability, resources;
+
+	//Particle emission rates
+	int bloodMin, bloodMax;
+	int abilityMin, abilityMax;
+	int resourceMin, resourceMax;
+
+	//Particle initialization
+	bool particlesOK;
 
 public:
 	PrimePlayState();
@@ -143,7 +168,10 @@ public:
 	IrrToken* killedToken;
 
 	//Initialize this match's play state
-	void Initialize(IrrEngine* engine, IParticleSystemSceneNode* ps, int players, int tokens, int goal,
+	void Initialize(IrrEngine* engine, int players, int tokens, int goal,
+					IrrParticleSystem* b, IrrParticleSystem* a,
+					IrrParticleSystem* rnw, IrrParticleSystem* rne,
+					IrrParticleSystem* rsw, IrrParticleSystem* rse,
 					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4);
@@ -153,6 +181,18 @@ public:
 
 	//Activate wait and return "true" when done
 	bool Wait(float seconds);
+
+	//Initialize particle effects
+	void InitParticles(IrrBoard* board);
+
+	//Create resource extraction particle emitters
+	void CreateResourceEmitters(void);
+
+	//Start a particle system's emission somewhere
+	void StartParticles(int particleSystemID, Vector* position);
+
+	//Stop a particle system's emission
+	void StopParticles(int particleSystemID);
 
 	//Find out which player this turn belongs to
 	void SetTurnPlayer(int turn);
@@ -187,9 +227,9 @@ public:
 	//Check for ressurrection phase skipping condition
 	void VerifySafeZoneOccupation(IrrBoard* board);
 
-	//Check for tiles on the extraction point and
-	//if any team has reached resource goal
-	void VerifyResourceExtraction(IrrBoard* board);
+	//Create resource extraction effects, perform extraction itself
+	//and find out if any team has reached resource goal
+	void VerifyResourceExtraction(IrrBoard* board, bool effectVerification);
 
 	//Clear highlights off every tile and token
 	void ClearHighlights(IrrBoard* board);

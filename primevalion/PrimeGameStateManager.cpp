@@ -69,8 +69,7 @@ PrimeGameStateManager::~PrimeGameStateManager()
 	//Bye bye scenes!
 	delete title;
 	delete credits;
-	delete tutorial;	
-	match->removeBoard(); //Bye bye board
+	delete tutorial;
 	delete match;
 	
 	//Bye bye camera!
@@ -93,14 +92,17 @@ void PrimeGameStateManager::SetupMatch()
 	camera = match->addCamera(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
 	camera->setName("Match Camera");
 
-	//Add particle system to scene
-	IParticleSystemSceneNode* ps = engine->getSceneManager()->addParticleSystemSceneNode(false);
+	//Add particle systems to scene
+	CreateParticles();
 
 	//Initialize game elements
 	CreateBoard();
 
 	//Initialize play state
-	playState.Initialize(engine, ps, playersActive, tokensActive, gameGoal,
+	playState.Initialize(engine, playersActive, tokensActive, gameGoal,
+						 bloodParticles, abilityParticles,
+						 resourceParticlesNW, resourceParticlesNE,
+						 resourceParticlesSW, resourceParticlesSE,
 						 player1, player2, player3, player4,
 						 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
 }
@@ -112,15 +114,20 @@ void PrimeGameStateManager::ResetPlayers()
 	player1.primevalium = player2.primevalium = player3.primevalium = player4.primevalium = 0;
 }
 
+void PrimeGameStateManager::CreateParticles()
+{
+	//Add multiple particle systems to match
+
+	bloodParticles = match->addParticleSystem();
+	abilityParticles = match->addParticleSystem();
+	resourceParticlesNW = match->addParticleSystem();
+	resourceParticlesNE = match->addParticleSystem();
+	resourceParticlesSW = match->addParticleSystem();
+	resourceParticlesSE = match->addParticleSystem();
+}
+
 void PrimeGameStateManager::CreateBoard()
 {
-	//Deactivate old board
-	if (board != NULL)
-	{
-		match->removeBoard();
-		board = NULL;
-	}
-
 	//Add new board to scene
 	board = match->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
 
@@ -321,6 +328,13 @@ void PrimeGameStateManager::ManageMatch()
 	//If play state signaled match has ended, head back to title screen
 	else if (playState.signalBackToTitle)
 	{
+		//Deactivate board
+		if (board != NULL)
+		{
+			match->removeBoard();
+			board = NULL;
+		}
+
 		//Change scene and GUI
 		engine->setCurrentScene(title);
 		engine->setCurrentGUI(guimgr.env_title);

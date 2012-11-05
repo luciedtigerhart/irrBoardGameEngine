@@ -3,7 +3,10 @@
 PrimePlayState::PrimePlayState() {};
 PrimePlayState::~PrimePlayState() {};
 
-void PrimePlayState::Initialize(IrrEngine* engine, IParticleSystemSceneNode* ps, int players, int tokens, int goal,
+void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int goal,
+								IrrParticleSystem* b, IrrParticleSystem* a,
+								IrrParticleSystem* rnw, IrrParticleSystem* rne,
+								IrrParticleSystem* rsw, IrrParticleSystem* rse,
 								PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 								std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 								std::list<IrrToken*>* team3, std::list<IrrToken*>* team4)
@@ -11,49 +14,14 @@ void PrimePlayState::Initialize(IrrEngine* engine, IParticleSystemSceneNode* ps,
 	//Get input from engine
 	input = engine->getInput();
 
-	// TEMPORARY
-	//-----------------------------------------------------------
+	//Get particle systems from game state manager
+	bloodParticles = b; abilityParticles = a;
+	resourceParticlesNW = rnw; resourceParticlesNE = rne;
+	resourceParticlesSW = rsw; resourceParticlesSE = rse;
+	
+	particlesOK = false; //Particles haven't been initialized yet
 
-		//Get particle system from game state manager
-		particles = ps;
-
-		//Create blood particles
-		IParticleEmitter* particleEmitter = particles->createBoxEmitter(aabbox3d<f32>(-0.5f,-0.5f,-0.5f,0.5f,0.5f,0.5f), // emitter size
-													vector3df(0.0f,0.04f,0.0f),   // direction and PARTICLE TRANSLATION SPEED
-													20,50,                        // emit rate
-													SColor(0,255,255,255),       // darkest color
-													SColor(0,255,255,255),       // brightest color
-													2000,3000,					// min and max age
-													10,							  //angle
-													dimension2df(0.2f,0.2f),      // min size
-													dimension2df(0.7f,0.7f));     // max size
-
-		particles->setEmitter(particleEmitter);
-
-		particles->getMaterial(0).Lighting = false;
-		particles->getMaterial(0).ZWriteEnable = false;
-		particles->getMaterial(0).setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_blood02.png"));
-		particles->getMaterial(0).MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
-
-		IParticleAffector* rotator = particles->createRotationAffector(vector3df(0.0f,-200.0f,0.0f));
-		IParticleAffector* puller = particles->createGravityAffector(vector3df(0.0f,-0.1f,0.0f));
-		IParticleAffector* fader = particles->createFadeOutParticleAffector(SColor(0,0,0,0), 4000); //HIGHER the value, SOONER they fade
-
-		//particles->addAffector(rotator);
-		particles->addAffector(puller);
-		particles->addAffector(fader);
-
-		rotator->drop();
-		puller->drop();
-		fader->drop();
-
-		particleEmitter->drop();
-
-		particles->setVisible(false);
-
-	//-----------------------------------------------------------
-
-	//Initializa token lists
+	//Initialize token lists
 
 	tokensTeam1 = new std::list<IrrToken*>();
 	tokensTeam2 = new std::list<IrrToken*>();
@@ -193,6 +161,248 @@ bool PrimePlayState::Wait(float seconds)
 	}
 
 	return isAwake;
+}
+
+void PrimePlayState::InitParticles(IrrBoard* board)
+{
+	//Set minimal and maximal emission rates
+	bloodMin = 10; bloodMax = 20;
+	abilityMin = 2; abilityMax = 5;
+	resourceMin = 2; resourceMax = 4;
+
+	//Create blood particles material
+	blood.Lighting = false; blood.ZWriteEnable = false;
+	blood.MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
+	blood.setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_blood02.png"));
+
+	//Create ability particles material
+	ability.Lighting = false; ability.ZWriteEnable = false;
+	ability.MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
+	ability.setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_light02.png"));
+
+	//Create resource particles material
+	resources.Lighting = false; resources.ZWriteEnable = false;
+	resources.MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
+	resources.setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_light01.png"));
+
+	//Create blood particles emitter
+	IParticleEmitter* bEmitter = bloodParticles->createBoxEmitter(BLOOD, aabbox3d<f32>(-0.5f,-0.5f,-0.5f,0.5f,0.5f,0.5f), // emitter size
+																  vector3df(0.0f,0.04f,0.0f),   // direction and translation speed
+																  0,0,						  // emit rate (zero by default)
+																  SColor(0,255,255,255),       // darkest color
+																  SColor(0,255,255,255),       // brightest color
+																  2000,3000,					// min and max age
+																  10,							  //angle
+																  dimension2df(0.2f,0.2f),      // min size
+																  dimension2df(0.7f,0.7f));     // max size
+	
+	//Create ability particles emitter
+	IParticleEmitter* aEmitter = abilityParticles->createSphereEmitter(ABILITY, vector3df(0.0f,0.0f,0.0f), 1.0f, // emitter size
+																	   vector3df(0.0f,0.005f,0.0f),   // direction and translation speed
+																	   0,0,						   // emit rate (zero by default)
+																	   SColor(0,255,255,255),       // darkest color
+																	   SColor(0,255,255,255),       // brightest color
+																	   2000,3000,					  // min and max age
+																	   10,							 //angle
+																	   dimension2df(0.4f,0.4f),      // min size
+																	   dimension2df(0.8f,0.8f));     // max size
+	
+	//Create resource particle emitters
+	CreateResourceEmitters();
+	
+	//Set blood particle material
+	bloodParticles->node->getMaterial(0) = blood;
+
+	//Set ability particle material
+	abilityParticles->node->getMaterial(0) = ability;
+
+	//Set resource particle materials
+	resourceParticlesNW->node->getMaterial(0) = resources;
+	resourceParticlesNE->node->getMaterial(0) = resources;
+	resourceParticlesSW->node->getMaterial(0) = resources;
+	resourceParticlesSE->node->getMaterial(0) = resources;
+
+	//Create blood particle affectors
+	bloodParticles->addGravityAffector(1, vector3df(0.0f,-0.1f,0.0f));
+	bloodParticles->addFadeOutAffector(2, SColor(0,0,0,0), 4000); //The higher the value, the sooner they fade
+
+	//Create ability particle affectors
+	abilityParticles->addFadeOutAffector(3, SColor(0,0,0,0), 8000);
+
+	//Create resource particle fade out affectors
+	resourceParticlesNW->addFadeOutAffector(4, SColor(0,0,0,0), 12000);
+	resourceParticlesNE->addFadeOutAffector(5, SColor(0,0,0,0), 12000);
+	resourceParticlesSW->addFadeOutAffector(6, SColor(0,0,0,0), 12000);
+	resourceParticlesSE->addFadeOutAffector(7, SColor(0,0,0,0), 12000);
+
+	//Create resource particle rotation affectors
+	resourceParticlesNW->addRotationAffector(8, vector3df(0.0f, 15.0f, 0.0f), board->board[4][4]->node->getAbsolutePosition());
+	resourceParticlesNE->addRotationAffector(9, vector3df(0.0f, 15.0f, 0.0f), board->board[4][5]->node->getAbsolutePosition());
+	resourceParticlesSW->addRotationAffector(10, vector3df(0.0f, 15.0f, 0.0f), board->board[5][4]->node->getAbsolutePosition());
+	resourceParticlesSE->addRotationAffector(11, vector3df(0.0f, 15.0f, 0.0f), board->board[5][5]->node->getAbsolutePosition());
+
+	//Finish up particle initialization
+	particlesOK = true;
+}
+
+void PrimePlayState::CreateResourceEmitters(void)
+{
+	//Create NORTHWEST resource particles emitter
+	IParticleEmitter* rnwEmitter = resourceParticlesNW->createRingEmitter(RESOURCES_NW, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
+																		  0,0,					      // emit rate (zero by default)
+																		  SColor(0,255,255,255),       // darkest color
+																		  SColor(0,255,255,255),       // brightest color
+																		  10000,12000,					  // min and max age
+																		  0,								//angle
+																		  dimension2df(0.5f,0.5f),      // min size
+																		  dimension2df(1.0f,1.0f));     // max size
+
+	//Create NORTHEAST resource particles emitter
+	IParticleEmitter* rneEmitter = resourceParticlesNE->createRingEmitter(RESOURCES_NE, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
+																		  0,0,					      // emit rate (zero by default)
+																		  SColor(0,255,255,255),       // darkest color
+																		  SColor(0,255,255,255),       // brightest color
+																		  10000,12000,					  // min and max age
+																		  0,								//angle
+																		  dimension2df(0.5f,0.5f),      // min size
+																		  dimension2df(1.0f,1.0f));     // max size
+
+	//Create SOUTHWEST resource particles emitter
+	IParticleEmitter* rswEmitter = resourceParticlesSW->createRingEmitter(RESOURCES_SW, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
+																		  0,0,					      // emit rate (zero by default)
+																		  SColor(0,255,255,255),       // darkest color
+																		  SColor(0,255,255,255),       // brightest color
+																		  10000,12000,					  // min and max age
+																		  0,								//angle
+																		  dimension2df(0.5f,0.5f),      // min size
+																		  dimension2df(1.0f,1.0f));     // max size
+
+	//Create NORTHWEST resource particles emitter
+	IParticleEmitter* rseEmitter = resourceParticlesSE->createRingEmitter(RESOURCES_SE, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
+																		  0,0,					      // emit rate (zero by default)
+																		  SColor(0,255,255,255),       // darkest color
+																		  SColor(0,255,255,255),       // brightest color
+																		  10000,12000,					  // min and max age
+																		  0,								//angle
+																		  dimension2df(0.5f,0.5f),      // min size
+																		  dimension2df(1.0f,1.0f));     // max size
+}
+
+void PrimePlayState::StartParticles(int particleSystemID, Vector* position)
+{
+	//Find particle system with ID passed as parameter
+
+	if (particleSystemID == BLOOD)
+	{
+		//Restart emission
+		bloodParticles->node->getEmitter()->setMinParticlesPerSecond(bloodMin);
+		bloodParticles->node->getEmitter()->setMaxParticlesPerSecond(bloodMax);
+
+		//Re-position
+		bloodParticles->setPosition(position);
+	}
+
+	else if (particleSystemID == ABILITY)
+	{
+		//Restart emission
+		abilityParticles->node->getEmitter()->setMinParticlesPerSecond(abilityMin);
+		abilityParticles->node->getEmitter()->setMaxParticlesPerSecond(abilityMax);
+
+		//Re-position
+		abilityParticles->setPosition(position);
+	}
+
+	else if (particleSystemID == RESOURCES_NW)
+	{
+		//Restart emission
+		resourceParticlesNW->node->getEmitter()->setMinParticlesPerSecond(resourceMin);
+		resourceParticlesNW->node->getEmitter()->setMaxParticlesPerSecond(resourceMax);
+
+		//Re-position
+		resourceParticlesNW->setPosition(position);
+	}
+
+	else if (particleSystemID == RESOURCES_NE)
+	{
+		//Restart emission
+		resourceParticlesNE->node->getEmitter()->setMinParticlesPerSecond(resourceMin);
+		resourceParticlesNE->node->getEmitter()->setMaxParticlesPerSecond(resourceMax);
+
+		//Re-position
+		resourceParticlesNE->setPosition(position);
+	}
+
+	else if (particleSystemID == RESOURCES_SW)
+	{
+		//Restart emission
+		resourceParticlesSW->node->getEmitter()->setMinParticlesPerSecond(resourceMin);
+		resourceParticlesSW->node->getEmitter()->setMaxParticlesPerSecond(resourceMax);
+
+		//Re-position
+		resourceParticlesSW->setPosition(position);
+	}
+
+	else if (particleSystemID == RESOURCES_SE)
+	{
+		//Restart emission
+		resourceParticlesSE->node->getEmitter()->setMinParticlesPerSecond(resourceMin);
+		resourceParticlesSE->node->getEmitter()->setMaxParticlesPerSecond(resourceMax);
+
+		//Re-position
+		resourceParticlesSE->setPosition(position);
+	}
+
+}
+
+void PrimePlayState::StopParticles(int particleSystemID)
+{
+	//Find particle system with ID passed as parameter
+
+	if (particleSystemID == BLOOD)
+	{
+		//Stop emission
+		bloodParticles->node->getEmitter()->setMinParticlesPerSecond(0);
+		bloodParticles->node->getEmitter()->setMaxParticlesPerSecond(0);
+	}
+
+	else if (particleSystemID == ABILITY)
+	{
+		//Stop emission
+		abilityParticles->node->getEmitter()->setMinParticlesPerSecond(0);
+		abilityParticles->node->getEmitter()->setMaxParticlesPerSecond(0);
+	}
+
+	else if (particleSystemID == RESOURCES_NW)
+	{
+		//Stop emission
+		resourceParticlesNW->node->getEmitter()->setMinParticlesPerSecond(0);
+		resourceParticlesNW->node->getEmitter()->setMaxParticlesPerSecond(0);
+	}
+
+	else if (particleSystemID == RESOURCES_NE)
+	{
+		//Stop emission
+		resourceParticlesNE->node->getEmitter()->setMinParticlesPerSecond(0);
+		resourceParticlesNE->node->getEmitter()->setMaxParticlesPerSecond(0);
+	}
+
+	else if (particleSystemID == RESOURCES_SW)
+	{
+		//Stop emission
+		resourceParticlesSW->node->getEmitter()->setMinParticlesPerSecond(0);
+		resourceParticlesSW->node->getEmitter()->setMaxParticlesPerSecond(0);
+	}
+
+	else if (particleSystemID == RESOURCES_SE)
+	{
+		//Stop emission
+		resourceParticlesSE->node->getEmitter()->setMinParticlesPerSecond(0);
+		resourceParticlesSE->node->getEmitter()->setMaxParticlesPerSecond(0);
+	}
 }
 
 void PrimePlayState::SetTurnPlayer(int turn)
@@ -376,7 +586,7 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 					heavyTokens++;
 
 					//If more than one of these have been found in a line...
-					if (heavyTokens >= 2)
+					if (heavyTokens >= 2 && freeTiles == 0)
 					{
 						//Cannot push 2 or more aligned Trolls
 						isValid = false;
@@ -384,6 +594,10 @@ bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int 
 						//Break "while" loop
 						breakScan = true;
 					}
+
+					//If two of these have been found in a line, but there
+					//were free tiles before them, it shouldn't hamper movement.
+					else if (heavyTokens >= 2 && freeTiles > 0) heavyTokens = 0;
 				}
 			}
 
@@ -540,11 +754,10 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 			//Start animation!
 			token->getBehavior(0)->setBool("isAnimRunning", true);
 
-			particles->setPosition(vector3df(token->node->getAbsolutePosition().X,
+			//Activate particle effect!
+			StartParticles(BLOOD, new Vector(token->node->getAbsolutePosition().X,
 											 token->node->getAbsolutePosition().Y + 2.5f,
 											 token->node->getAbsolutePosition().Z));
-
-			particles->setVisible(true);
 		}
 
 		//If this token's animation is currently running...
@@ -577,7 +790,8 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 			//Set this token as the "killed token"
 			killedToken = token;
 
-			particles->setVisible(false);
+			//End particle effect
+			StopParticles(BLOOD);
 		}
 
 		//If animation is done, inform the other tokens
@@ -706,11 +920,10 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 			//Start animation!
 			token->getBehavior(0)->setBool("isAnimRunning", true);
 
-			particles->setPosition(vector3df(token->node->getAbsolutePosition().X,
+			//Activate particle effect!
+			StartParticles(BLOOD, new Vector(token->node->getAbsolutePosition().X,
 											 token->node->getAbsolutePosition().Y + 2.5f,
 											 token->node->getAbsolutePosition().Z));
-
-			particles->setVisible(true);
 		}
 
 		//If this token's animation is currently running...
@@ -740,7 +953,8 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 			//Set this token as the "killed token"
 			killedToken = token;
 
-			particles->setVisible(false);
+			//End particle effect
+			StopParticles(BLOOD);
 		}
 
 		//If animation is done, inform the other tokens
@@ -890,6 +1104,7 @@ bool PrimePlayState::TrollBesideMe(IrrToken* token, IrrBoard* board)
 			if (board->board[up[0]][up[1]]->token->getBehavior(0)->getInt("race") == TROLL
 				&& !board->board[up[0]][up[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
 				&& !board->board[up[0]][up[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& !board->board[up[0]][up[1]]->token->getBehavior(0)->getBool("isDead")
 				&& board->board[up[0]][up[1]]->token->player == token->player)
 			{
 				trollBesideMe = true;
@@ -905,6 +1120,7 @@ bool PrimePlayState::TrollBesideMe(IrrToken* token, IrrBoard* board)
 			if (board->board[down[0]][down[1]]->token->getBehavior(0)->getInt("race") == TROLL
 				&& !board->board[down[0]][down[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
 				&& !board->board[down[0]][down[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& !board->board[down[0]][down[1]]->token->getBehavior(0)->getBool("isDead")
 				&& board->board[down[0]][down[1]]->token->player == token->player)
 			{
 				trollBesideMe = true;
@@ -920,6 +1136,7 @@ bool PrimePlayState::TrollBesideMe(IrrToken* token, IrrBoard* board)
 			if (board->board[left[0]][left[1]]->token->getBehavior(0)->getInt("race") == TROLL
 				&& !board->board[left[0]][left[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
 				&& !board->board[left[0]][left[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& !board->board[left[0]][left[1]]->token->getBehavior(0)->getBool("isDead")
 				&& board->board[left[0]][left[1]]->token->player == token->player)
 			{
 				trollBesideMe = true;
@@ -935,6 +1152,7 @@ bool PrimePlayState::TrollBesideMe(IrrToken* token, IrrBoard* board)
 			if (board->board[right[0]][right[1]]->token->getBehavior(0)->getInt("race") == TROLL
 				&& !board->board[right[0]][right[1]]->token->getBehavior(0)->getBool("isGonnaBeTrapped")
 				&& !board->board[right[0]][right[1]]->token->getBehavior(0)->getBool("isTargeted")
+				&& !board->board[right[0]][right[1]]->token->getBehavior(0)->getBool("isDead")
 				&& board->board[right[0]][right[1]]->token->player == token->player)
 			{
 				trollBesideMe = true;
@@ -1021,7 +1239,7 @@ void PrimePlayState::VerifySafeZoneOccupation(IrrBoard* board)
 	}
 }
 
-void PrimePlayState::VerifyResourceExtraction(IrrBoard* board)
+void PrimePlayState::VerifyResourceExtraction(IrrBoard* board, bool effectVerification)
 {
 	//Scan the whole board
 	for (int i=0; i < board->tile_i; i++)
@@ -1031,36 +1249,106 @@ void PrimePlayState::VerifyResourceExtraction(IrrBoard* board)
 			//If a resource tile has a token on it...
 			if (board->board[i][j]->inf == RESOURCE && board->board[i][j]->token != NULL)
 			{
-				//Activate this token's extraction state
-				board->board[i][j]->token->getBehavior(0)->setBool("isExtracting", true);
-
-				//Add Primevalium to this token's team
-
-				if (board->board[i][j]->token->player == player1.idx)
+				//Activate extraction effect...
+				if (effectVerification)
 				{
-					player1.primevalium += 100;
-					if (player1.assignedRace == KOBOLD) player1.primevalium += 60;
+					//Determine whether this tile is the Northwest, Northeast,
+					//Southwest or Southeast resource tile
+
+					//NORTHWEST...
+					if (i == 4 && j == 4)
+					{
+						//Begin particle emission
+						StartParticles(RESOURCES_NW, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
+																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Z));
+					}
+
+					//NORTHEAST...
+					else if (i == 4 && j == 5)
+					{
+						//Begin particle emission
+						StartParticles(RESOURCES_NE, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
+																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Z));
+					}
+
+					//SOUTHWEST...
+					else if (i == 5 && j == 4)
+					{
+						//Begin particle emission
+						StartParticles(RESOURCES_SW, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
+																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Z));
+					}
+
+					//SOUTHEAST...
+					else if (i == 5 && j == 5)
+					{
+						//Begin particle emission
+						StartParticles(RESOURCES_SE, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
+																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Z));
+					}
 				}
 
-				else if (board->board[i][j]->token->player == player2.idx)
+				//...Or perform extraction!
+				else
 				{
-					player2.primevalium += 100;
-					if (player2.assignedRace == KOBOLD) player2.primevalium += 60;
-				}
+					//Activate this token's extraction state
+					board->board[i][j]->token->getBehavior(0)->setBool("isExtracting", true);
 
-				else if (board->board[i][j]->token->player == player3.idx)
+					//Add Primevalium to this token's team
+
+					if (board->board[i][j]->token->player == player1.idx)
+					{
+						player1.primevalium += 100;
+						if (player1.assignedRace == KOBOLD) player1.primevalium += 60;
+					}
+
+					else if (board->board[i][j]->token->player == player2.idx)
+					{
+						player2.primevalium += 100;
+						if (player2.assignedRace == KOBOLD) player2.primevalium += 60;
+					}
+
+					else if (board->board[i][j]->token->player == player3.idx)
+					{
+						player3.primevalium += 100;
+						if (player3.assignedRace == KOBOLD) player3.primevalium += 60;
+					}
+
+					else if (board->board[i][j]->token->player == player4.idx)
+					{
+						player4.primevalium += 100;
+						if (player4.assignedRace == KOBOLD) player4.primevalium += 60;
+					}
+
+					resourcesExtracted = true;
+				}
+			}
+
+			//Otherwise, if there's no token on this resource tile...
+			else if (board->board[i][j]->inf == RESOURCE && board->board[i][j]->token == NULL)
+			{
+				//Deactivate extraction effect
+				if (effectVerification)
 				{
-					player3.primevalium += 100;
-					if (player3.assignedRace == KOBOLD) player3.primevalium += 60;
-				}
+					//Determine whether this tile is the Northwest, Northeast,
+					//Southwest or Southeast resource tile
 
-				else if (board->board[i][j]->token->player == player4.idx)
-				{
-					player4.primevalium += 100;
-					if (player4.assignedRace == KOBOLD) player4.primevalium += 60;
-				}
+					//NORTHWEST...
+					if (i == 4 && j == 4) StopParticles(RESOURCES_NW);
 
-				resourcesExtracted = true;
+					//NORTHEAST...
+					else if (i == 4 && j == 5) StopParticles(RESOURCES_NE);
+
+					//SOUTHWEST...
+					else if (i == 5 && j == 4) StopParticles(RESOURCES_SW);
+
+					//SOUTHEAST...
+					else if (i == 5 && j == 5) StopParticles(RESOURCES_SE);
+				}
 			}
 		}
 	}
@@ -1108,6 +1396,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 
 		else if (matchStart && Wait(2.0f))
 		{
+			//Initialize particle systems
+			InitParticles(board);
+
 			phase = TURN_START;
 			matchStart = false;
 		}
@@ -1255,7 +1546,7 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			if (!resourcesVerified && Wait(0.8f))
 			{
 				//Perform resource extraction
-				VerifyResourceExtraction(board);
+				VerifyResourceExtraction(board, false);
 
 				resourcesVerified = true;
 			}
@@ -1651,6 +1942,10 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 			{
 				//Activate ability and show special effect
 				token->getBehavior(0)->setBool("isAbilityActive", true);
+
+				StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
+												   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+												   token->parentNode->node->getAbsolutePosition().Z));
 			}
 		}
 
@@ -1668,6 +1963,10 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 				//Activate ability and show special effect
 				token->getBehavior(0)->setBool("isAbilityActive", true);
 				token->getBehavior(0)->setBool("isFinished", false);
+
+				StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
+												   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+												   token->parentNode->node->getAbsolutePosition().Z));
 			}
 		}
 
@@ -1684,12 +1983,18 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 		if (TrollBesideMe(token, board))
 		{
 			//...As long as neither of them is dying.
-			if (!token->getBehavior(0)->getBool("isGonnaBeTrapped") && !token->getBehavior(0)->getBool("isTargeted"))
+			if (!token->getBehavior(0)->getBool("isGonnaBeTrapped")
+				&& !token->getBehavior(0)->getBool("isTargeted")
+				&& !token->getBehavior(0)->getBool("isDead"))
 			{
 				if (!token->getBehavior(0)->getBool("isAbilityActive"))
 				{
 					//Activate ability and show special effect
 					token->getBehavior(0)->setBool("isAbilityActive", true);
+
+					StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
+													   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+													   token->parentNode->node->getAbsolutePosition().Z));
 				}
 			}
 		}
@@ -1713,6 +2018,10 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 						//Activate ability and show special effect
 						token->getBehavior(0)->setBool("isAbilityActive", true);
 						token->getBehavior(0)->setBool("isFinished", false);
+
+						StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
+														   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+														   token->parentNode->node->getAbsolutePosition().Z));
 
 						//This ability cannot be activated again for 3 rounds
 						token->getBehavior(0)->setInt("abilityCooldown", (3 * playersActive));
@@ -1934,6 +2243,9 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	//Advance phases when conditions are met
 	SwapPhase(board);
 
+	//Activate or deactivate resource extraction effects
+	if (particlesOK) VerifyResourceExtraction(board, true);
+
 	//By default, tiles and tokens are not highlighted
 	ClearHighlights(board);
 
@@ -2035,6 +2347,8 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	//-------- RACE ABILITY MANAGEMENT ----------
 	//-------------------------------------------
 
+	//By default, there's no ability activation special effect
+	if (particlesOK) StopParticles(ABILITY);
 
 	//Activate or deactivate abilities when necessary
 

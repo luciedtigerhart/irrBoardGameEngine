@@ -16,8 +16,8 @@ void loop()
 int main() {
 
 	//Run game!
-	//Primevalion.loop(loop);
-	Primevalion.loop();
+	Primevalion.loop(loop);
+	//Primevalion.loop();
 
 	return 0;
 }
