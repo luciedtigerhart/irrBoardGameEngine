@@ -70,17 +70,39 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	return 0;
 }
 
-void IrrEngine::loop(void(*f)())
+bool IrrEngine::run()
 {
-	this->loop(f,this->currentScene,this->currentGUI);
+	return device->run();
 }
 
-void IrrEngine::loop(void(*f)(),IrrGUI * gui)
+void IrrEngine::update()
 {
-	this->loop(f,this->currentScene,gui);
+	//Atualiza a cena
+	currentScene->update();
+
+	//atualiza a gui
+	currentGUI->update();
+
+	//Atualiza o input
+	input->update();
 }
 
-void IrrEngine::loop(void(*f)(),IrrScene * scene, IrrGUI * gui) {
+void IrrEngine::draw()
+{
+	//Limpa a cena com uma cor
+	driver->beginScene(true, true, SColor(255,100,101,140));
+
+	//Grafo de cena renderiza
+	currentScene->drawAll();
+
+	//Gerenciador da GUI renderiza
+	currentGUI->drawAll();
+
+	//Exibe o resultado na tela
+	driver->endScene();
+}
+
+void IrrEngine::loop(void(*f)()) {
 	// Qual foi a ultima fatia de tempo
 	u32 then = device->getTimer()->getTime();
 	int lastFPS = -1;
@@ -95,8 +117,6 @@ void IrrEngine::loop(void(*f)(),IrrScene * scene, IrrGUI * gui) {
 		//Define o tempo passado com o atual
 		then = now;
 
-		//Limpa a cena com uma cor
-		driver->beginScene(true, true, SColor(255,100,101,140));
 		
 		/*
 		vector3df pos(0.0f, 0.0f, 0.0f);
@@ -115,27 +135,12 @@ void IrrEngine::loop(void(*f)(),IrrScene * scene, IrrGUI * gui) {
 		//z
 		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
 		*/
-
-		//Atualiza o input
-		input->update();
-
-		//Atualiza a cena
-		scene->update();
-
-		//atualiza a gui
-		gui->update();
-
+		update();
+		
 		//Função do usuario
 		(*f)();
 
-		//Grafo de cena renderiza
-		scene->drawAll();
-
-		//Gerenciador da GUI renderiza
-		gui->drawAll();
-
-		//Exibe o resultado na tela
-		driver->endScene();
+		draw();
 
 		//Pega o FPS
 		int fps = driver->getFPS();

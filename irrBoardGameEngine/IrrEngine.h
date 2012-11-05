@@ -52,8 +52,13 @@ namespace IrrBoardGameEngine {
 		static IrrEngine *getInstance(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false,const wchar_t* text = L"IrrBGE");
 		
 		void loop(void(*f)());
-		void loop(void(*f)(),IrrGUI * gui);
-		void loop(void(*f)(),IrrScene*,IrrGUI * gui);
+
+		//
+		// CRIAR LOOP MANUAL
+		//
+		bool run();
+		void update();
+		void draw();
 
 		void setCurrentScene(IrrScene *s);
 		IrrScene *createScene();
