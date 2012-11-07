@@ -94,6 +94,19 @@
     <ClInclude Include="PrimeTeam.h" />
     <ClInclude Include="PrimeTile.h" />
     <ClInclude Include="PrimeToken.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="primevalion.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Desktop\icon.ico" />
+    <None Include="..\..\..\..\Desktop\icon1.ico" />
+    <None Include="..\..\..\..\Desktop\icon1.png" />
+    <None Include="..\..\..\..\Desktop\icon128.ico" />
+    <None Include="..\..\..\..\Desktop\icon2.ico" />
+    <None Include="icon1.ico" />
+    <None Include="icon2.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
