@@ -930,7 +930,7 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 		else if (animStarted && animRunning && !animFinished)
 		{
 			//Translate token, and when destination has been reached...
-			if (TokenHasTranslated(token, speed * 1.5f))
+			if (TokenHasTranslated(token, (speed * 1.5f)))
 			{
 				//Finish up animation
 				token->getBehavior(0)->setBool("isAnimRunning", false);
@@ -2364,7 +2364,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 
 	//Set animation speed
-	animSpeed = 0.5f;
+	animSpeed = 150.0f * deltaTime;
 
 	if (phase == ANIMATION_EXECUTION)
 	{

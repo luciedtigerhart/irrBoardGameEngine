@@ -8,16 +8,13 @@ using namespace IrrBoardGameEngine;
 
 PrimeGameStateManager Primevalion;
 
-void loop()
-{
-	Primevalion.Update();
-}
+//Game update method
+void game() { Primevalion.Update(); }
 
 int main() {
 
 	//Run game!
-	Primevalion.loop(loop);
-	//Primevalion.loop();
+	Primevalion.loop(game);
 
 	return 0;
 }

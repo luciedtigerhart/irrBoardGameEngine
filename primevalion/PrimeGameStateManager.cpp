@@ -357,31 +357,3 @@ void PrimeGameStateManager::loop(void(*f)())
 	//Run game!
 	engine->loop(f);
 }
-
-void PrimeGameStateManager::loop()
-{
-	//Run game!
-	while(engine->getDevice()->run())
-	{
-		//Update engine
-		engine->getScene()->update();
-		engine->getGUI()->update();
-		engine->getInput()->update();
-
-		//Update game state
-		Update();
-
-		//Begin frame...
-		engine->getDriver()->beginScene(true, true, SColor(255,100,101,140));
-
-			//Draw stuff!
-			engine->getSceneManager()->drawAll();
-			engine->getGUIenv()->drawAll();
-
-		//...End frame.
-		engine->getDriver()->endScene();
-	}
-
-	//Close game!
-	engine->getDevice()->drop();
-}
