@@ -59,6 +59,9 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="primevalion.rc">
@@ -66,25 +69,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="icon1.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="icon2.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\..\Desktop\icon1.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\..\Desktop\icon1.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\..\Desktop\icon2.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\..\Desktop\icon.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\..\Desktop\icon128.ico">
+    <None Include="icon128.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
