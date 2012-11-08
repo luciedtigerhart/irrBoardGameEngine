@@ -24,6 +24,7 @@ namespace IrrBoardGameEngine {
 
 		void update();
 
+		vector3df m_LookAt;                // 
 		vector3df m_Rot;                   // H/V Position of camera on sphere (only X/Y used)
 		f32 m_Rad;                         // Radius of sphere
 		bool m_Dragging;                   // Is currently dragging?

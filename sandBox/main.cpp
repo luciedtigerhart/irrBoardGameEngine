@@ -52,9 +52,6 @@ int main()
 	cena->addLightSceneNode(vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 
 	//
-
-	
-	//
 	// CONFIGURA TILES
 	//
 

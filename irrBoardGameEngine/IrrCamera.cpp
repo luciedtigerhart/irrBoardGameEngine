@@ -45,10 +45,13 @@ void IrrCamera::dumpVector( const vector3df &vec )
 
 void IrrCamera::lookAt(Vector &v)
 {
-	this->node->setTarget(vector3df(v.x,v.y,v.z));
+	m_LookAt.X = v.x;
+	m_LookAt.X = v.y;
+	m_LookAt.X = v.z;
 }
 
 void IrrCamera::update()
-{	
+{
+	this->node->setTarget(m_LookAt);
 	this->node->setPosition( getPositionOnSphere( m_Rot.Y, m_Rot.X, m_Rad ));
 }

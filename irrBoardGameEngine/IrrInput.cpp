@@ -102,6 +102,17 @@ bool IrrInput::OnEvent(const SEvent& event)
 			else if( ev->Key == KEY_DOWN )
 				camera->m_Rot.X -= 0.1f;
 
+			/*
+			else if( ev->Key == KEY_KEY_W )
+				camera->m_LookAt.Z += 0.1f;
+			else if( ev->Key == KEY_KEY_S )
+				camera->m_LookAt.Z -= 0.1f;
+			else if( ev->Key == KEY_KEY_A )
+				camera->m_LookAt.X -= 0.1f;
+			else if( ev->Key == KEY_KEY_D )
+				camera->m_LookAt.X += 0.1f;
+			*/
+
 			camera->update();
 
 			return true;
@@ -121,7 +132,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 			}
 			else
 			{
-				if( ! camera->m_Dragging && ev->isLeftPressed() )
+				if( ! camera->m_Dragging && ev->isRightPressed() )
 				{
 					camera->m_DragStart.X = ev->X;
 					camera->m_DragStart.Y = ev->Y;
@@ -129,11 +140,11 @@ bool IrrInput::OnEvent(const SEvent& event)
 					camera->m_DragStartRotation.Y = camera->m_Rot.Y;
 					camera->m_Dragging = true;
 				}
-				else if( camera->m_Dragging && ! ev->isLeftPressed() )
+				else if( camera->m_Dragging && ! ev->isRightPressed() )
 				{
 					camera->m_Dragging = false;
 				}
-				else if( camera->m_Dragging && ev->isLeftPressed() )
+				else if( camera->m_Dragging && ev->isRightPressed() )
 				{
 					// Calculate a rotational offset in the range of -PI to +PI
 					f32 dx = (( ev->X - camera->m_DragStart.X ) / driver->getScreenSize().Width ) * PI;
