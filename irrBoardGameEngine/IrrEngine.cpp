@@ -46,11 +46,13 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 
 	//Titulo na janela
 	device->setWindowCaption(text);
-
+	
 	//device->getCursorControl()->setVisible(true);
 
 	//Pegar o driver de video
 	driver = device->getVideoDriver();
+
+	input->setDriver(driver);
 
 	//
 	// GUI

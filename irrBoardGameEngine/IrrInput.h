@@ -4,13 +4,16 @@
 #include <string>
 #include "irrlicht.h"
 #include "IrrGUI.h"
+#include "IrrCamera.h"
 
 using namespace irr;
 using namespace scene;
 using namespace std;
+using namespace video;
 
 namespace IrrBoardGameEngine {
 	class IrrGUI;
+	class IrrCamera;
 	class IrrInput: public IEventReceiver
 	{
 	public:
@@ -32,7 +35,9 @@ namespace IrrBoardGameEngine {
 		void clear();
 		void update();
 
+		void setDriver(IVideoDriver *);
 		void setGUI(IrrGUI *);
+		void setCamera(IrrCamera *);
 		/*
 		//registra uma comando de teclado
 		void registry(char *, int);
@@ -48,6 +53,8 @@ namespace IrrBoardGameEngine {
 	private:
 
 		IrrGUI * gui;
+		IrrCamera * camera;
+		IVideoDriver * driver;
 
 		void setKeyStatus(int* k, int keyCode, bool value);
 		bool getKeyStatus(int* k, int keyCode);

@@ -1,6 +1,6 @@
 #pragma once
+#include <iostream>
 #include "irrlicht.h"
-#include "IrrInput.h"
 #include <string.h>
 #include "Vector.h"
 
@@ -12,7 +12,9 @@ namespace IrrBoardGameEngine {
 	class IrrCamera
 	{
 	private:
-		IrrInput * ip;
+		vector3df getPositionOnSphere( f32 angleH, f32 angleV, f32 radius );
+		void dumpVector( const vector3df &vec );
+
 	public:
 		IrrCamera(ICameraSceneNode *);
 		void lookAt(Vector&);
@@ -21,5 +23,11 @@ namespace IrrBoardGameEngine {
 		~IrrCamera(void);
 
 		void update();
+
+		vector3df m_Rot;                   // H/V Position of camera on sphere (only X/Y used)
+		f32 m_Rad;                         // Radius of sphere
+		bool m_Dragging;                   // Is currently dragging?
+		vector2df m_DragStart;             // 2D Position on screen where the drag started
+		vector3df m_DragStartRotation;     // Rotation when drag started
 	};
 }

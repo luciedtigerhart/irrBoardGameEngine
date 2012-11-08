@@ -12,6 +12,7 @@
 #include "Vector.h"
 #include "IrrCamera.h"
 #include "IrrMesh.h"
+#include "IrrMeshAnimated.h"
 #include "IrrBehavior.h"
 
 //#include "IrrAnimation.h"
@@ -45,8 +46,11 @@ namespace IrrBoardGameEngine {
 		void setCamera(IrrCamera *);
 		IrrCamera* getCamera(); 
 
-		void setMesh(IrrMesh *);		
+		void setMesh(IrrMesh *);
 		IrrMesh* getMesh();
+
+		void setAnimatedMesh(IrrMeshAnimated *);
+		IrrMeshAnimated* getAnimatedMesh();
 
 		/*
 		void setAnimation(Animation *);
@@ -79,6 +83,7 @@ namespace IrrBoardGameEngine {
 		std::string *name;
 		IrrCamera *camera;
 		IrrMesh *mesh;
+		IrrMeshAnimated *ani_mesh;
 
 		/*
 		Animation *animation;

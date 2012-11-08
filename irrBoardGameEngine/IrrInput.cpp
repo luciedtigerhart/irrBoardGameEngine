@@ -11,8 +11,13 @@ IrrInput::IrrInput()
 	{
 		keyStatusDown[i] = keyStatusPressed[i] = keyStatusReleased[i] = 0;
 	}
-
+	camera = NULL;
 	//multimap<std::string,int> *keys = new multimap<std::string,int>();
+}
+
+void IrrInput::setDriver(IVideoDriver * d)
+{
+	driver = d;
 }
 
 bool IrrInput::OnEvent(const SEvent& event)
@@ -63,7 +68,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 				break;
 
 			default:
-                // We won't use the wheel
+                // We use the wheel
                 break;
         }
     }
@@ -81,6 +86,69 @@ bool IrrInput::OnEvent(const SEvent& event)
 				break;
 		}
 	}
+
+
+	if(camera != NULL)
+	{
+		if( event.EventType == EET_KEY_INPUT_EVENT )
+		{
+			const SEvent::SKeyInput *ev = &event.KeyInput;
+			if( ev->Key == KEY_LEFT )
+				camera->m_Rot.Y -= 0.1f;
+			else if( ev->Key == KEY_RIGHT )
+				camera->m_Rot.Y += 0.1f;
+			else if( ev->Key == KEY_UP )
+				camera->m_Rot.X += 0.1f;
+			else if( ev->Key == KEY_DOWN )
+				camera->m_Rot.X -= 0.1f;
+
+			camera->update();
+
+			return true;
+		}
+		else if( event.EventType == EET_MOUSE_INPUT_EVENT )
+		{
+			const SEvent::SMouseInput *ev = &event.MouseInput;
+			if( ev->Event == EMIE_MOUSE_WHEEL )
+			{
+				//cout << "Wheel event: " << ev->Wheel << endl;
+				if( ev->Wheel >= 0 )
+					camera->m_Rad -= 0.5f;
+				else
+					camera->m_Rad += 0.5f;
+
+				camera->update();
+			}
+			else
+			{
+				if( ! camera->m_Dragging && ev->isLeftPressed() )
+				{
+					camera->m_DragStart.X = ev->X;
+					camera->m_DragStart.Y = ev->Y;
+					camera->m_DragStartRotation.X = camera->m_Rot.X;
+					camera->m_DragStartRotation.Y = camera->m_Rot.Y;
+					camera->m_Dragging = true;
+				}
+				else if( camera->m_Dragging && ! ev->isLeftPressed() )
+				{
+					camera->m_Dragging = false;
+				}
+				else if( camera->m_Dragging && ev->isLeftPressed() )
+				{
+					// Calculate a rotational offset in the range of -PI to +PI
+					f32 dx = (( ev->X - camera->m_DragStart.X ) / driver->getScreenSize().Width ) * PI;
+					f32 dy = (( ev->Y - camera->m_DragStart.Y ) / driver->getScreenSize().Height ) * PI;
+
+					// Calculate the new total rotation
+					camera->m_Rot.X = camera->m_DragStartRotation.X + dy;
+					camera->m_Rot.Y = camera->m_DragStartRotation.Y + dx;
+
+					camera->update();
+				}
+			}
+		}
+	}
+
 	return false;
 }
 
@@ -134,6 +202,11 @@ bool IrrInput::getKeyStatus(int* k, int keyCode)
 void IrrInput::setGUI(IrrGUI * currentGUI)
 {
 	gui = currentGUI;
+}
+
+void IrrInput::setCamera(IrrCamera * currentCamera)
+{
+	camera = currentCamera;
 }
 /*
 bool IrrInput::getButton(char *c)

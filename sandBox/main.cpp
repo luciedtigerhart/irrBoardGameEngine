@@ -25,6 +25,7 @@ IrrBoard * board;
 
 void myLoop()
 {
+	/*
 	if(engine->getInput()->isKeyDown(KEY_SPACE))
 	{
 		if(board != NULL)
@@ -33,6 +34,7 @@ void myLoop()
 			board = NULL;
 		}
 	}
+	*/
 }
 
 int main()
@@ -41,14 +43,16 @@ int main()
     
 	cena = engine->getScene();
 
-	IrrGameObject *cam = cena->addCamera(new Vector(20.0f, 20.0f, 20.0f),new Vector(0.0f, 0.0f, 1.0f));
+	IrrGameObject *cam = cena->addCameraDefault(new Vector(20.0f, 20.0f, 20.0f),new Vector(0.0f, 0.0f, 1.0f));
 	cam->setName("Camera principal");
 
-	board = cena->addBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
+	board = cena->addStaticBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
+	//board = cena->addAnimatedBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
 
 	cena->addLightSceneNode(vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 
 	//
+
 	
 	//
 	// CONFIGURA TILES

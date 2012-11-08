@@ -2,8 +2,23 @@
 
 void TokenDummy::init(void)
 {
+	/*
 	token->node = smgr->addMeshSceneNode(smgr->getMesh("obj/token02.obj"),token->parentNode->node,-1,vector3df(0,0,0));
 	token->node->setParent(token->parentNode->node);
+	*/
+
+	IAnimatedMesh * ms = smgr->getMesh("obj/dwarf.x");
+
+	IAnimatedMeshSceneNode * animNode = smgr->addAnimatedMeshSceneNode(ms,token->parentNode->node,-1,vector3df(0,0,0));
+	token->node = animNode;
+	token->node->setParent(token->parentNode->node);
+
+	token->node->setScale(vector3df(0.05,0.05,0.05));
+
+	//
+	// SOMBRA
+	//
+	animNode->addShadowVolumeSceneNode(ms);
 
 	ITriangleSelector* selector = smgr->createTriangleSelectorFromBoundingBox(token->node);
 	token->node->setTriangleSelector(selector);

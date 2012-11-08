@@ -20,6 +20,7 @@
     <ClInclude Include="IrrInput.h" />
     <ClInclude Include="IrrLoader.h" />
     <ClInclude Include="IrrMesh.h" />
+    <ClInclude Include="IrrMeshAnimated.h" />
     <ClInclude Include="IrrParticleSystem.h" />
     <ClInclude Include="IrrScene.h" />
     <ClInclude Include="IrrTile.h" />
@@ -38,6 +39,7 @@
     <ClCompile Include="IrrInput.cpp" />
     <ClCompile Include="IrrLoader.cpp" />
     <ClCompile Include="IrrMesh.cpp" />
+    <ClCompile Include="IrrMeshAnimated.cpp" />
     <ClCompile Include="IrrParticleSystem.cpp" />
     <ClCompile Include="IrrScene.cpp" />
     <ClCompile Include="IrrTile.cpp" />

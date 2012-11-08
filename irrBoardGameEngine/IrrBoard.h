@@ -16,6 +16,7 @@
 #include "Vector.h"
 #include "IrrCamera.h"
 #include "IrrMesh.h"
+#include "IrrMeshAnimated.h"
 #include "IrrTile.h"
 #include "IrrTokenBehavior.h"
 #include "IrrTileBehavior.h"

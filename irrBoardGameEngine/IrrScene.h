@@ -16,6 +16,7 @@
 
 #include "IrrLoader.h"
 #include "IrrMesh.h"
+#include "IrrMeshAnimated.h"
 #include "IrrParticleSystem.h"
 #include "IrrCamera.h"
 
@@ -61,6 +62,7 @@ namespace IrrBoardGameEngine {
 		IrrGameObject * bola;
 	protected:
 		void addObject(IrrGameObject*);
+		IrrBoard *addBoard(std::string src,Vector*,bool animated = false, bool shadow = false);
 
 	public:
 		void update();
@@ -70,8 +72,12 @@ namespace IrrBoardGameEngine {
 		IrrGameObject *addSphere(Vector*);
 		IrrGameObject *addAnimatedMesh(char *,Vector*);
 		IrrGameObject *addMesh(char *,Vector*);
-		IrrBoard *addBoard(std::string src,Vector*);
-		IrrGameObject *addCamera(Vector*,Vector*);
+		IrrBoard *addStaticBoard(std::string src,Vector*);
+		IrrBoard *addAnimatedBoard(std::string src,Vector*,bool shadow = false);
+		
+		IrrGameObject *addCameraDefault(Vector*,Vector*);
+		IrrGameObject *addCameraFPS(Vector*,Vector*);
+		IrrGameObject *addCameraBoardGame(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 
 		ILightSceneNode * addLightSceneNode(const core::vector3df& position = core::vector3df(0,0,0),

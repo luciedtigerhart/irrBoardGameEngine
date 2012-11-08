@@ -70,6 +70,18 @@ IrrMesh* IrrGameObject::getMesh()
 	return mesh;
 }
 
+void IrrGameObject::setAnimatedMesh(IrrMeshAnimated *c)
+{
+	this->ani_mesh = c;
+	node->addChild(((IrrMeshAnimated*)c)->node);
+	((IrrMeshAnimated*)c)->node->setParent(node);
+}
+
+IrrMeshAnimated* IrrGameObject::getAnimatedMesh()
+{
+	return ani_mesh;
+}
+
 /*
 void IrrGameObject::setAnimation(Animation *c)
 {

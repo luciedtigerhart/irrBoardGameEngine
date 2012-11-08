@@ -90,7 +90,7 @@ IrrGameObject *IrrScene::addSphere(Vector* p)
 	return go;
 }
 
-IrrGameObject *IrrScene::addCamera(Vector* p, Vector* lookAt)
+IrrGameObject *IrrScene::addCameraDefault(Vector* p, Vector* lookAt)
 {
 	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
@@ -99,7 +99,49 @@ IrrGameObject *IrrScene::addCamera(Vector* p, Vector* lookAt)
 	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)));	
 	go->setCamera(cam);
 	currentCamera = cam->node;
+
+	input->setCamera(cam);
 	this->addObject(go);
+	return go;
+}
+
+IrrGameObject *IrrScene::addCameraFPS(Vector* p, Vector* lookAt)
+{
+	IrrGameObject *go = new IrrGameObject();
+	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
+
+	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)));	
+	go->setCamera(cam);
+	currentCamera = cam->node;
+
+	input->setCamera(cam);
+	this->addObject(go);
+	return go;
+}
+
+IrrGameObject *IrrScene::addCameraBoardGame(Vector* p, Vector* lookAt)
+{
+	IrrGameObject *go = new IrrGameObject();
+	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
+
+	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)));	
+	go->setCamera(cam);
+	currentCamera = cam->node;
+
+	input->setCamera(cam);
+	this->addObject(go);
+	return go;
+}
+
+IrrGameObject *IrrScene::addAnimatedMesh(char *m, Vector* p)
+{
+	IrrGameObject *go = new IrrGameObject;
+	go->node = smgr->addEmptySceneNode();
+	go->node->setParent(rootScene);
+	go->setAnimatedMesh(new IrrMeshAnimated(smgr->addAnimatedMeshSceneNode(smgr->getMesh(m),go->node,IDFlag_IsPickable | IDFlag_IsHighlightable,vector3df(p->x,p->y,p->z))));
+	this->addObject(go);	
 	return go;
 }
 
@@ -113,7 +155,17 @@ IrrGameObject *IrrScene::addMesh(char *m, Vector* p)
 	return go;
 }
 
-IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
+IrrBoard *IrrScene::addStaticBoard(std::string src,Vector*p)
+{
+	return addBoard(src, p);
+}
+
+IrrBoard *IrrScene::addAnimatedBoard(std::string src,Vector*p,bool shadow)
+{
+	return addBoard(src, p, true, shadow);
+}
+
+IrrBoard *IrrScene::addBoard(std::string src,Vector*p,bool animated, bool shadow)
 {
 	IrrBoard *go = new IrrBoard();
 	std::string m;
@@ -132,8 +184,20 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 			{
 				m = go->objs->at(go->board[i][j]->idx);
 
-				go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,IDFlag_IsPickable,vector3df((p->x+(j*go->tile_width)),p->y,(p->z-(i*go->tile_length))));
-
+				if(animated)
+				{
+					IAnimatedMesh * ms = smgr->getMesh(m.c_str());
+					IAnimatedMeshSceneNode * c = smgr->addAnimatedMeshSceneNode(ms,go->node,IDFlag_IsPickable,vector3df((p->x+(j*go->tile_width)),p->y,(p->z-(i*go->tile_length))));
+					if(shadow)
+					{
+						c->addShadowVolumeSceneNode(ms,ID_IsNotPickable);
+					}
+					go->board[i][j]->node = c;
+				}
+				else
+				{
+					go->board[i][j]->node = smgr->addMeshSceneNode(smgr->getMesh(m.c_str()),go->node,IDFlag_IsPickable,vector3df((p->x+(j*go->tile_width)),p->y,(p->z-(i*go->tile_length))));
+				}
 				go->node->addChild(go->board[i][j]->node);
 				go->board[i][j]->node->setParent(go->node);
 
@@ -156,16 +220,9 @@ IrrBoard *IrrScene::addBoard(std::string src, Vector* p)
 	return go;
 }
 
-/*
-GameObject *IrrScene::addAnimatedMesh(char *am, Vector* p)
-{
-	GameObject *go = new GameObject;
-	((IrrGameObjectImpl*)go->getImplementor())->node = smgr->addEmptySceneNode();
-	go->setAnimation(new IrrAnimatedMesh(smgr->addAnimatedMeshSceneNode(smgr->getMesh(am),((IrrGameObjectImpl*)go->getImplementor())->node,-1,vector3df(p->x,p->y,p->z))));
-	this->addObject(go);	
-	return go;
-}
+IrrBoard *addAnimatedBoard(std::string src,Vector*,bool shadow = false);
 
+/*
 GameObject *IrrScene::addAudio(const char *filename,int id,Vector *p)
 {
 	GameObject *go = new GameObject;
@@ -262,6 +319,7 @@ void IrrScene::removeBoard(IrrBoard * board)
 void IrrScene::setCamera(IrrCamera * camera)
 {
 	currentCamera = camera->node;
+	input->setCamera(camera);
 }
 
 void IrrScene::setBoard(IrrBoard * board)

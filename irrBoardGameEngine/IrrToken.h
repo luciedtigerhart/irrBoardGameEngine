@@ -8,6 +8,7 @@
 #include "Vector.h"
 #include "IrrCamera.h"
 #include "IrrMesh.h"
+#include "IrrMeshAnimated.h"
 #include "IrrGameObject.h"
 
 using namespace irr;
