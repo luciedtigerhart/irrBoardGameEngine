@@ -31,7 +31,7 @@ namespace IrrBoardGameEngine {
         void removeLabel(s32 id);
 
 		//TEXTOS COM FONT
-		void addFont(s32 id, char * src);
+		void addFont(s32 id, char * src, s32 space = 1, s32 lineHeight = 1);
 		IGUIFont* getFont(s32 id);
 		//void addTextFont(s32 idFont, s32 id, char *text, int minX, int minY, int maxX, int maxY);
 

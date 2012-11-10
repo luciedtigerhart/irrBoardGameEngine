@@ -77,8 +77,10 @@ void IrrGUI::removeLabel(s32 id) {
 		(*it).second->remove();
 }
 
-void IrrGUI::addFont(s32 id, char * src) {
+void IrrGUI::addFont(s32 id, char * src, s32 space, s32 lineHeight) {
 	font2 = guienv->getFont(src);
+	font2->setKerningWidth(space);
+	font2->setKerningHeight(lineHeight);
 	fonts.insert(pair<s32, IGUIFont*>(id,font2));
 }
 

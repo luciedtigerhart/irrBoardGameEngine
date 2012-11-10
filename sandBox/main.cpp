@@ -153,13 +153,13 @@ int main()
 	//
 	// FONT
 	//
-	fgui->addFont(GUI_ID_FONT,"gui/dungeon.png");
+	fgui->addFont(GUI_ID_FONT,"gui/dungeon.png",30,-60);
 
 
 	//
 	// TEXTOS
 	//
-	fgui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,800,800,SColor(255,255,0,0),GUI_ID_FONT);
+	fgui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,800,800,SColor(255,0,0,0),GUI_ID_FONT);
 
 	fgui->addLabel(GUI_ID_TEXT_02,"sdfsdf sdfs df",0,90,100,180);
 
