@@ -136,8 +136,8 @@ bool IrrInput::OnEvent(const SEvent& event)
 			{
 				if( ! camera->m_Dragging && ev->isRightPressed() )
 				{
-					camera->m_DragStart.X = ev->X;
-					camera->m_DragStart.Y = ev->Y;
+					camera->m_DragStart.X = (f32)ev->X;
+					camera->m_DragStart.Y = (f32)ev->Y;
 					camera->m_DragStartRotation.X = camera->m_Rot.X;
 					camera->m_DragStartRotation.Y = camera->m_Rot.Y;
 					camera->m_Dragging = true;

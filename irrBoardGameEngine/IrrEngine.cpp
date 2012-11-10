@@ -62,6 +62,9 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	input->setGUI(currentGUI);
 	currentGUI->setActive(true);
 
+	driver->getMaterial2D().TextureLayer[0].BilinearFilter=true;
+	driver->getMaterial2D().AntiAliasing=video::EAAM_FULL_BASIC;
+
 	//
 	// SCENE
 	//
@@ -74,7 +77,12 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 
 bool IrrEngine::run()
 {
-	return device->run();
+	bool isrun = device->run();
+	
+	//Limpa a cena com uma cor
+	driver->beginScene(true, true, SColor(255,100,101,140));
+
+	return isrun;
 }
 
 void IrrEngine::update()
@@ -91,9 +99,6 @@ void IrrEngine::update()
 
 void IrrEngine::draw()
 {
-	//Limpa a cena com uma cor
-	driver->beginScene(true, true, SColor(255,100,101,140));
-
 	//Grafo de cena renderiza
 	currentScene->drawAll();
 
@@ -110,7 +115,7 @@ void IrrEngine::loop(void(*f)()) {
 	int lastFPS = -1;
 	
 	//Game loop
-	while(device->run())
+	while(run())
 	{
 		//Pega a fatia de tempo atual
 		const u32 now = device->getTimer()->getTime();
@@ -119,7 +124,6 @@ void IrrEngine::loop(void(*f)()) {
 		//Define o tempo passado com o atual
 		then = now;
 
-		
 		/*
 		vector3df pos(0.0f, 0.0f, 0.0f);
 		SMaterial m;

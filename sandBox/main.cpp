@@ -17,7 +17,8 @@ enum
     GUI_ID_TEXT_02,
     GUI_ID_TEXT_03,
     GUI_ID_BUTTON,
-	GUI_ID_BUTTON_02
+	GUI_ID_BUTTON_02,
+	GUI_ID_FONT
 };
 
 IrrEngine * engine;
@@ -46,7 +47,7 @@ void myLoop()
 
 	if(fgui->isPressedButton(GUI_ID_BUTTON_02))
 	{
-		fgui->fadeOut(5000);
+		fgui->fadeOut(5000,SColor(124, 255, 0, 0));
 		audio->getAudio()->setLoopingStreamMode();
 	}
 
@@ -149,9 +150,18 @@ int main()
 	//
 	fgui = engine->getGUI();
 
-	fgui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,50,80);
+	//
+	// FONT
+	//
+	fgui->addFont(GUI_ID_FONT,"gui/dungeon.png");
 
-	fgui->addLabel(GUI_ID_TEXT_02,"sdfsdf sdfs df",50,0,100,80);
+
+	//
+	// TEXTOS
+	//
+	fgui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,800,800,SColor(255,255,0,0),GUI_ID_FONT);
+
+	fgui->addLabel(GUI_ID_TEXT_02,"sdfsdf sdfs df",0,90,100,180);
 
 	fgui->addLabel(GUI_ID_TEXT_03,"m450s45d4f05sd40f5sdfexto",100,0,150,80);
 
@@ -159,6 +169,10 @@ int main()
 
 	fgui->addButton(GUI_ID_BUTTON_02,"gui/botao-off.png","gui/botao-on.png","gui/botao-off-click.png","gui/botao-on-click.png",30,290,false,"gui/botao-disabled.png");
 	
+
+	
+
+
 	//
 	// FADE
 	//

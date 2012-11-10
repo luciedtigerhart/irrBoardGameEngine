@@ -11,7 +11,7 @@ IrrGUI::IrrGUI(IrrlichtDevice * device)
 
 	irr::core::dimension2d<u32> d = driver->getScreenSize();
 	//rootGUI = new IGUIElement(EGUIET_WINDOW,guienv,0,-1,rect<s32>(0, 0, 50, 50)); //guienv->addGUIElement(irr::gui::EGUI_ELEMENT_TYPE.EGUIET_ELEMENT);
-	//rootGUI = guienv->addModalScreen(guienv->getRootGUIElement
+	//rootGUI = guienv->getRootGUIElement();
 	//rootGUI = guienv->addImage(rect<s32>(0, 0, d.Width, d.Height));
 	rootGUI = guienv->addStaticText(L"",rect<s32>(0, 0, d.Width, d.Height));
 	fader = NULL;
@@ -23,31 +23,47 @@ IrrGUI::~IrrGUI(void)
 
 }
 
-void IrrGUI::addLabel(s32 id, char *text, int minX, int minY, int maxX, int maxY)
+void IrrGUI::addLabel(s32 id, char *text, int minX, int minY, int maxX, int maxY, video::SColor color, s32 idFont)
 {
     std::string other(text);
     const std::wstring& ws =  std::wstring(other.begin(), other.end());
-        
-    labels.insert(pair<s32, IGUIStaticText*>(id,guienv->addStaticText(ws.c_str(), rect<s32>(minX, minY, maxX, maxY), false, true, rootGUI,id)));	
+
+	IGUIStaticText* txt = guienv->addStaticText(ws.c_str(), rect<s32>(minX, minY, maxX, maxY), false, true, rootGUI, id);
+    if(idFont != -1)
+	{
+		txt->setOverrideFont(getFont(idFont));
+	}
+	
+	txt->setOverrideColor(color);
+
+    labels.insert(pair<s32, IGUIStaticText*>(id,txt));	
 }
 
 void IrrGUI::setText(s32 id, char *text) {
-    // Converte char para wchar_t
     std::string other(text);
     const std::wstring& ws =  std::wstring(other.begin(), other.end());
 
     std::map<s32, IGUIStaticText*>::iterator it = labels.find(id);
     if(it != labels.end())
+	{
 		(*it).second->setText(ws.c_str());
+	}
 }
 
-void IrrGUI::setLabel(s32 id, bool visible) {
+void IrrGUI::setLabelColor(s32 id, video::SColor color)
+{
+	std::map<s32, IGUIStaticText*>::iterator it = labels.find(id);
+    if(it != labels.end())
+		(*it).second->setOverrideColor(color);
+}
+
+void IrrGUI::setLabelVisible(s32 id, bool visible) {
     std::map<s32, IGUIStaticText*>::iterator it = labels.find(id);
     if(it != labels.end())
 		(*it).second->setVisible(visible);
 }
 
-bool IrrGUI::getLabel(s32 id) {
+bool IrrGUI::getLabelIsVisible(s32 id) {
     std::map<s32, IGUIStaticText*>::iterator it = labels.find(id);
     if(it != labels.end())
 		return (*it).second->isVisible();
@@ -59,6 +75,24 @@ void IrrGUI::removeLabel(s32 id) {
     std::map<s32, IGUIStaticText*>::iterator it = labels.find(id);
     if(it != labels.end())
 		(*it).second->remove();
+}
+
+void IrrGUI::addFont(s32 id, char * src) {
+	font2 = guienv->getFont(src);
+	fonts.insert(pair<s32, IGUIFont*>(id,font2));
+}
+
+IGUIFont* IrrGUI::getFont(s32 id)
+{
+	std::map<s32, IGUIFont*>::iterator it = fonts.find(id);
+    if(it != fonts.end())
+	{
+		return (*it).second;
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 void IrrGUI::addImage(s32 id, char* file, int x, int y) {
@@ -122,6 +156,10 @@ void IrrGUI::update()
 			std::cout << "elemento clicado";
 		}
 		it++;
+	}
+	
+	if (font2){		
+		font2->draw(L"Also mixing with 3d graphics is possible.", core::rect<s32>(130,20,300,60), video::SColor(255,0,0,0));
 	}
 	*/
 }
@@ -220,20 +258,21 @@ void IrrGUI::drawAll()
 	}
 }
 
-void IrrGUI::fadeIn(u32 time)
+void IrrGUI::fadeIn(u32 time,video::SColor color)
 {
-	fade(time,true);
+	fade(time,true,color);
 }
 
-void IrrGUI::fadeOut(u32 time)
+void IrrGUI::fadeOut(u32 time,video::SColor color)
 {
-	fade(time,false);
+	fade(time,false,color);
 }
 
-void IrrGUI::fade(u32 time, bool in)
+void IrrGUI::fade(u32 time, bool in,video::SColor color)
 {
 	if(fader == NULL) fader = guienv->addInOutFader(0,rootGUI);
 	fader->setVisible(true);
+	fader->setColor(color);
 	if(in)
 	{
 		fader->fadeIn(time);
