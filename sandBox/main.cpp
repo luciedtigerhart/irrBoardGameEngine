@@ -33,6 +33,7 @@ void myLoop()
 	{
 		fgui->fadeIn(5000);
 		audio->getAudio()->stop();
+		fgui->setDisabledButton(GUI_ID_BUTTON_02,true);
 	}
 	/*
 	std::cout << fgui->isReadyfade();
@@ -47,6 +48,11 @@ void myLoop()
 	{
 		fgui->fadeOut(5000);
 		audio->getAudio()->setLoopingStreamMode();
+	}
+
+	if(fgui->isPressedButton(GUI_ID_BUTTON))
+	{
+		fgui->setDisabledButton(GUI_ID_BUTTON_02,false);
 	}
 }
 
@@ -151,8 +157,8 @@ int main()
 
 	fgui->addButton(GUI_ID_BUTTON,"gui/botao-off.png","gui/botao-on.png","gui/botao-off-click.png","gui/botao-on-click.png",30,60, true);
 
-	fgui->addButton(GUI_ID_BUTTON_02,"gui/botao-off.png","gui/botao-on.png","gui/botao-off-click.png","gui/botao-on-click.png",30,290);
-
+	fgui->addButton(GUI_ID_BUTTON_02,"gui/botao-off.png","gui/botao-on.png","gui/botao-off-click.png","gui/botao-on-click.png",30,290,false,"gui/botao-disabled.png");
+	
 	//
 	// FADE
 	//

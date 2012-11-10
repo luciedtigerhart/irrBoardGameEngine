@@ -85,13 +85,14 @@ void IrrGUI::removeImage(s32 id) {
 		(*it).second->remove();
 }
 
-void IrrGUI::addButton(s32 id, char* fileNormal, char* fileHover, char* filePressed, char* filePressedHover, int x, int y, bool toggle) {
+void IrrGUI::addButton(s32 id, char* fileNormal, char* fileHover, char* filePressed, char* filePressedHover, int x, int y, bool toggle, char* fileDisabled) {
 	IrrGUIButton* bt = new IrrGUIButton(guienv,driver,id,x,y,rootGUI,toggle);
 	
 	bt->addImage(fileNormal);
 	bt->addImageHover(fileHover);
 	bt->addImagePressed(filePressed);
 	bt->addImagePressedHover(filePressedHover);
+	if(fileDisabled != NULL) bt->addImageDisabled(fileDisabled);
 
 	buttons.insert(pair<s32, IrrGUIButton*>(id,bt));
 }
@@ -170,6 +171,28 @@ bool IrrGUI::isPressedButton(s32 id)
     if(it != buttons.end())
 	{
 		return (*it).second->isPressed();
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void IrrGUI::setDisabledButton(s32 id, bool value)
+{
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
+    if(it != buttons.end())
+	{
+		(*it).second->setDisabled(value);
+	}
+}
+
+bool IrrGUI::isDisabledButton(s32 id)
+{
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
+    if(it != buttons.end())
+	{
+		return (*it).second->isDisabled();
 	}
 	else
 	{

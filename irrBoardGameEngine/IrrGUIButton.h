@@ -25,6 +25,7 @@ namespace IrrBoardGameEngine {
 		IGUIImage* img_hover;
 		IGUIImage* img_pressed;
 		IGUIImage* img_pressed_hover;
+		IGUIImage* img_disabled;
 
 		s32 id;
 		int x;
@@ -34,6 +35,7 @@ namespace IrrBoardGameEngine {
 		bool hover;
 		bool visible;
 		bool toggle;
+		bool disabled;
 
 		IGUIElement* parent_node;
 
@@ -44,6 +46,7 @@ namespace IrrBoardGameEngine {
 		void addImageHover(char* file);
 		void addImagePressed(char* file);
 		void addImagePressedHover(char* file);
+		void addImageDisabled(char* file);
 
 		void setHover(bool value);
 		bool isHover();
@@ -52,6 +55,9 @@ namespace IrrBoardGameEngine {
 		bool isPressed();
 
 		void setVisible(bool value);
+
+		void setDisabled(bool value);
+		bool isDisabled();
 
 		void update();
 

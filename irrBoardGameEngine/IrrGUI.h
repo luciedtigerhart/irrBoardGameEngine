@@ -35,13 +35,15 @@ namespace IrrBoardGameEngine {
         void removeImage(s32 id);
 
 		//BOTOES
+		void setDisabledButton(s32 id, bool value);
+		bool isDisabledButton(s32 id);
 		void setPressedButton(s32 id, bool value);
 		void setPressedButton(bool value);
 		bool isPressedButton(s32 id);
 		void setMouseOver(s32 id, bool value);
 		bool isMouseOver(s32 id);
 
-		void addButton(s32 id, char* fileNormal, char* fileHover, char* filePressed, char* filePressedHover, int x, int y, bool toggle = false);
+		void addButton(s32 id, char* fileNormal, char* fileHover, char* filePressed, char* filePressedHover, int x, int y, bool toggle = false, char* fileDisabled = NULL);
 		void setButton(s32 id, bool visible);
 		void removeButton(s32 id);
 
