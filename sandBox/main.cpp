@@ -16,25 +16,38 @@ enum
     GUI_ID_TEXT_01 = 101,
     GUI_ID_TEXT_02,
     GUI_ID_TEXT_03,
-    GUI_ID_BUTTON
+    GUI_ID_BUTTON,
+	GUI_ID_BUTTON_02
 };
 
 IrrEngine * engine;
 IrrScene * cena;
 IrrBoard * board;
 
+IrrGUI * fgui;
+IrrGameObject * audio;
+
 void myLoop()
 {
-	/*
 	if(engine->getInput()->isKeyDown(KEY_SPACE))
 	{
-		if(board != NULL)
-		{
-			cena->removeBoard();
-			board = NULL;
-		}
+		fgui->fadeIn(5000);
+		audio->getAudio()->stop();
+	}
+	/*
+	std::cout << fgui->isReadyfade();
+	
+	if(fgui->isReadyfade())
+	{
+		fgui->fade(5000,true);
 	}
 	*/
+
+	if(fgui->isPressedButton(GUI_ID_BUTTON_02))
+	{
+		fgui->fadeOut(5000);
+		audio->getAudio()->setLoopingStreamMode();
+	}
 }
 
 int main()
@@ -128,16 +141,32 @@ int main()
 	//
 	// CONSTRUÇÃO DO GUI
 	//
-	IrrGUI * gui = engine->getGUI();
+	fgui = engine->getGUI();
 
-	gui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,50,80);
+	fgui->addLabel(GUI_ID_TEXT_01,"meu texto meu texto meu texto meu texto meu texto",0,0,50,80);
 
-	gui->addLabel(GUI_ID_TEXT_02,"sdfsdf sdfs df",50,0,100,80);
+	fgui->addLabel(GUI_ID_TEXT_02,"sdfsdf sdfs df",50,0,100,80);
 
-	gui->addLabel(GUI_ID_TEXT_03,"m450s45d4f05sd40f5sdfexto",100,0,150,80);
+	fgui->addLabel(GUI_ID_TEXT_03,"m450s45d4f05sd40f5sdfexto",100,0,150,80);
 
-	//gui->addButton(GUI_ID_BUTTON,"gui/botao-off.png","gui/botao-on.png",30,60,228,117);
+	fgui->addButton(GUI_ID_BUTTON,"gui/botao-off.png","gui/botao-on.png","gui/botao-off-click.png","gui/botao-on-click.png",30,60, true);
 
+	fgui->addButton(GUI_ID_BUTTON_02,"gui/botao-off.png","gui/botao-on.png","gui/botao-off-click.png","gui/botao-on-click.png",30,290);
+
+	//
+	// FADE
+	//
+	fgui->fadeIn(2000);
+
+
+	//
+	// AUDIO
+	//
+	audio = cena->addAudio("sound/sfx_special_unitDie_trapTroll.wav",12,new Vector(0.0f, 0.0f, 0.0f));
+	//setPlayOnceMode > toca uma vez
+	//setLoopingStreamMode > loca em loop
+
+	//
 	/*
 	IrrGUI * gui_dois = engine->createGUI();
 
@@ -150,7 +179,7 @@ int main()
 
 	delete cena;
 	delete engine;
-	delete gui;
+	delete fgui;
 	delete cam;
 	
 

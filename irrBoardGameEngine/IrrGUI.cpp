@@ -4,47 +4,18 @@
 
 using namespace IrrBoardGameEngine;
 
-/*
-
-há fazer:::
-
-Pelo menos em teoria é bem simples: vamos supor que temos a imagem de hover para quando o botão está em estado normal, 
-que chamamos "ImageHoverNormal". Também temos uma imagem de hover para quando o botão está em estado "pressed", 
-que vamos chamar de "ImageHoverPressed". Ambas essas imagens tem que ser um ITexture*, que é o que o IGUIButton 
-usa como textura (é bem simples criar um ITexture, só passar o caminho da imagem no construtor).
-
-Tudo beleza até aqui? Para trocar a imagem, 
-quando o mouse estiver sobre o botão (você diz que tem como saber quando isso acontece) é só verificar o "isPressed" desse botão:
-
--> Se "isPressed == false", então muda a imagem para "ImageHoverNormal" com o método "setImage()" do IGUIButton.
--> Se "isPressed == true", então muda a imagem para "ImageHoverPressed" com o método "setPressedImage()" do IGUIButton.
-
-Fácil não? Só tem que lembrar de fazer as imagens 
-trocarem de volta para as normais (não-hover) 
-quando o mouse não estiver sobre o botão. 
-A moral então seria ter um método para o programador de jogo 
-setar quais são essas "ImageHoverNormal" e "ImageHoverPressed", 
-e um método que é sempre chamado no update que faz a verificação 
-de mouse sobre botão e a troca de imagens.
-
-Seria legal ter um fader padrão já na GUI do motor, do tamanho da tela (que o motor já sabe). 
-Aí é só criar métodos para dar fadeIn e fadeOut nesse fader 
-(passando como parâmetro o tempo) e um método que retorna se ele já terminou (verifica o atributo "isReady").
-http://irrlicht.sourceforge.net/docu/classirr_1_1gui_1_1_i_g_u_i_in_out_fader.html
-*/
-
 IrrGUI::IrrGUI(IrrlichtDevice * device)
 {	
 	driver = device->getVideoDriver();
 	guienv = device->getGUIEnvironment();
 
-
 	irr::core::dimension2d<u32> d = driver->getScreenSize();
 	//rootGUI = new IGUIElement(EGUIET_WINDOW,guienv,0,-1,rect<s32>(0, 0, 50, 50)); //guienv->addGUIElement(irr::gui::EGUI_ELEMENT_TYPE.EGUIET_ELEMENT);
 	//rootGUI = guienv->addModalScreen(guienv->getRootGUIElement
+	//rootGUI = guienv->addImage(rect<s32>(0, 0, d.Width, d.Height));
 	rootGUI = guienv->addStaticText(L"",rect<s32>(0, 0, d.Width, d.Height));
-
-	//std::cout << d.Width << " " << d.Height;
+	fader = NULL;
+	isfadein = false;
 }
 
 IrrGUI::~IrrGUI(void)
@@ -57,8 +28,7 @@ void IrrGUI::addLabel(s32 id, char *text, int minX, int minY, int maxX, int maxY
     std::string other(text);
     const std::wstring& ws =  std::wstring(other.begin(), other.end());
         
-    labels.insert(pair<s32, IGUIStaticText*>(id,guienv->addStaticText(ws.c_str(), rect<s32>(minX, minY, maxX, maxY), false, true, rootGUI,id)));
-	elementState.insert(pair<s32, EState>(id,EState()));
+    labels.insert(pair<s32, IGUIStaticText*>(id,guienv->addStaticText(ws.c_str(), rect<s32>(minX, minY, maxX, maxY), false, true, rootGUI,id)));	
 }
 
 void IrrGUI::setText(s32 id, char *text) {
@@ -93,7 +63,6 @@ void IrrGUI::removeLabel(s32 id) {
 
 void IrrGUI::addImage(s32 id, char* file, int x, int y) {
 	imagens.insert(pair<s32, IGUIImage*>(id,guienv->addImage(driver->getTexture(file),position2d<int>(x, y),true,rootGUI,id)));
-	elementState.insert(pair<s32, EState>(id,EState()));
 }
 
 void IrrGUI::setImage(s32 id, bool visible) {
@@ -116,27 +85,29 @@ void IrrGUI::removeImage(s32 id) {
 		(*it).second->remove();
 }
 
-void IrrGUI::addButton(s32 id, char* fileNormal, char* filePressed, int x, int y, int w, int h) {
-	//imagens.insert(pair<std::string, IGUIImage*>(std::string(name),guienv->addImage(driver->getTexture(file),position2d<int>(x, y),true)));
-	IGUIButton* bt = guienv->addButton(rect<s32>(x, y, x+w, y+h),rootGUI,id);
+void IrrGUI::addButton(s32 id, char* fileNormal, char* fileHover, char* filePressed, char* filePressedHover, int x, int y, bool toggle) {
+	IrrGUIButton* bt = new IrrGUIButton(guienv,driver,id,x,y,rootGUI,toggle);
+	
+	bt->addImage(fileNormal);
+	bt->addImageHover(fileHover);
+	bt->addImagePressed(filePressed);
+	bt->addImagePressedHover(filePressedHover);
 
-	bt->setImage(driver->getTexture(fileNormal),rect<s32>(0, 0, w, h));
-	bt->setPressedImage(driver->getTexture(filePressed),rect<s32>(0, 0, w, h));
-
-	buttons.insert(pair<s32, IGUIButton*>(id,bt));
-	elementState.insert(pair<s32, EState>(id,EState()));
+	buttons.insert(pair<s32, IrrGUIButton*>(id,bt));
 }
 
 void IrrGUI::setButton(s32 id, bool visible) {
-    std::map<s32, IGUIButton*>::iterator it = buttons.find(id);
+    std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
     if(it != buttons.end())
 		(*it).second->setVisible(visible);
 }
 
 void IrrGUI::removeButton(s32 id) {
-    std::map<s32, IGUIButton*>::iterator it = buttons.find(id);
+	/*
+    std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
     if(it != buttons.end())
 		(*it).second->remove();
+	*/
 }
 
 void IrrGUI::update()
@@ -156,36 +127,46 @@ void IrrGUI::update()
 
 void IrrGUI::setMouseOver(s32 id, bool value)
 {
-	std::map<s32, EState>::iterator it = elementState.find(id);
-    if(it != elementState.end())
-		(*it).second.mouseOver = value;
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
+    if(it != buttons.end())
+		(*it).second->setHover(value);
 }
 
-EState IrrGUI::getElementState(s32 id)
+bool IrrGUI::isMouseOver(s32 id)
 {
-	std::map<s32, EState>::iterator it = elementState.find(id);
-    if(it != elementState.end())
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
+    if(it != buttons.end())
 	{
-		return (*it).second;
+		return (*it).second->isHover();
 	}
 	else
 	{
-		return EState();
+		return false;
 	}
 }
 
 void IrrGUI::setPressedButton(s32 id, bool value)
 {
-	std::map<s32, IGUIButton*>::iterator it = buttons.find(id);
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
     if(it != buttons.end())
 	{
 		(*it).second->setPressed(value);
 	}
 }
 
+void IrrGUI::setPressedButton(bool value)
+{
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.begin();
+    while(it != buttons.end())
+	{
+		(*it).second->setPressed(value);
+		it++;
+	}
+}
+
 bool IrrGUI::isPressedButton(s32 id)
 {
-	std::map<s32, IGUIButton*>::iterator it = buttons.find(id);
+	std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
     if(it != buttons.end())
 	{
 		return (*it).second->isPressed();
@@ -209,5 +190,43 @@ IGUIEnvironment * IrrGUI::getGUIenv()
 void IrrGUI::drawAll()
 {
 	guienv->drawAll();
+
+	if(fader != NULL && isfadein && fader->isReady())
+	{
+		fader->setVisible(false);
+	}
 }
 
+void IrrGUI::fadeIn(u32 time)
+{
+	fade(time,true);
+}
+
+void IrrGUI::fadeOut(u32 time)
+{
+	fade(time,false);
+}
+
+void IrrGUI::fade(u32 time, bool in)
+{
+	if(fader == NULL) fader = guienv->addInOutFader(0,rootGUI);
+	fader->setVisible(true);
+	if(in)
+	{
+		fader->fadeIn(time);
+		isfadein = true;
+	}
+	else
+	{
+		isfadein = false;
+		fader->fadeOut(time);
+	}
+}
+
+bool IrrGUI::isReadyfade()
+{
+	if(fader != NULL)
+		return fader->isReady();
+	else
+		return false;
+}

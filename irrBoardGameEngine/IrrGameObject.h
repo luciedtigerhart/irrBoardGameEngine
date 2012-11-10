@@ -14,9 +14,9 @@
 #include "IrrMesh.h"
 #include "IrrMeshAnimated.h"
 #include "IrrBehavior.h"
+#include "IrrAudio.h"
 
 //#include "IrrAnimation.h"
-//#include "IrrAudio.h"
 
 
 using namespace irr;
@@ -55,10 +55,11 @@ namespace IrrBoardGameEngine {
 		/*
 		void setAnimation(Animation *);
 		IrrAnimation* getAnimation();
-		
-		void setAudio(Audio *);
-		IrrAudio *getAudio();
 		*/
+
+		void setAudio(IrrAudio *);
+		IrrAudio *getAudio();
+		
 
 		void addChild(IrrGameObject *o);
 		void removeChild(IrrGameObject *o);
@@ -87,9 +88,9 @@ namespace IrrBoardGameEngine {
 
 		/*
 		Animation *animation;
-		Audio *audio;
 		*/
-
+		IrrAudio *audio;
+		
 		vector<IrrBehavior*> *behaviors;
 		std::map<IrrGameObject*,ISceneNode*> *children;
 	};

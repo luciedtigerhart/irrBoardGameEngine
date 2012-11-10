@@ -69,6 +69,12 @@
     <ClInclude Include="IrrMeshAnimated.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IrrGUIButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IrrAudio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IrrEngine.cpp">
@@ -111,6 +117,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IrrMeshAnimated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IrrGUIButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IrrAudio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

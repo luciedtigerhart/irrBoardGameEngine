@@ -42,14 +42,16 @@ bool IrrInput::OnEvent(const SEvent& event)
 
 	// Usando o mouse
     if (event.EventType == irr::EET_MOUSE_INPUT_EVENT)
-    {
+    {		
         switch(event.MouseInput.Event)
         {
 			case EMIE_LMOUSE_PRESSED_DOWN:
+				gui->setPressedButton(guiElementid, true);
 				mouseState.leftButtonDown = true;
 				//std::cout << "EMIE_LMOUSE_PRESSED_DOWN" << endl;
 				break;
 			case EMIE_LMOUSE_LEFT_UP:
+				gui->setPressedButton(false);
 				mouseState.leftButtonDown = false;
 				//std::cout << "EMIE_LMOUSE_LEFT_UP" << endl;
 				break;
@@ -75,14 +77,14 @@ bool IrrInput::OnEvent(const SEvent& event)
 
 	if (event.EventType == EET_GUI_EVENT)
 	{
-		s32 id = event.GUIEvent.Caller->getID();
+		guiElementid = event.GUIEvent.Caller->getID();
 		switch(event.GUIEvent.EventType)
 		{
 			case EGET_ELEMENT_HOVERED:
-				gui->setMouseOver(id, true);
+				gui->setMouseOver(guiElementid, true);
 				break;
 			case EGET_ELEMENT_LEFT:
-				gui->setMouseOver(id, false);
+				gui->setMouseOver(guiElementid, false);
 				break;
 		}
 	}

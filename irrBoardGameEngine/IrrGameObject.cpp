@@ -93,12 +93,12 @@ void IrrGameObject::setAnimation(Animation *c)
 IrrAnimation* IrrGameObject::getAnimation(){
 	return animation;
 }
-
-void IrrGameObject::setAudio(Audio *a)
+*/
+void IrrGameObject::setAudio(IrrAudio *a)
 {
 	this->audio = a;
-	node->addChild(((IrrKlangSceneNode*)a));
-	((IrrKlangSceneNode*)a)->setParent(node);
+	node->addChild(((IrrAudio*)a));
+	((IrrAudio*)a)->setParent(node);
 }
 
 IrrAudio* IrrGameObject::getAudio(){
@@ -109,7 +109,7 @@ void IrrGameObject::play()
 {
 	audio->setPlayOnceMode(true);
 }
-*/
+
 
 IrrBehavior * IrrGameObject::getBehavior(int index)
 {

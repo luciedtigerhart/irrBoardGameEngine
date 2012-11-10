@@ -37,6 +37,8 @@ namespace IrrBoardGameEngine {
 
 		void setDriver(IVideoDriver *);
 		void setGUI(IrrGUI *);
+		s32 guiElementid;
+
 		void setCamera(IrrCamera *);
 		/*
 		//registra uma comando de teclado

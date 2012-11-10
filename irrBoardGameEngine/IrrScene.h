@@ -19,6 +19,7 @@
 #include "IrrMeshAnimated.h"
 #include "IrrParticleSystem.h"
 #include "IrrCamera.h"
+#include "IrrAudio.h"
 
 using namespace irr;
 using namespace scene;

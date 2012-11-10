@@ -220,27 +220,21 @@ IrrBoard *IrrScene::addBoard(std::string src,Vector*p,bool animated, bool shadow
 	return go;
 }
 
-IrrBoard *addAnimatedBoard(std::string src,Vector*,bool shadow = false);
-
-/*
-GameObject *IrrScene::addAudio(const char *filename,int id,Vector *p)
+IrrGameObject *IrrScene::addAudio(const char *filename, int id, Vector *p)
 {
-	GameObject *go = new GameObject;
-	((IrrGameObjectImpl*)go->getImplementor())->node = smgr->addEmptySceneNode();
-
-	IrrKlangSceneNode *ad;
-	ad = new IrrKlangSceneNode(soundEngine,
-		((IrrGameObjectImpl*)go->getImplementor())->node,
-		smgr,
-		id);
+	IrrGameObject *go = new IrrGameObject;
+	go->node = smgr->addEmptySceneNode();
+	
+	IrrAudio *ad = new IrrAudio(soundEngine,go->node,smgr,id);
 	ad->setSoundFileName(filename);
+	ad->stop();
 	go->setAudio(ad);
 	go->setPosition(*p);
 	
-	this->addObject(go);		
+	this->addObject(go);
+	
 	return go;
 }
-*/
 
 ISceneNode * IrrScene::getSceneNodeAndCollisionPointFromRay()
 {

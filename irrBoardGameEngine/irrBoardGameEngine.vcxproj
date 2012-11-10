@@ -17,7 +17,9 @@
     <ClInclude Include="IrrEngine.h" />
     <ClInclude Include="IrrGameObject.h" />
     <ClInclude Include="IrrGUI.h" />
+    <ClInclude Include="IrrGUIButton.h" />
     <ClInclude Include="IrrInput.h" />
+    <ClInclude Include="IrrAudio.h" />
     <ClInclude Include="IrrLoader.h" />
     <ClInclude Include="IrrMesh.h" />
     <ClInclude Include="IrrMeshAnimated.h" />
@@ -36,7 +38,9 @@
     <ClCompile Include="IrrEngine.cpp" />
     <ClCompile Include="IrrGameObject.cpp" />
     <ClCompile Include="IrrGUI.cpp" />
+    <ClCompile Include="IrrGUIButton.cpp" />
     <ClCompile Include="IrrInput.cpp" />
+    <ClCompile Include="IrrAudio.cpp" />
     <ClCompile Include="IrrLoader.cpp" />
     <ClCompile Include="IrrMesh.cpp" />
     <ClCompile Include="IrrMeshAnimated.cpp" />
