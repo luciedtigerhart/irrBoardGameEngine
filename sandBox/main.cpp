@@ -153,7 +153,7 @@ int main()
 	//
 	// FONT
 	//
-	fgui->addFont(GUI_ID_FONT,"gui/dungeon.png",30,-60);
+	fgui->addFont(GUI_ID_FONT,"gui/dungeon.png");
 
 
 	//

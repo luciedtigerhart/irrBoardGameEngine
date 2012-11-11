@@ -56,6 +56,12 @@ IrrParticleSystem * IrrScene::addParticleSystem()
 	ps->node->setParent(rootScene);
 	return ps;
 }
+
+void IrrScene::removeParticleSystem(IrrParticleSystem * ps)
+{
+	delete ps;
+}
+
 ILightSceneNode* IrrScene::addLightSceneNode(const core::vector3df& position,video::SColorf color,f32 radius)
 {
 	return addLightSceneNode(rootScene,-1,position,color,radius);

@@ -14,7 +14,11 @@ IrrParticleSystem::~IrrParticleSystem(void)
 {
 	removeAllEmitter();
 	removeAllAffectors();
-	if(node != NULL) delete node;
+	if(node != NULL)
+	{
+		node->drop();
+		delete node;
+	}
 }
 
 IParticleEmitter * IrrParticleSystem::createBoxEmitter(s32 id,const core::aabbox3df& box,

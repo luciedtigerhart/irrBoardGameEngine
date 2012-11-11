@@ -89,7 +89,9 @@ namespace IrrBoardGameEngine {
 			video::SColorf color = video::SColorf(1.0f, 1.0f, 1.0f),
 			f32 radius=100.0f);
 
+		//Particula
 		IrrParticleSystem * addParticleSystem();
+		void removeParticleSystem(IrrParticleSystem * ps);
 
 		//construtora
 		IrrScene(IrrlichtDevice *,ISoundEngine *,IrrInput *);
