@@ -1,4 +1,5 @@
 #include "IrrAudio.h"
+#include <iostream>
 
 using namespace IrrBoardGameEngine;
 
@@ -23,6 +24,12 @@ IrrAudio::IrrAudio(irrklang::ISoundEngine* soundEngine, scene::ISceneNode* paren
 	MinTimeMsInterval = 1000;
 	Sound = 0;
 	PlayedCount = 0;
+
+	fade_volume_atual = 1.0f;
+	fade_in = false;
+	fade_out = false;
+	fade_velocidade = 0.1f;
+	fade_volume = 0.0f;
 
 	if (SoundEngine) SoundEngine->grab();
 }
@@ -53,13 +60,54 @@ void IrrAudio::OnAnimate(u32 timeMs)
 	core::vector3df pos = getAbsolutePosition();
 
 	if (Sound)
+	{
 		Sound->setPosition(pos);
 
-	switch(PlayMode) {
-	case EPM_NOTHING:
-		return;
-	case EPM_RANDOM: {
-			if (Sound && Sound->isFinished()) {
+		if(fade_out)
+		{
+			fade_volume = Sound->getVolume();
+
+			if(timeMs % 1000 == 0)
+			{
+				fade_volume -= fade_velocidade;
+			}
+
+			Sound->setVolume(fade_volume);
+
+			if(fade_volume <= 0)
+			{
+				stop();
+			}
+		}
+
+		if(fade_in && fade_volume < fade_volume_atual)
+		{
+			if(fade_volume == 0)
+			{
+				fade_volume_atual = Sound->getVolume();
+				fade_volume += fade_velocidade;
+			}
+
+			if(timeMs % 1000 == 0)
+			{
+				fade_volume += fade_velocidade;				
+			}
+
+			Sound->setVolume(fade_volume);			
+		}
+		else
+		{
+			fade_in = false;
+		}
+	}
+
+	switch(PlayMode)
+	{
+		case EPM_NOTHING:
+			return;
+		case EPM_RANDOM:			
+			if (Sound && Sound->isFinished())
+			{
 				Sound->drop();
 				Sound = 0;
 
@@ -71,13 +119,16 @@ void IrrAudio::OnAnimate(u32 timeMs)
 					delta = 2;
 
 				TimeMsDelayFinished = timeMs + (rand()%delta) + MinTimeMsInterval;
-			} else if (!Sound && (!TimeMsDelayFinished || timeMs > TimeMsDelayFinished)) {
+			}
+			else if (!Sound && (!TimeMsDelayFinished || timeMs > TimeMsDelayFinished))
+			{
 				// play new sound		
 
 				if (SoundFileName.size())
 					Sound = SoundEngine->play3D(SoundFileName.c_str(), pos, false, true, true);
 
-				if (Sound) {
+				if (Sound)
+				{
 					if (MinDistance > 0 )
 						Sound->setMinDistance(MinDistance);
 					if (MaxDistance > 0 )
@@ -85,11 +136,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 
 					Sound->setIsPaused(false);
 				}
-			}
-		}
-		break;
-	case EPM_LOOPING:
-		{
+			}			
+			break;
+		case EPM_LOOPING:		
 			if (!Sound)
 			{
 				if (SoundFileName.size())
@@ -109,11 +158,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 					// sound could not be loaded
 					stop();
 				}
-			}
-		}
-		break;
-	case EPM_ONCE:
-		{
+			}			
+			break;
+		case EPM_ONCE:			
 			if (PlayedCount)
 			{
 				// stop
@@ -149,8 +196,7 @@ void IrrAudio::OnAnimate(u32 timeMs)
 					stop();
 				}
 			}
-		}
-		break;
+			break;
 	}
 }
 
@@ -237,7 +283,6 @@ const core::aabbox3d<f32>& IrrAudio::getBoundingBox() const
 	return Box;
 }
 
-
 const c8* const IrrKlangPlayModeNames[] =
 {
 	"nothing", "random", "looping",	"play_once", 0
@@ -251,36 +296,69 @@ ESCENE_NODE_TYPE IrrAudio::getType() const
 }
 
 
-void IrrAudio::stop()
+void IrrAudio::stop(bool fadeOut, float velocidade)
 {
 	PlayMode = EPM_NOTHING;
 	PlayedCount = 0;
 
 	if (Sound)
 	{
-		Sound->stop();
-		Sound->drop();
-		Sound = 0;
+		fade_in = false;
+		fade_out = fadeOut;
+		fade_velocidade = velocidade;
+
+		if(!fade_out)
+		{
+			Sound->stop();
+			Sound->drop();
+			Sound = 0;
+		}
+	}
+}
+
+bool IrrAudio::isFinished()
+{
+	return Sound->isFinished();
+}
+
+void IrrAudio::setVolume(ik_f32 volume)
+{
+	Sound->setVolume(volume);
+}
+
+//! Sets the play mode to 'play once', a sound file is played once, and 
+//! the scene node deletes itself then, if wished.
+void IrrAudio::setPlayOnceMode(bool fadeIn, float velocidade,bool deleteWhenFinished)
+{
+	stop();
+	PlayMode = EPM_ONCE;
+	PlayedCount = 0;
+
+	fade_in = fadeIn;
+	fade_velocidade = velocidade;
+	DeleteWhenFinished = deleteWhenFinished;
+	if(fade_in)
+	{
+		//fade_volume_atual = Sound->getVolume();
+		fade_volume = 0.0f;
+		//Sound->setVolume(fade_volume);
 	}
 }
 
 
-//! Sets the play mode to 'play once', a sound file is played once, and 
-//! the scene node deletes itself then, if wished.
-void IrrAudio::setPlayOnceMode(bool deleteWhenFinished)
-{
-	stop();
-	PlayMode = EPM_ONCE;
-	DeleteWhenFinished = deleteWhenFinished;
-	PlayedCount = 0;
-}
-
-
 //! Sets the play mode to 'looping stream', plays a looped sound over and over again.
-void IrrAudio::setLoopingStreamMode()
+void IrrAudio::setLoopingStreamMode(bool fadeIn, float velocidade)
 {
 	stop();
 	PlayMode = EPM_LOOPING;
+	fade_in = fadeIn;
+	fade_velocidade = velocidade;
+	if(fade_in)
+	{
+		//fade_volume_atual = Sound->getVolume();
+		fade_volume = 0.0f;
+		//Sound->setVolume(fade_volume);
+	}
 }
 
 

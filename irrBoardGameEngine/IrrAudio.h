@@ -21,10 +21,10 @@ namespace IrrBoardGameEngine
 
 		//! Sets the play mode to 'play once', a sound file is played once, and 
 		//! the scene node deletes itself then, if wished.
-		void setPlayOnceMode(bool deleteWhenFinished=false);
+		void setPlayOnceMode(bool fadeIn = false, float velocidade = 0.1f,bool deleteWhenFinished=false);
 
 		//! Sets the play mode to 'looping stream', plays a looped sound over and over again.
-		void setLoopingStreamMode();
+		void setLoopingStreamMode(bool fadeIn = false, float velocidade = 0.1f);
 
 		//! Sets the play mode to 'random'. Plays a sound with a variable, random interval
 		//! over and over again.
@@ -45,7 +45,11 @@ namespace IrrBoardGameEngine
 		void setMinMaxSoundDistance(f32 minDistance=1.0f, f32 maxDistance=10000000.0f);
 
 		//! stops playback, releases sound, sets playmode to 'nothing'
-		void stop();
+		void stop(bool fadeOut = false, float velocidade = 0.1f);
+
+		//
+		bool isFinished();
+		void setVolume(ik_f32 volume);
 
 		// rendering functions:
 		virtual void OnAnimate(u32 timeMs);
@@ -63,6 +67,12 @@ namespace IrrBoardGameEngine
 			EPM_LOOPING,
 			EPM_ONCE
 		};
+
+		bool fade_in;
+		bool fade_out;
+		float fade_velocidade;
+		float fade_volume;
+		float fade_volume_atual;
 
 		core::aabbox3d<f32> Box;
 		irrklang::ISoundEngine* SoundEngine;
