@@ -30,6 +30,9 @@ private:
 	IrrBoard* board;
 	IrrGameObject* camera;
 
+	//Skybox
+	ISceneNode* skybox;
+
 	//Lights
 	ILightSceneNode* light;
 

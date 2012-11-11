@@ -84,6 +84,23 @@ void PrimeGameStateManager::Init()
 	tutorial = engine->createScene();
 	match = engine->createScene();
 	
+	//Add a skybox to match scene
+	/*
+	skybox = match->getSceneManager()->addSkyBoxSceneNode(engine->getDriver()->getTexture("obj/skybox/skybox_top.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/skybox_bottom.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/skybox_left.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/skybox_right.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/skybox_front.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/skybox_back.jpg"));
+	*/
+	
+	skybox = match->getSceneManager()->addSkyBoxSceneNode(engine->getDriver()->getTexture("obj/skybox/plain_sky_top.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/plain_sky_bottom.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/plain_sky_left.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/plain_sky_right.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/plain_sky_front.jpg"),
+														  engine->getDriver()->getTexture("obj/skybox/plain_sky_back.jpg"));
+
 	//Load music and sound effects
 	LoadAudio();
 
