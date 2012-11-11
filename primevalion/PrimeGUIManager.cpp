@@ -46,14 +46,14 @@ void PrimeGUIManager::SetTurnCount(bool show, int turn)
 		turnCount = convert.str();
 
 		//Show and update turn counter
-		env_match->setLabel(LABEL_TURN_COUNT, true);
+		env_match->setLabelVisible(LABEL_TURN_COUNT, true);
 		env_match->setText(LABEL_TURN_COUNT, (char*)turnCount.c_str());
 	}
 
 	else if (!show)
 	{
 		//Hide and reset turn counter
-		env_match->setLabel(LABEL_TURN_COUNT, false);
+		env_match->setLabelVisible(LABEL_TURN_COUNT, false);
 		env_match->setText(LABEL_TURN_COUNT, "1");
 	}
 }
@@ -338,7 +338,7 @@ void PrimeGUIManager::UpdateMatchIndicator(bool show, irr::s32 indicator, irr::s
 	env_match->setImage(indicator, show);
 
 	//Show and update label
-	env_match->setLabel(label, show);
+	env_match->setLabelVisible(label, show);
 	env_match->setText(label, (char*)counter.c_str());
 }
 
@@ -516,13 +516,13 @@ void PrimeGUIManager::HideResourceIndicators()
 
 	//Hide and reset resource labels
 
-	env_match->setLabel(LABEL_RESOURCES_1ST, false);
-	env_match->setLabel(LABEL_RESOURCES_2ND, false);
-	env_match->setLabel(LABEL_RESOURCES_3RD, false);
-	env_match->setLabel(LABEL_RESOURCES_4TH, false);
-	env_match->setLabel(LABEL_RESOURCES_1ST_ODD, false);
-	env_match->setLabel(LABEL_RESOURCES_2ND_ODD, false);
-	env_match->setLabel(LABEL_RESOURCES_3RD_ODD, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_1ST, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_2ND, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_3RD, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_4TH, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_1ST_ODD, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_2ND_ODD, false);
+	env_match->setLabelVisible(LABEL_RESOURCES_3RD_ODD, false);
 
 	env_match->setText(LABEL_RESOURCES_1ST, "0");
 	env_match->setText(LABEL_RESOURCES_2ND, "0");
@@ -814,6 +814,8 @@ void PrimeGUIManager::FlipTutorialPages()
 		{
 			env_tutorial->setButton(BUTTON_PREVIOUS, false);
 			env_tutorial->setButton(BUTTON_NEXT, true);
+			env_tutorial->setImage(IMAGE_PREVIOUS_DISABLED, true);
+			env_tutorial->setImage(IMAGE_NEXT_DISABLED, false);
 
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, true);
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
@@ -828,6 +830,8 @@ void PrimeGUIManager::FlipTutorialPages()
 		{
 			env_tutorial->setButton(BUTTON_PREVIOUS, true);
 			env_tutorial->setButton(BUTTON_NEXT, true);
+			env_tutorial->setImage(IMAGE_PREVIOUS_DISABLED, false);
+			env_tutorial->setImage(IMAGE_NEXT_DISABLED, false);
 
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, true);
@@ -842,6 +846,8 @@ void PrimeGUIManager::FlipTutorialPages()
 		{
 			env_tutorial->setButton(BUTTON_PREVIOUS, true);
 			env_tutorial->setButton(BUTTON_NEXT, true);
+			env_tutorial->setImage(IMAGE_PREVIOUS_DISABLED, false);
+			env_tutorial->setImage(IMAGE_NEXT_DISABLED, false);
 
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
@@ -856,6 +862,8 @@ void PrimeGUIManager::FlipTutorialPages()
 		{
 			env_tutorial->setButton(BUTTON_PREVIOUS, true);
 			env_tutorial->setButton(BUTTON_NEXT, true);
+			env_tutorial->setImage(IMAGE_PREVIOUS_DISABLED, false);
+			env_tutorial->setImage(IMAGE_NEXT_DISABLED, false);
 
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
@@ -870,6 +878,8 @@ void PrimeGUIManager::FlipTutorialPages()
 		{
 			env_tutorial->setButton(BUTTON_PREVIOUS, true);
 			env_tutorial->setButton(BUTTON_NEXT, false);
+			env_tutorial->setImage(IMAGE_PREVIOUS_DISABLED, false);
+			env_tutorial->setImage(IMAGE_NEXT_DISABLED, true);
 
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1, false);
 			env_tutorial->setImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2, false);
@@ -1041,147 +1051,287 @@ bool PrimeGUIManager::VerifyMatchEndMatchButton()
 void PrimeGUIManager::BuildGUITitleScreen()
 {
 	//Backgrounds
-	env_title->addImage(BACKGROUND_TITLE_SCREEN,"gui/outgame/background_title.jpg",0,0);
+	env_title->addImage(BACKGROUND_TITLE_SCREEN,"gui/title/gui_bg_title_screen.jpg",0,0);
 
 	//Active player indicators
-	env_title->addImage(INDICATOR_PLAYER_1_ON,"gui/outgame/team_player1.jpg",230,160);
-	env_title->addImage(INDICATOR_PLAYER_2_ON,"gui/outgame/team_player2.jpg",650,160);
-	env_title->addImage(INDICATOR_PLAYER_3_ON,"gui/outgame/team_player3.jpg",230,380);
-	env_title->addImage(INDICATOR_PLAYER_4_ON,"gui/outgame/team_player4.jpg",650,380);
+	env_title->addImage(INDICATOR_PLAYER_1_ON,"gui/title/gui_image_player_team_1_active.png",165,202);
+	env_title->addImage(INDICATOR_PLAYER_2_ON,"gui/title/gui_image_player_team_2_active.png",692,202);
+	env_title->addImage(INDICATOR_PLAYER_3_ON,"gui/title/gui_image_player_team_3_active.png",165,398);
+	env_title->addImage(INDICATOR_PLAYER_4_ON,"gui/title/gui_image_player_team_4_active.png",692,398);
 
 	//Inactive player indicators
-	env_title->addImage(INDICATOR_PLAYER_1_OFF,"gui/outgame/team_player1_off.jpg",230,160);
-	env_title->addImage(INDICATOR_PLAYER_2_OFF,"gui/outgame/team_player2_off.jpg",650,160);
-	env_title->addImage(INDICATOR_PLAYER_3_OFF,"gui/outgame/team_player3_off.jpg",230,380);
-	env_title->addImage(INDICATOR_PLAYER_4_OFF,"gui/outgame/team_player4_off.jpg",650,380);
+	env_title->addImage(INDICATOR_PLAYER_1_OFF,"gui/title/gui_image_player_team_1_inactive.png",165,202);
+	env_title->addImage(INDICATOR_PLAYER_2_OFF,"gui/title/gui_image_player_team_2_inactive.png",692,202);
+	env_title->addImage(INDICATOR_PLAYER_3_OFF,"gui/title/gui_image_player_team_3_inactive.png",165,398);
+	env_title->addImage(INDICATOR_PLAYER_4_OFF,"gui/title/gui_image_player_team_4_inactive.png",692,398);
 
 	//Player activation buttons
-	env_title->addButton(BUTTON_PLAYER_1_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",310,160,29,26);
-	env_title->addButton(BUTTON_PLAYER_2_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",730,160,29,26);
-	env_title->addButton(BUTTON_PLAYER_3_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",310,380,29,26);
-	env_title->addButton(BUTTON_PLAYER_4_ACTIVATE,"gui/outgame/team_on.jpg","gui/outgame/team_on_hover.jpg",730,380,29,26);
+	env_title->addButton(BUTTON_PLAYER_1_ACTIVATE,"gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  "gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  355,186);
+	env_title->addButton(BUTTON_PLAYER_2_ACTIVATE,"gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  "gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  533,186);
+	env_title->addButton(BUTTON_PLAYER_3_ACTIVATE,"gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  "gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  355,382);
+	env_title->addButton(BUTTON_PLAYER_4_ACTIVATE,"gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  "gui/title/gui_button_player_activate_normal.png",
+												  "gui/title/gui_button_player_activate_hover.png",
+												  533,382);
 
 	//Player deactivation buttons
-	env_title->addButton(BUTTON_PLAYER_1_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",310,160,29,26);
-	env_title->addButton(BUTTON_PLAYER_2_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",730,160,29,26);
-	env_title->addButton(BUTTON_PLAYER_3_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",310,380,29,26);
-	env_title->addButton(BUTTON_PLAYER_4_DEACTIVATE,"gui/outgame/team_off.jpg","gui/outgame/team_off_hover.jpg",730,380,29,26);
+	env_title->addButton(BUTTON_PLAYER_1_DEACTIVATE,"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													355,186);
+	env_title->addButton(BUTTON_PLAYER_2_DEACTIVATE,"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													533,186);
+	env_title->addButton(BUTTON_PLAYER_3_DEACTIVATE,"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													355,382);
+	env_title->addButton(BUTTON_PLAYER_4_DEACTIVATE,"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													"gui/title/gui_button_player_deactivate_normal.png",
+													"gui/title/gui_button_player_deactivate_hover.png",
+													533,382);
 
 	//Selected race images (for when a race is selected and cannot be clicked anymore)
-	env_title->addImage(IMAGE_PLAYER_1_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",230,190);
-	env_title->addImage(IMAGE_PLAYER_1_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",260,190);
-	env_title->addImage(IMAGE_PLAYER_1_TROLL,"gui/outgame/race_troll_toggled.jpg",290,190);
-	env_title->addImage(IMAGE_PLAYER_1_HOG,"gui/outgame/race_hog_toggled.jpg",320,190);
+	env_title->addImage(IMAGE_PLAYER_1_KOBOLD,"gui/title/gui_image_race_kobold_player_1.png",115,255);
+	env_title->addImage(IMAGE_PLAYER_1_GNOLL,"gui/title/gui_image_race_gnoll_player_1.png",195,255);
+	env_title->addImage(IMAGE_PLAYER_1_TROLL,"gui/title/gui_image_race_troll_player_1.png",277,256);
+	env_title->addImage(IMAGE_PLAYER_1_HOG,"gui/title/gui_image_race_hog_player_1.png",359,255);
 
-	env_title->addImage(IMAGE_PLAYER_2_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",650,190);
-	env_title->addImage(IMAGE_PLAYER_2_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",680,190);
-	env_title->addImage(IMAGE_PLAYER_2_TROLL,"gui/outgame/race_troll_toggled.jpg",710,190);
-	env_title->addImage(IMAGE_PLAYER_2_HOG,"gui/outgame/race_hog_toggled.jpg",740,190);
+	env_title->addImage(IMAGE_PLAYER_2_KOBOLD,"gui/title/gui_image_race_kobold_player_2.png",540,255);
+	env_title->addImage(IMAGE_PLAYER_2_GNOLL,"gui/title/gui_image_race_gnoll_player_2.png",620,255);
+	env_title->addImage(IMAGE_PLAYER_2_TROLL,"gui/title/gui_image_race_troll_player_2.png",702,256);
+	env_title->addImage(IMAGE_PLAYER_2_HOG,"gui/title/gui_image_race_hog_player_2.png",784,255);
 
-	env_title->addImage(IMAGE_PLAYER_3_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",230,410);
-	env_title->addImage(IMAGE_PLAYER_3_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",260,410);
-	env_title->addImage(IMAGE_PLAYER_3_TROLL,"gui/outgame/race_troll_toggled.jpg",290,410);
-	env_title->addImage(IMAGE_PLAYER_3_HOG,"gui/outgame/race_hog_toggled.jpg",320,410);
+	env_title->addImage(IMAGE_PLAYER_3_KOBOLD,"gui/title/gui_image_race_kobold_player_3.png",115,452);
+	env_title->addImage(IMAGE_PLAYER_3_GNOLL,"gui/title/gui_image_race_gnoll_player_3.png",195,452);
+	env_title->addImage(IMAGE_PLAYER_3_TROLL,"gui/title/gui_image_race_troll_player_3.png",277,453);
+	env_title->addImage(IMAGE_PLAYER_3_HOG,"gui/title/gui_image_race_hog_player_3.png",359,452);
 
-	env_title->addImage(IMAGE_PLAYER_4_KOBOLD,"gui/outgame/race_kobold_toggled.jpg",650,410);
-	env_title->addImage(IMAGE_PLAYER_4_GNOLL,"gui/outgame/race_gnoll_toggled.jpg",680,410);
-	env_title->addImage(IMAGE_PLAYER_4_TROLL,"gui/outgame/race_troll_toggled.jpg",710,410);
-	env_title->addImage(IMAGE_PLAYER_4_HOG,"gui/outgame/race_hog_toggled.jpg",740,410);
+	env_title->addImage(IMAGE_PLAYER_4_KOBOLD,"gui/title/gui_image_race_kobold_player_4.png",540,452);
+	env_title->addImage(IMAGE_PLAYER_4_GNOLL,"gui/title/gui_image_race_gnoll_player_4.png",620,452);
+	env_title->addImage(IMAGE_PLAYER_4_TROLL,"gui/title/gui_image_race_troll_player_4.png",702,453);
+	env_title->addImage(IMAGE_PLAYER_4_HOG,"gui/title/gui_image_race_hog_player_4.png",784,452);
 
 	//Unselectable race images (for when a team is deactivated and no race can be selected)
-	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P1,"gui/outgame/race_kobold_off.jpg",230,190);
-	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P1,"gui/outgame/race_gnoll_off.jpg",260,190);
-	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P1,"gui/outgame/race_troll_off.jpg",290,190);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P1,"gui/outgame/race_hog_off.jpg",320,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P1,"gui/title/gui_image_race_kobold_disabled.png",115,255);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P1,"gui/title/gui_image_race_gnoll_disabled.png",195,255);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P1,"gui/title/gui_image_race_troll_disabled.png",277,256);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P1,"gui/title/gui_image_race_hog_disabled.png",359,255);
 
-	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P2,"gui/outgame/race_kobold_off.jpg",650,190);
-	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P2,"gui/outgame/race_gnoll_off.jpg",680,190);
-	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P2,"gui/outgame/race_troll_off.jpg",710,190);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P2,"gui/outgame/race_hog_off.jpg",740,190);
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P2,"gui/title/gui_image_race_kobold_disabled.png",540,255);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P2,"gui/title/gui_image_race_gnoll_disabled.png",620,255);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P2,"gui/title/gui_image_race_troll_disabled.png",702,256);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P2,"gui/title/gui_image_race_hog_disabled.png",784,255);
 
-	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P3,"gui/outgame/race_kobold_off.jpg",230,410);
-	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P3,"gui/outgame/race_gnoll_off.jpg",260,410);
-	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P3,"gui/outgame/race_troll_off.jpg",290,410);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P3,"gui/outgame/race_hog_off.jpg",320,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P3,"gui/title/gui_image_race_kobold_disabled.png",115,452);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P3,"gui/title/gui_image_race_gnoll_disabled.png",195,452);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P3,"gui/title/gui_image_race_troll_disabled.png",277,453);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P3,"gui/title/gui_image_race_hog_disabled.png",359,452);
 
-	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P4,"gui/outgame/race_kobold_off.jpg",650,410);
-	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P4,"gui/outgame/race_gnoll_off.jpg",680,410);
-	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P4,"gui/outgame/race_troll_off.jpg",710,410);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P4,"gui/outgame/race_hog_off.jpg",740,410);
+	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P4,"gui/title/gui_image_race_kobold_disabled.png",540,452);
+	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P4,"gui/title/gui_image_race_gnoll_disabled.png",620,452);
+	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P4,"gui/title/gui_image_race_troll_disabled.png",702,453);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P4,"gui/title/gui_image_race_hog_disabled.png",784,452);
 
 	//Unselected race buttons (which allow the selection of a race)
-	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P1,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold.jpg",230,190,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P1,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll.jpg",260,190,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_TROLL_P1,"gui/outgame/race_troll.jpg","gui/outgame/race_troll.jpg",290,190,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_HOG_P1,"gui/outgame/race_hog.jpg","gui/outgame/race_hog.jpg",320,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P1,"gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 "gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 115,255);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P1,"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													195,255);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P1,"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													277,256);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P1,"gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  "gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  359,255);
 
-	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P2,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold.jpg",650,190,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P2,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll.jpg",680,190,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_TROLL_P2,"gui/outgame/race_troll.jpg","gui/outgame/race_troll.jpg",710,190,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_HOG_P2,"gui/outgame/race_hog.jpg","gui/outgame/race_hog.jpg",740,190,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P2,"gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 "gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 540,255);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P2,"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													620,255);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P2,"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													702,256);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P2,"gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  "gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  784,255);
 
-	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P3,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold.jpg",230,410,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P3,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll.jpg",260,410,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_TROLL_P3,"gui/outgame/race_troll.jpg","gui/outgame/race_troll.jpg",290,410,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_HOG_P3,"gui/outgame/race_hog.jpg","gui/outgame/race_hog.jpg",320,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P3,"gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 "gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 115,452);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P3,"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													195,452);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P3,"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													277,453);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P3,"gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  "gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  359,452);
 
-	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P4,"gui/outgame/race_kobold.jpg","gui/outgame/race_kobold_toggled.jpg",650,410,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P4,"gui/outgame/race_gnoll.jpg","gui/outgame/race_gnoll_toggled.jpg",680,410,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_TROLL_P4,"gui/outgame/race_troll.jpg","gui/outgame/race_troll_toggled.jpg",710,410,29,26);
-	env_title->addButton(BUTTON_UNSELECTED_HOG_P4,"gui/outgame/race_hog.jpg","gui/outgame/race_hog_toggled.jpg",740,410,29,26);
+	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P4,"gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 "gui/title/gui_button_race_kobold_normal.png",
+													 "gui/title/gui_button_race_kobold_hover.png",
+													 540,452);
+	env_title->addButton(BUTTON_UNSELECTED_GNOLL_P4,"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													"gui/title/gui_button_race_gnoll_normal.png",
+													"gui/title/gui_button_race_gnoll_hover.png",
+													620,452);
+	env_title->addButton(BUTTON_UNSELECTED_TROLL_P4,"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													"gui/title/gui_button_race_troll_normal.png",
+													"gui/title/gui_button_race_troll_hover.png",
+													702,453);
+	env_title->addButton(BUTTON_UNSELECTED_HOG_P4,"gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  "gui/title/gui_button_race_hog_normal.png",
+												  "gui/title/gui_button_race_hog_hover.png",
+												  784,452);
 
 	//Screen transition buttons
-	env_title->addButton(BUTTON_CREDITS,"gui/outgame/button_credits.jpg","gui/outgame/button_credits.jpg",280,650,124,35);
-	env_title->addButton(BUTTON_START_MATCH,"gui/outgame/button_start_match.jpg","gui/outgame/button_start_match.jpg",450,650,124,35);
-	env_title->addButton(BUTTON_TUTORIAL,"gui/outgame/button_tutorial.jpg","gui/outgame/button_tutorial.jpg",620,650,124,35);
+	env_title->addButton(BUTTON_TUTORIAL,"gui/title/gui_button_tutorial_normal.png",
+										 "gui/title/gui_button_tutorial_hover.png",
+										 "gui/title/gui_button_tutorial_normal.png",
+										 "gui/title/gui_button_tutorial_hover.png",
+										 100,605);
+	env_title->addButton(BUTTON_CREDITS,"gui/title/gui_button_credits_normal.png",
+										"gui/title/gui_button_credits_hover.png",
+										"gui/title/gui_button_credits_normal.png",
+										"gui/title/gui_button_credits_hover.png",
+										660,605);
+	env_title->addButton(BUTTON_START_MATCH,"gui/title/gui_button_start_match_normal.png",
+											"gui/title/gui_button_start_match_hover.png",
+											"gui/title/gui_button_start_match_normal.png",
+											"gui/title/gui_button_start_match_hover.png",
+											360,590);
 
 	//Disabled "Start Match" button
-	env_title->addImage(IMAGE_START_MATCH_DISABLED,"gui/outgame/button_start_match_disabled.jpg",450,650);
+	env_title->addImage(IMAGE_START_MATCH_DISABLED,"gui/title/gui_button_start_match_disabled.png",360,590);
 }
 
 void PrimeGUIManager::BuildGUICreditsScreen()
 {
 	//Backgrounds
-	env_credits->addImage(BACKGROUND_CREDITS_SCREEN,"gui/outgame/background_credits.jpg",0,0);
+	env_credits->addImage(BACKGROUND_CREDITS_SCREEN,"gui/credits/gui_bg_credits_screen.jpg",0,0);
 
 	//Screen transition buttons
-	env_credits->addButton(BUTTON_BACK_TO_TITLE_CREDITS,"gui/outgame/button_title.jpg","gui/outgame/button_title.jpg",450,650,124,35);
+	env_credits->addButton(BUTTON_BACK_TO_TITLE_CREDITS,"gui/credits/gui_button_back_to_title_normal.png",
+														"gui/credits/gui_button_back_to_title_hover.png",
+														"gui/credits/gui_button_back_to_title_normal.png",
+														"gui/credits/gui_button_back_to_title_hover.png",
+														660,605);
 }
 
 void PrimeGUIManager::BuildGUITutorialScreen()
 {
 	//Backgrounds
-	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1,"gui/outgame/background_tutorial1.jpg",0,0);
-	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2,"gui/outgame/background_tutorial2.jpg",0,0);
-	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3,"gui/outgame/background_tutorial3.jpg",0,0);
-	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4,"gui/outgame/background_tutorial4.jpg",0,0);
-	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5,"gui/outgame/background_tutorial5.jpg",0,0);
+	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_1,"gui/tutorial/gui_bg_tutorial_screen_page_1.jpg",0,0);
+	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_2,"gui/tutorial/gui_bg_tutorial_screen_page_2.jpg",0,0);
+	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_3,"gui/tutorial/gui_bg_tutorial_screen_page_3.jpg",0,0);
+	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_4,"gui/tutorial/gui_bg_tutorial_screen_page_4.jpg",0,0);
+	env_tutorial->addImage(BACKGROUND_TUTORIAL_SCREEN_PAGE_5,"gui/tutorial/gui_bg_tutorial_screen_page_5.jpg",0,0);
 
 	//Browsing buttons
-	env_tutorial->addButton(BUTTON_PREVIOUS,"gui/outgame/button_previous.jpg","gui/outgame/button_previous.jpg",750,650,90,35);
-	env_tutorial->addButton(BUTTON_NEXT,"gui/outgame/button_next.jpg","gui/outgame/button_next.jpg",850,650,90,35);
+	env_tutorial->addButton(BUTTON_PREVIOUS,"gui/tutorial/gui_button_previous_normal.png",
+											"gui/tutorial/gui_button_previous_hover.png",
+											"gui/tutorial/gui_button_previous_normal.png",
+											"gui/tutorial/gui_button_previous_hover.png",
+											620,632);
+	env_tutorial->addButton(BUTTON_NEXT,"gui/tutorial/gui_button_next_normal.png",
+										"gui/tutorial/gui_button_next_hover.png",
+										"gui/tutorial/gui_button_next_normal.png",
+										"gui/tutorial/gui_button_next_hover.png",
+										800,632);
+
+	//Disabled browsing button images
+	env_tutorial->addImage(IMAGE_PREVIOUS_DISABLED,"gui/tutorial/gui_button_previous_disabled.png",620,632);
+	env_tutorial->addImage(IMAGE_NEXT_DISABLED,"gui/tutorial/gui_button_next_disabled.png",800,632);
 
 	//Screen transition buttons
-	env_tutorial->addButton(BUTTON_BACK_TO_TITLE_TUTORIAL,"gui/outgame/button_title.jpg","gui/outgame/button_title.jpg",100,650,124,35);
+	env_tutorial->addButton(BUTTON_BACK_TO_TITLE_TUTORIAL,"gui/credits/gui_button_back_to_title_normal.png",
+														  "gui/credits/gui_button_back_to_title_hover.png",
+														  "gui/credits/gui_button_back_to_title_normal.png",
+														  "gui/credits/gui_button_back_to_title_hover.png",
+														  55,620);
 }
 
 void PrimeGUIManager::BuildGUIMatchScreen()
 {
+	//Label font
+	env_match->addFont(FONT_DUNGEON_TURN_COUNT, "gui/font/font_dungeon_size24.png", -8);
+	env_match->addFont(FONT_DUNGEON_RESOURCES, "gui/font/font_dungeon_size28.png", -6);
+
 	//Buttons
-	env_match->addButton(BUTTON_END_TURN,"gui/ingame/button_end_turn.jpg","gui/ingame/button_end_turn.jpg",750,10,124,35);
-	env_match->addButton(BUTTON_END_MATCH,"gui/ingame/button_end_match.jpg","gui/ingame/button_end_match.jpg",880,10,124,35);
+	env_match->addButton(BUTTON_END_TURN,"gui/match/gui_button_end_turn_normal.png",
+										 "gui/match/gui_button_end_turn_hover.png",
+										 "gui/match/gui_button_end_turn_normal.png",
+										 "gui/match/gui_button_end_turn_hover.png",
+										 650,10);
+	env_match->addButton(BUTTON_END_MATCH,"gui/match/gui_button_end_match_normal.png",
+										  "gui/match/gui_button_end_match_hover.png",
+										  "gui/match/gui_button_end_match_normal.png",
+										  "gui/match/gui_button_end_match_hover.png",
+										  830,10);
 
 	//Disabled buttons
-	env_match->addImage(IMAGE_END_TURN_DISABLED,"gui/ingame/button_end_turn_disabled.jpg",750,10);
-	env_match->addImage(IMAGE_END_MATCH_DISABLED,"gui/ingame/button_end_match_disabled.jpg",880,10);
+	env_match->addImage(IMAGE_END_TURN_DISABLED,"gui/match/gui_button_end_turn_disabled.png",650,10);
+	env_match->addImage(IMAGE_END_MATCH_DISABLED,"gui/match/gui_button_end_match_disabled.png",830,10);
 
 	//Turn indicator
-	env_match->addImage(INDICATOR_TURN_WIDGET,"gui/ingame/turn_widget.png",10,10);
-	env_match->addImage(INDICATOR_TURN_PLAYER_1,"gui/ingame/team_player1.jpg",120,15);
-	env_match->addImage(INDICATOR_TURN_PLAYER_2,"gui/ingame/team_player2.jpg",120,15);
-	env_match->addImage(INDICATOR_TURN_PLAYER_3,"gui/ingame/team_player3.jpg",120,15);
-	env_match->addImage(INDICATOR_TURN_PLAYER_4,"gui/ingame/team_player4.jpg",120,15);
-	env_match->addLabel(LABEL_TURN_COUNT, "1", 80,20,100,30);
+	env_match->addImage(INDICATOR_TURN_WIDGET,"gui/match/gui_image_turn_widget.png",12,5);
+	env_match->addImage(INDICATOR_TURN_PLAYER_1,"gui/match/gui_image_player_1_widget.png",157,22);
+	env_match->addImage(INDICATOR_TURN_PLAYER_2,"gui/match/gui_image_player_2_widget.png",157,22);
+	env_match->addImage(INDICATOR_TURN_PLAYER_3,"gui/match/gui_image_player_3_widget.png",157,22);
+	env_match->addImage(INDICATOR_TURN_PLAYER_4,"gui/match/gui_image_player_4_widget.png",157,22);
+	env_match->addLabel(LABEL_TURN_COUNT, "1", 108,25,160,50, SColor(255,255,255,255), FONT_DUNGEON_TURN_COUNT);
 
 	SetTurnCount(false, 0); //Reset and hide turn count
 	SetPlayerIndicator(false, 0); //Hide player indicators
@@ -1194,111 +1344,143 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 	env_match->setImage(INDICATOR_TURN_WIDGET, false);
 
 	//Turn markers
-	env_match->addImage(INDICATOR_TURN_MARKER_P1_1ST,"gui/ingame/turn_marker_player1.jpg",20,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P1_2ND,"gui/ingame/turn_marker_player1.jpg",40,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P1_3RD,"gui/ingame/turn_marker_player1.jpg",60,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P1_4TH,"gui/ingame/turn_marker_player1.jpg",80,40);
+	env_match->addImage(INDICATOR_TURN_MARKER_P1_1ST,"gui/match/gui_image_player_1_stone.png",35,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P1_2ND,"gui/match/gui_image_player_1_stone.png",60,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P1_3RD,"gui/match/gui_image_player_1_stone.png",85,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P1_4TH,"gui/match/gui_image_player_1_stone.png",110,48);
 
-	env_match->addImage(INDICATOR_TURN_MARKER_P2_1ST,"gui/ingame/turn_marker_player2.jpg",20,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P2_2ND,"gui/ingame/turn_marker_player2.jpg",40,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P2_3RD,"gui/ingame/turn_marker_player2.jpg",60,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P2_4TH,"gui/ingame/turn_marker_player2.jpg",80,40);
+	env_match->addImage(INDICATOR_TURN_MARKER_P2_1ST,"gui/match/gui_image_player_2_stone.png",35,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P2_2ND,"gui/match/gui_image_player_2_stone.png",60,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P2_3RD,"gui/match/gui_image_player_2_stone.png",85,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P2_4TH,"gui/match/gui_image_player_2_stone.png",110,48);
 
-	env_match->addImage(INDICATOR_TURN_MARKER_P3_1ST,"gui/ingame/turn_marker_player3.jpg",20,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P3_2ND,"gui/ingame/turn_marker_player3.jpg",40,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P3_3RD,"gui/ingame/turn_marker_player3.jpg",60,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P3_4TH,"gui/ingame/turn_marker_player3.jpg",80,40);
+	env_match->addImage(INDICATOR_TURN_MARKER_P3_1ST,"gui/match/gui_image_player_3_stone.png",35,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P3_2ND,"gui/match/gui_image_player_3_stone.png",60,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P3_3RD,"gui/match/gui_image_player_3_stone.png",85,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P3_4TH,"gui/match/gui_image_player_3_stone.png",110,48);
 
-	env_match->addImage(INDICATOR_TURN_MARKER_P4_1ST,"gui/ingame/turn_marker_player4.jpg",20,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P4_2ND,"gui/ingame/turn_marker_player4.jpg",40,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P4_3RD,"gui/ingame/turn_marker_player4.jpg",60,40);
-	env_match->addImage(INDICATOR_TURN_MARKER_P4_4TH,"gui/ingame/turn_marker_player4.jpg",80,40);
+	env_match->addImage(INDICATOR_TURN_MARKER_P4_1ST,"gui/match/gui_image_player_4_stone.png",35,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P4_2ND,"gui/match/gui_image_player_4_stone.png",60,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P4_3RD,"gui/match/gui_image_player_4_stone.png",85,48);
+	env_match->addImage(INDICATOR_TURN_MARKER_P4_4TH,"gui/match/gui_image_player_4_stone.png",110,48);
 
 	HideTurnMarkers(); //Hide all turn markers
 
 	//Resource indicator widgets
-	env_match->addImage(INDICATOR_RESOURCES_P1_1ST,"gui/ingame/resources_player1.jpg",140,700);
-	env_match->addImage(INDICATOR_RESOURCES_P1_2ND,"gui/ingame/resources_player1.jpg",340,700);
-	env_match->addImage(INDICATOR_RESOURCES_P1_3RD,"gui/ingame/resources_player1.jpg",540,700);
-	env_match->addImage(INDICATOR_RESOURCES_P1_4TH,"gui/ingame/resources_player1.jpg",740,700);
-	env_match->addImage(INDICATOR_RESOURCES_P1_1ST_ODD,"gui/ingame/resources_player1.jpg",240,700);
-	env_match->addImage(INDICATOR_RESOURCES_P1_2ND_ODD,"gui/ingame/resources_player1.jpg",440,700);
-	env_match->addImage(INDICATOR_RESOURCES_P1_3RD_ODD,"gui/ingame/resources_player1.jpg",640,700);
+	env_match->addImage(INDICATOR_RESOURCES_P1_1ST,"gui/match/gui_image_resources_player_1.png",110,670);
+	env_match->addImage(INDICATOR_RESOURCES_P1_2ND,"gui/match/gui_image_resources_player_1.png",310,670);
+	env_match->addImage(INDICATOR_RESOURCES_P1_3RD,"gui/match/gui_image_resources_player_1.png",510,670);
+	env_match->addImage(INDICATOR_RESOURCES_P1_4TH,"gui/match/gui_image_resources_player_1.png",710,670);
+	env_match->addImage(INDICATOR_RESOURCES_P1_1ST_ODD,"gui/match/gui_image_resources_player_1.png",210,670);
+	env_match->addImage(INDICATOR_RESOURCES_P1_2ND_ODD,"gui/match/gui_image_resources_player_1.png",410,670);
+	env_match->addImage(INDICATOR_RESOURCES_P1_3RD_ODD,"gui/match/gui_image_resources_player_1.png",610,670);
 
-	env_match->addImage(INDICATOR_RESOURCES_P2_1ST,"gui/ingame/resources_player2.jpg",140,700);
-	env_match->addImage(INDICATOR_RESOURCES_P2_2ND,"gui/ingame/resources_player2.jpg",340,700);
-	env_match->addImage(INDICATOR_RESOURCES_P2_3RD,"gui/ingame/resources_player2.jpg",540,700);
-	env_match->addImage(INDICATOR_RESOURCES_P2_4TH,"gui/ingame/resources_player2.jpg",740,700);
-	env_match->addImage(INDICATOR_RESOURCES_P2_1ST_ODD,"gui/ingame/resources_player2.jpg",240,700);
-	env_match->addImage(INDICATOR_RESOURCES_P2_2ND_ODD,"gui/ingame/resources_player2.jpg",440,700);
-	env_match->addImage(INDICATOR_RESOURCES_P2_3RD_ODD,"gui/ingame/resources_player2.jpg",640,700);
+	env_match->addImage(INDICATOR_RESOURCES_P2_1ST,"gui/match/gui_image_resources_player_2.png",110,670);
+	env_match->addImage(INDICATOR_RESOURCES_P2_2ND,"gui/match/gui_image_resources_player_2.png",310,670);
+	env_match->addImage(INDICATOR_RESOURCES_P2_3RD,"gui/match/gui_image_resources_player_2.png",510,670);
+	env_match->addImage(INDICATOR_RESOURCES_P2_4TH,"gui/match/gui_image_resources_player_2.png",710,670);
+	env_match->addImage(INDICATOR_RESOURCES_P2_1ST_ODD,"gui/match/gui_image_resources_player_2.png",210,670);
+	env_match->addImage(INDICATOR_RESOURCES_P2_2ND_ODD,"gui/match/gui_image_resources_player_2.png",410,670);
+	env_match->addImage(INDICATOR_RESOURCES_P2_3RD_ODD,"gui/match/gui_image_resources_player_2.png",610,670);
 
-	env_match->addImage(INDICATOR_RESOURCES_P3_1ST,"gui/ingame/resources_player3.jpg",140,700);
-	env_match->addImage(INDICATOR_RESOURCES_P3_2ND,"gui/ingame/resources_player3.jpg",340,700);
-	env_match->addImage(INDICATOR_RESOURCES_P3_3RD,"gui/ingame/resources_player3.jpg",540,700);
-	env_match->addImage(INDICATOR_RESOURCES_P3_4TH,"gui/ingame/resources_player3.jpg",740,700);
-	env_match->addImage(INDICATOR_RESOURCES_P3_1ST_ODD,"gui/ingame/resources_player3.jpg",240,700);
-	env_match->addImage(INDICATOR_RESOURCES_P3_2ND_ODD,"gui/ingame/resources_player3.jpg",440,700);
-	env_match->addImage(INDICATOR_RESOURCES_P3_3RD_ODD,"gui/ingame/resources_player3.jpg",640,700);
+	env_match->addImage(INDICATOR_RESOURCES_P3_1ST,"gui/match/gui_image_resources_player_3.png",110,670);
+	env_match->addImage(INDICATOR_RESOURCES_P3_2ND,"gui/match/gui_image_resources_player_3.png",310,670);
+	env_match->addImage(INDICATOR_RESOURCES_P3_3RD,"gui/match/gui_image_resources_player_3.png",510,670);
+	env_match->addImage(INDICATOR_RESOURCES_P3_4TH,"gui/match/gui_image_resources_player_3.png",710,670);
+	env_match->addImage(INDICATOR_RESOURCES_P3_1ST_ODD,"gui/match/gui_image_resources_player_3.png",210,670);
+	env_match->addImage(INDICATOR_RESOURCES_P3_2ND_ODD,"gui/match/gui_image_resources_player_3.png",410,670);
+	env_match->addImage(INDICATOR_RESOURCES_P3_3RD_ODD,"gui/match/gui_image_resources_player_3.png",610,670);
 
-	env_match->addImage(INDICATOR_RESOURCES_P4_1ST,"gui/ingame/resources_player4.jpg",140,700);
-	env_match->addImage(INDICATOR_RESOURCES_P4_2ND,"gui/ingame/resources_player4.jpg",340,700);
-	env_match->addImage(INDICATOR_RESOURCES_P4_3RD,"gui/ingame/resources_player4.jpg",540,700);
-	env_match->addImage(INDICATOR_RESOURCES_P4_4TH,"gui/ingame/resources_player4.jpg",740,700);
-	env_match->addImage(INDICATOR_RESOURCES_P4_1ST_ODD,"gui/ingame/resources_player4.jpg",240,700);
-	env_match->addImage(INDICATOR_RESOURCES_P4_2ND_ODD,"gui/ingame/resources_player4.jpg",440,700);
-	env_match->addImage(INDICATOR_RESOURCES_P4_3RD_ODD,"gui/ingame/resources_player4.jpg",640,700);
+	env_match->addImage(INDICATOR_RESOURCES_P4_1ST,"gui/match/gui_image_resources_player_4.png",110,670);
+	env_match->addImage(INDICATOR_RESOURCES_P4_2ND,"gui/match/gui_image_resources_player_4.png",310,670);
+	env_match->addImage(INDICATOR_RESOURCES_P4_3RD,"gui/match/gui_image_resources_player_4.png",510,670);
+	env_match->addImage(INDICATOR_RESOURCES_P4_4TH,"gui/match/gui_image_resources_player_4.png",710,670);
+	env_match->addImage(INDICATOR_RESOURCES_P4_1ST_ODD,"gui/match/gui_image_resources_player_4.png",210,670);
+	env_match->addImage(INDICATOR_RESOURCES_P4_2ND_ODD,"gui/match/gui_image_resources_player_4.png",410,670);
+	env_match->addImage(INDICATOR_RESOURCES_P4_3RD_ODD,"gui/match/gui_image_resources_player_4.png",610,670);
 
 	//Resource labels
-	env_match->addLabel(LABEL_RESOURCES_1ST, "0", 180,710,240,730);
-	env_match->addLabel(LABEL_RESOURCES_2ND, "0", 380,710,440,730);
-	env_match->addLabel(LABEL_RESOURCES_3RD, "0", 580,710,640,730);
-	env_match->addLabel(LABEL_RESOURCES_4TH, "0", 780,710,840,730);
-	env_match->addLabel(LABEL_RESOURCES_1ST_ODD, "0", 280,710,340,730);
-	env_match->addLabel(LABEL_RESOURCES_2ND_ODD, "0", 480,710,540,730);
-	env_match->addLabel(LABEL_RESOURCES_3RD_ODD, "0", 680,710,740,730);
+	env_match->addLabel(LABEL_RESOURCES_1ST, "0", 186,700,440,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
+	env_match->addLabel(LABEL_RESOURCES_2ND, "0", 386,700,640,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
+	env_match->addLabel(LABEL_RESOURCES_3RD, "0", 586,700,840,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
+	env_match->addLabel(LABEL_RESOURCES_4TH, "0", 786,700,1040,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
+	env_match->addLabel(LABEL_RESOURCES_1ST_ODD, "0", 286,700,540,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
+	env_match->addLabel(LABEL_RESOURCES_2ND_ODD, "0", 486,700,740,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
+	env_match->addLabel(LABEL_RESOURCES_3RD_ODD, "0", 686,700,940,730, SColor(255,255,255,255), FONT_DUNGEON_RESOURCES);
 
 	HideResourceIndicators(); //Hide resource indicators
 
 	//Generic messages
-	env_match->addImage(MESSAGE_SORT,"gui/ingame/message_sorting_turn_order.jpg",380,330);
-	env_match->addImage(MESSAGE_TURN,"gui/ingame/message_turn.jpg",380,360);
-	env_match->addImage(MESSAGE_PLAYER_1,"gui/ingame/team_player1.jpg",465,320);
-	env_match->addImage(MESSAGE_PLAYER_2,"gui/ingame/team_player2.jpg",465,320);
-	env_match->addImage(MESSAGE_PLAYER_3,"gui/ingame/team_player3.jpg",465,320);
-	env_match->addImage(MESSAGE_PLAYER_4,"gui/ingame/team_player4.jpg",465,320);
+	env_match->addImage(MESSAGE_SORT,"gui/match/gui_image_message_sorting.png",295,330);
+	env_match->addImage(MESSAGE_TURN,"gui/match/gui_image_message_turn.png",320,315);
+	env_match->addImage(MESSAGE_PLAYER_1,"gui/match/gui_image_message_player_1.png",345,290);
+	env_match->addImage(MESSAGE_PLAYER_2,"gui/match/gui_image_message_player_2.png",345,290);
+	env_match->addImage(MESSAGE_PLAYER_3,"gui/match/gui_image_message_player_3.png",345,290);
+	env_match->addImage(MESSAGE_PLAYER_4,"gui/match/gui_image_message_player_4.png",345,290);
 
 	SetGenericMessage(false, false, 0); //Hide generic messages
 
 	//Victory messages
-	env_match->addImage(MESSAGE_VICTORY_SINGLE,"gui/ingame/message_victory.jpg",380,360);
-	env_match->addImage(MESSAGE_VICTORY_DOUBLE,"gui/ingame/message_victory.jpg",380,400);
-	env_match->addImage(MESSAGE_VICTORY_TRIPLE,"gui/ingame/message_victory.jpg",380,440);
-	env_match->addImage(MESSAGE_VICTORY_QUADRUPLE,"gui/ingame/message_victory.jpg",380,480);
 
-	env_match->addImage(MESSAGE_VICTORY_P1_SINGLE,"gui/ingame/team_player1.jpg",465,320);
-	env_match->addImage(MESSAGE_VICTORY_P1_DOUBLE_TOP,"gui/ingame/team_player1.jpg",465,300);
-	env_match->addImage(MESSAGE_VICTORY_P1_TRIPLE_TOP,"gui/ingame/team_player1.jpg",465,270);
-	env_match->addImage(MESSAGE_VICTORY_P1_QUADRUPLE_TOP,"gui/ingame/team_player1.jpg",465,240);
+	env_match->addImage(MESSAGE_VICTORY_SINGLE,"gui/match/gui_image_message_victory.png",280,285);
+	env_match->addImage(MESSAGE_VICTORY_DOUBLE,"gui/match/gui_image_message_victory.png",280,330);
+	env_match->addImage(MESSAGE_VICTORY_TRIPLE,"gui/match/gui_image_message_victory.png",280,370);
+	env_match->addImage(MESSAGE_VICTORY_QUADRUPLE,"gui/match/gui_image_message_victory.png",280,400);
 
-	env_match->addImage(MESSAGE_VICTORY_P2_SINGLE,"gui/ingame/team_player2.jpg",465,320);
-	env_match->addImage(MESSAGE_VICTORY_P2_DOUBLE_TOP,"gui/ingame/team_player2.jpg",465,300);
-	env_match->addImage(MESSAGE_VICTORY_P2_DOUBLE_BOTTOM,"gui/ingame/team_player2.jpg",465,350);
-	env_match->addImage(MESSAGE_VICTORY_P2_TRIPLE_TOP,"gui/ingame/team_player2.jpg",465,270);
-	env_match->addImage(MESSAGE_VICTORY_P2_TRIPLE_MIDDLE,"gui/ingame/team_player2.jpg",465,320);
-	env_match->addImage(MESSAGE_VICTORY_P2_QUADRUPLE_MIDDLE_TOP,"gui/ingame/team_player2.jpg",465,300);
+	env_match->addImage(MESSAGE_VICTORY_P1_SINGLE,"gui/match/gui_image_message_player_1.png",382,285);
+	env_match->addImage(MESSAGE_VICTORY_P1_DOUBLE_TOP,"gui/match/gui_image_message_player_1.png",382,250);
+	env_match->addImage(MESSAGE_VICTORY_P1_TRIPLE_TOP,"gui/match/gui_image_message_player_1.png",382,220);
+	env_match->addImage(MESSAGE_VICTORY_P1_QUADRUPLE_TOP,"gui/match/gui_image_message_player_1.png",382,180);
 
-	env_match->addImage(MESSAGE_VICTORY_P3_SINGLE,"gui/ingame/team_player3.jpg",465,320);
-	env_match->addImage(MESSAGE_VICTORY_P3_DOUBLE_TOP,"gui/ingame/team_player3.jpg",465,300);
-	env_match->addImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM,"gui/ingame/team_player3.jpg",465,350);
-	env_match->addImage(MESSAGE_VICTORY_P3_TRIPLE_MIDDLE,"gui/ingame/team_player3.jpg",465,320);
-	env_match->addImage(MESSAGE_VICTORY_P3_TRIPLE_BOTTOM,"gui/ingame/team_player3.jpg",465,370);
-	env_match->addImage(MESSAGE_VICTORY_P3_QUADRUPLE_MIDDLE_BOTTOM,"gui/ingame/team_player3.jpg",465,360);
+	env_match->addImage(MESSAGE_VICTORY_P2_SINGLE,"gui/match/gui_image_message_player_2.png",382,285);
+	env_match->addImage(MESSAGE_VICTORY_P2_DOUBLE_TOP,"gui/match/gui_image_message_player_2.png",382,250);
+	env_match->addImage(MESSAGE_VICTORY_P2_DOUBLE_BOTTOM,"gui/match/gui_image_message_player_2.png",382,320);
+	env_match->addImage(MESSAGE_VICTORY_P2_TRIPLE_TOP,"gui/match/gui_image_message_player_2.png",382,220);
+	env_match->addImage(MESSAGE_VICTORY_P2_TRIPLE_MIDDLE,"gui/match/gui_image_message_player_2.png",382,290);
+	env_match->addImage(MESSAGE_VICTORY_P2_QUADRUPLE_MIDDLE_TOP,"gui/match/gui_image_message_player_2.png",382,250);
 
-	env_match->addImage(MESSAGE_VICTORY_P4_SINGLE,"gui/ingame/team_player4.jpg",465,320);
-	env_match->addImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM,"gui/ingame/team_player4.jpg",465,350);
-	env_match->addImage(MESSAGE_VICTORY_P4_TRIPLE_BOTTOM,"gui/ingame/team_player4.jpg",465,370);
-	env_match->addImage(MESSAGE_VICTORY_P4_QUADRUPLE_BOTTOM,"gui/ingame/team_player4.jpg",465,420);
+	env_match->addImage(MESSAGE_VICTORY_P3_SINGLE,"gui/match/gui_image_message_player_3.png",382,285);
+	env_match->addImage(MESSAGE_VICTORY_P3_DOUBLE_TOP,"gui/match/gui_image_message_player_3.png",382,250);
+	env_match->addImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM,"gui/match/gui_image_message_player_3.png",382,320);
+	env_match->addImage(MESSAGE_VICTORY_P3_TRIPLE_MIDDLE,"gui/match/gui_image_message_player_3.png",382,290);
+	env_match->addImage(MESSAGE_VICTORY_P3_TRIPLE_BOTTOM,"gui/match/gui_image_message_player_3.png",382,360);
+	env_match->addImage(MESSAGE_VICTORY_P3_QUADRUPLE_MIDDLE_BOTTOM,"gui/match/gui_image_message_player_3.png",382,320);
+
+	env_match->addImage(MESSAGE_VICTORY_P4_SINGLE,"gui/match/gui_image_message_player_4.png",382,270);
+	env_match->addImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM,"gui/match/gui_image_message_player_4.png",382,320);
+	env_match->addImage(MESSAGE_VICTORY_P4_TRIPLE_BOTTOM,"gui/match/gui_image_message_player_4.png",382,360);
+	env_match->addImage(MESSAGE_VICTORY_P4_QUADRUPLE_BOTTOM,"gui/match/gui_image_message_player_4.png",382,390);
+
+	/*
+	env_match->addImage(MESSAGE_VICTORY_SINGLE,"gui/match/gui_image_message_victory.png",380,360);
+	env_match->addImage(MESSAGE_VICTORY_DOUBLE,"gui/match/gui_image_message_victory.png",380,400);
+	env_match->addImage(MESSAGE_VICTORY_TRIPLE,"gui/match/gui_image_message_victory.png",380,440);
+	env_match->addImage(MESSAGE_VICTORY_QUADRUPLE,"gui/match/gui_image_message_victory.png",380,480);
+
+	env_match->addImage(MESSAGE_VICTORY_P1_SINGLE,"gui/match/gui_image_message_player_1.png",465,320);
+	env_match->addImage(MESSAGE_VICTORY_P1_DOUBLE_TOP,"gui/match/gui_image_message_player_1.png",465,300);
+	env_match->addImage(MESSAGE_VICTORY_P1_TRIPLE_TOP,"gui/match/gui_image_message_player_1.png",465,270);
+	env_match->addImage(MESSAGE_VICTORY_P1_QUADRUPLE_TOP,"gui/match/gui_image_message_player_1.png",465,240);
+
+	env_match->addImage(MESSAGE_VICTORY_P2_SINGLE,"gui/match/gui_image_message_player_2.png",465,320);
+	env_match->addImage(MESSAGE_VICTORY_P2_DOUBLE_TOP,"gui/match/gui_image_message_player_2.png",465,300);
+	env_match->addImage(MESSAGE_VICTORY_P2_DOUBLE_BOTTOM,"gui/match/gui_image_message_player_2.png",465,350);
+	env_match->addImage(MESSAGE_VICTORY_P2_TRIPLE_TOP,"gui/match/gui_image_message_player_2.png",465,270);
+	env_match->addImage(MESSAGE_VICTORY_P2_TRIPLE_MIDDLE,"gui/match/gui_image_message_player_2.png",465,320);
+	env_match->addImage(MESSAGE_VICTORY_P2_QUADRUPLE_MIDDLE_TOP,"gui/match/gui_image_message_player_2.png",465,300);
+
+	env_match->addImage(MESSAGE_VICTORY_P3_SINGLE,"gui/match/gui_image_message_player_3.png",465,320);
+	env_match->addImage(MESSAGE_VICTORY_P3_DOUBLE_TOP,"gui/match/gui_image_message_player_3.png",465,300);
+	env_match->addImage(MESSAGE_VICTORY_P3_DOUBLE_BOTTOM,"gui/match/gui_image_message_player_3.png",465,350);
+	env_match->addImage(MESSAGE_VICTORY_P3_TRIPLE_MIDDLE,"gui/match/gui_image_message_player_3.png",465,320);
+	env_match->addImage(MESSAGE_VICTORY_P3_TRIPLE_BOTTOM,"gui/match/gui_image_message_player_3.png",465,370);
+	env_match->addImage(MESSAGE_VICTORY_P3_QUADRUPLE_MIDDLE_BOTTOM,"gui/match/gui_image_message_player_3.png",465,360);
+
+	env_match->addImage(MESSAGE_VICTORY_P4_SINGLE,"gui/match/gui_image_message_player_4.png",465,320);
+	env_match->addImage(MESSAGE_VICTORY_P4_DOUBLE_BOTTOM,"gui/match/gui_image_message_player_4.png",465,350);
+	env_match->addImage(MESSAGE_VICTORY_P4_TRIPLE_BOTTOM,"gui/match/gui_image_message_player_4.png",465,370);
+	env_match->addImage(MESSAGE_VICTORY_P4_QUADRUPLE_BOTTOM,"gui/match/gui_image_message_player_4.png",465,420);
+	*/
 
 	HideVictoryMessage(); //Hide all victory messages
 }
@@ -1323,11 +1505,14 @@ int PrimeGUIManager::ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTea
 	if (VerifyTitleStartMatchButton(p1, p2, p3, p4)) screenTransition = MATCH_TRANSITION;
 	if (VerifyTitleTutorialButton()) screenTransition = TUTORIAL_TRANSITION;
 	if (VerifyTitleCreditsButton()) screenTransition = CREDITS_TRANSITION;
-	
+
+	//Set all buttons as "released"
+	env_title->setPressedButton(false);
+
 	return screenTransition;
 }
 
-bool PrimeGUIManager::ManageGUITutorialScreen()
+int PrimeGUIManager::ManageGUITutorialScreen()
 {
 	//Browse pages when "Next" or "Previous" buttons are pressed
 	if (VerifyTutorialNextButtonPressed()) { if (nextReleased) tutorialPage += 1; }
@@ -1345,15 +1530,29 @@ bool PrimeGUIManager::ManageGUITutorialScreen()
 	FlipTutorialPages();
 
 	//Return to title screen when "Back to Title" button is pressed
-	if (VerifyTutorialBackToTitleButton()) return true;
-	else return false;
+	if (VerifyTutorialBackToTitleButton())
+	{
+		//Set all buttons as "released"
+		env_tutorial->setPressedButton(false);
+
+		return TITLE_TRANSITION;
+	}
+
+	else return 0;
 }
 
-bool PrimeGUIManager::ManageGUICreditsScreen()
+int PrimeGUIManager::ManageGUICreditsScreen()
 {
 	//Return to title screen when "Back to Title" button is pressed
-	if (VerifyCreditsBackToTitleButton()) return true;
-	else return false;
+	if (VerifyCreditsBackToTitleButton())
+	{
+		//Set all buttons as "released"
+		env_credits->setPressedButton(false);
+
+		return TITLE_TRANSITION;
+	}
+
+	else return 0;
 }
 
 void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
@@ -1425,9 +1624,9 @@ void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 				}
 			}
 
-			//Verify match button presses and signal play state accordingly
-			if (VerifyMatchEndTurnButton()) playState->signalEndTurn = true;
-			if (VerifyMatchEndMatchButton()) playState->signalEndMatch = true;
+			//Verify match button presses and signal play state accordingly (set button as "released" after that)
+			if (VerifyMatchEndTurnButton()) { playState->signalEndTurn = true; env_match->setPressedButton(false); }
+			if (VerifyMatchEndMatchButton()) { playState->signalEndMatch = true; env_match->setPressedButton(false); }
 
 			//Update match GUI!
 			//---------------------------------------

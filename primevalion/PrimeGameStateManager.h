@@ -40,8 +40,13 @@ private:
 	IrrParticleSystem* resourceParticlesSW;
 	IrrParticleSystem* resourceParticlesSE;
 
-	//Managers
+	//GUI Manager
 	PrimeGUIManager guimgr;
+	int transition, fade, fTimeOutGame, fTimeInGame;
+
+	//Audio
+	std::vector<IrrGameObject*> BGM;
+	std::vector<IrrGameObject*> SFX;
 
 	//Play State
 	PrimePlayState playState;
@@ -73,6 +78,7 @@ private:
 		void CreateBoard();
 		void LoadTiles();
 		void LoadTokens();
+		void LoadAudio();
 		void SortTurnOrder();
 
 	//Scene management methods
@@ -80,6 +86,7 @@ private:
 	void ManageTutorialScreen();
 	void ManageCreditsScreen();
 	void ManageMatch();
+
 public:
 	PrimeGameStateManager();
 	~PrimeGameStateManager();

@@ -10,9 +10,15 @@
 
 	#define SORT_MESSAGE true
 	#define TURN_MESSAGE true
+
+	#define TITLE_TRANSITION 1
 	#define MATCH_TRANSITION 1
 	#define TUTORIAL_TRANSITION 2
 	#define CREDITS_TRANSITION 3
+
+	#define FADING_IN 0
+	#define FADING_OUT 1
+	#define FADED_OUT 2
 
 //----------------------------
 
@@ -28,8 +34,12 @@ private:
 	//GUI element names:
 	enum
 	{
+		//Fonts
+		FONT_DUNGEON_TURN_COUNT = 1,
+		FONT_DUNGEON_RESOURCES,
+
 		//Backgrounds
-		BACKGROUND_TITLE_SCREEN = 1,
+		BACKGROUND_TITLE_SCREEN,
 		BACKGROUND_CREDITS_SCREEN,
 		BACKGROUND_TUTORIAL_SCREEN_PAGE_1,
 		BACKGROUND_TUTORIAL_SCREEN_PAGE_2,
@@ -153,6 +163,10 @@ private:
 		//Browsing buttons
 		BUTTON_PREVIOUS,
 		BUTTON_NEXT,
+
+		//Disabled buttons
+		IMAGE_PREVIOUS_DISABLED,
+		IMAGE_NEXT_DISABLED,
 
 		//Screen transition buttons
 		BUTTON_BACK_TO_TITLE_TUTORIAL,
@@ -359,8 +373,8 @@ public:
 
 	//Methods that manage screens
 	int ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
-	bool ManageGUICreditsScreen();
-	bool ManageGUITutorialScreen();
+	int ManageGUICreditsScreen();
+	int ManageGUITutorialScreen();
 	void ManageGUIMatchScreen(int turn, PrimePlayState* playState);
 };
 

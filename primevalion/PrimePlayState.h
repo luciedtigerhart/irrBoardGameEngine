@@ -5,6 +5,31 @@
 #include "IrrEngine.h"
 #include "PrimeToken.h"
 
+//Audio definitions
+//----------------------------
+
+	#define BGM_OUTGAME 0
+	#define BGM_MATCH 1
+	#define BGM_VICTORY 2
+
+	#define SFX_BUTTON 0
+	#define SFX_TOKEN_SELECT 1
+	#define SFX_TOKEN_DRAG 2
+	#define SFX_TOKEN_FIT 3
+
+	#define SFX_ABILITY 4
+	#define SFX_EXTRACTION 5
+
+	#define SFX_DIE_KOBOLD 6
+	#define SFX_DIE_GNOLL 7
+	#define SFX_DIE_TROLL 8
+	#define SFX_DIE_HOG 9
+
+	#define SFX_TRAP_KOBOLD 10
+	#define SFX_TRAP_GNOLL 11
+	#define SFX_TRAP_TROLL 12
+	#define SFX_TRAP_HOG 13
+
 //Direction definitions
 //----------------------------
 
@@ -129,6 +154,10 @@ private:
 	//Particle initialization
 	bool particlesOK;
 
+	//Audio lists
+	std::vector<IrrGameObject*>* BGM;
+	std::vector<IrrGameObject*>* SFX;
+
 public:
 	PrimePlayState();
 	~PrimePlayState();
@@ -149,6 +178,7 @@ public:
 	bool signalBackToTitle; //If "true", match has finished completely and game should return to title screen
 	bool signalEndTurn; //If "true", GUI has reported the "End Turn" button has been pressed
 	bool signalEndMatch; //If "true", GUI has reported the "End Match" button has been pressed
+	bool signalVictoryBGM; //If "true", victory BGM must be played as match ends
 	bool matchStart; //If "true", then "Sorting turn order" message is shown
 	bool matchOver; //If "true", then victory messages are shown
 	bool turnOver; //If "true", then current turn is over
@@ -174,7 +204,8 @@ public:
 					IrrParticleSystem* rsw, IrrParticleSystem* rse,
 					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
-					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4);
+					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4,
+					std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound);
 
 	//Update "Wait" mini-engine
 	void Wait();

@@ -9,7 +9,8 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 								IrrParticleSystem* rsw, IrrParticleSystem* rse,
 								PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 								std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
-								std::list<IrrToken*>* team3, std::list<IrrToken*>* team4)
+								std::list<IrrToken*>* team3, std::list<IrrToken*>* team4,
+								std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound)
 {
 	//Get input from engine
 	input = engine->getInput();
@@ -20,6 +21,9 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 	resourceParticlesSW = rsw; resourceParticlesSE = rse;
 	
 	particlesOK = false; //Particles haven't been initialized yet
+
+	//Get audio lists from game state manager
+	BGM = music; SFX = sound;
 
 	//Initialize token lists
 
@@ -78,7 +82,8 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 	player4.primevalium = p4.primevalium;
 
 	//Initialize signals
-	signalEndTurn = signalEndMatch = signalBackToTitle = false;
+	signalEndTurn = signalEndMatch = false;
+	signalBackToTitle = signalVictoryBGM = false;
 
 	//Initialize match phase
 	phase = MATCH_START;
@@ -173,7 +178,7 @@ void PrimePlayState::InitParticles(IrrBoard* board)
 	//Create blood particles material
 	blood.Lighting = false; blood.ZWriteEnable = false;
 	blood.MaterialType = EMT_TRANSPARENT_VERTEX_ALPHA;
-	blood.setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_blood02.png"));
+	blood.setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_blood01.png"));
 
 	//Create ability particles material
 	ability.Lighting = false; ability.ZWriteEnable = false;
@@ -1392,7 +1397,13 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 		//Start match for real only after 2 seconds,
 		//during which "Sorting turn order" message is shown.
 
-		if (!matchStart && Wait(0.5f)) matchStart = true;
+		if (!matchStart && Wait(1.0f))
+		{
+			//Start playing match BGM
+			BGM->at(BGM_MATCH)->getAudio()->setLoopingStreamMode();
+
+			matchStart = true;
+		}
 
 		else if (matchStart && Wait(2.0f))
 		{
@@ -1563,6 +1574,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 				//Check for victory condition
 				if (player1.isVictorious || player2.isVictorious || player3.isVictorious || player4.isVictorious)
 				{
+					//Signal victory music
+					signalVictoryBGM = true;
+
 					//End match if there's one or more victors
 					phase = MATCH_END;
 				}
@@ -1587,13 +1601,22 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 	//Show victory messages and finish up match
 	else if (phase == MATCH_END)
 	{
+		//Stop playing match BGM
+		BGM->at(BGM_MATCH)->getAudio()->stop();
+
 		//Wait until victory song is over,
 		//meanwhile displaying victory message.
 
-		if (!matchOver && Wait(1.0f)) matchOver = true;
+		if (!matchOver && Wait(1.0f))
+		{
+			matchOver = true;
+
+			//Play victory BGM, if there is a victorious player
+			if (signalVictoryBGM) BGM->at(BGM_VICTORY)->getAudio()->setPlayOnceMode();
+		}
 
 		//Once victory song has finished...
-		else if (matchOver && !signalBackToTitle && ((signalEndMatch && Wait(0.1f)) || (!signalEndMatch && Wait(7.0f))))
+		else if (matchOver && !signalBackToTitle && ((signalEndMatch && Wait(0.1f)) || (!signalEndMatch && Wait(6.0f))))
 		{
 			//Drop tokens which were dead by the end of match (still floating in limbo)
 

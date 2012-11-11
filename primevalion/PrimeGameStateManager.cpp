@@ -12,7 +12,7 @@ ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
 PrimeGameStateManager::PrimeGameStateManager()
 {
 	//Specify game goal, in resources
-	gameGoal = 2000;
+	gameGoal = 100;
 
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );
@@ -32,12 +32,27 @@ PrimeGameStateManager::PrimeGameStateManager()
 	guimgr.BuildGUITutorialScreen();
 	guimgr.BuildGUIMatchScreen();
 
+	//Initialize GUI transition effects
+	guimgr.env_title->fadeOut(0);
+	guimgr.env_credits->fadeOut(0);
+	guimgr.env_tutorial->fadeOut(0);
+	guimgr.env_match->fadeOut(0, SColor(255,255,255,255));
+
+	//Initialize GUI transition variables
+	transition = 0;
+	fade = FADED_OUT;
+	fTimeOutGame = 350;
+	fTimeInGame = 1200;
+
 	//Initialize scenes
 	title = engine->createScene();
 	credits = engine->createScene();
 	tutorial = engine->createScene();
 	match = engine->createScene();
 	
+	//Load music and sound effects
+	LoadAudio();
+
 	//Initialize board
 	board = NULL;
 
@@ -74,6 +89,10 @@ PrimeGameStateManager::~PrimeGameStateManager()
 	
 	//Bye bye camera!
 	delete camera;
+
+	//Bye bye audio!
+	BGM.clear();
+	SFX.clear();
 };
 
 void PrimeGameStateManager::SetupMatch()
@@ -104,7 +123,8 @@ void PrimeGameStateManager::SetupMatch()
 						 resourceParticlesNW, resourceParticlesNE,
 						 resourceParticlesSW, resourceParticlesSE,
 						 player1, player2, player3, player4,
-						 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4);
+						 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4,
+						 &BGM, &SFX);
 }
 
 void PrimeGameStateManager::ResetPlayers()
@@ -222,6 +242,39 @@ void PrimeGameStateManager::LoadTokens()
 	}
 }
 
+void PrimeGameStateManager::LoadAudio()
+{
+	//Add 3 musics to BGM list and 14 sound effects to SFX list
+	for (int i=0; i<3; i++) BGM.push_back(new IrrGameObject);
+	for (int i=0; i<14; i++) SFX.push_back(new IrrGameObject);
+
+	//Load music files
+
+	BGM[0] = match->addAudio("sound/bgm/bgm_outgame.ogg", BGM_OUTGAME, new Vector(0,0,0));
+	BGM[1] = match->addAudio("sound/bgm/bgm_match.ogg", BGM_MATCH, new Vector(0,0,0));
+	BGM[2] = match->addAudio("sound/bgm/bgm_victory.ogg", BGM_VICTORY, new Vector(0,0,0));
+
+	//Load sound effect files
+
+	SFX[0] = match->addAudio("sound/sgx/sfx_iface_button.wav", SFX_BUTTON, new Vector(0,0,0));
+	SFX[1] = match->addAudio("sound/sgx/sfx_iface_unitSelect.wav", SFX_TOKEN_SELECT, new Vector(0,0,0));
+	SFX[2] = match->addAudio("sound/sgx/sfx_motion_drag.wav", SFX_TOKEN_DRAG, new Vector(0,0,0));
+	SFX[3] = match->addAudio("sound/sgx/sfx_motion_positionFit.wav", SFX_TOKEN_FIT, new Vector(0,0,0));
+
+	SFX[4] = match->addAudio("sound/sgx/sfx_gameplay_abilityActivate.wav", SFX_ABILITY, new Vector(0,0,0));
+	SFX[5] = match->addAudio("sound/sgx/sfx_gameplay_bonusExtract.wav", SFX_EXTRACTION, new Vector(0,0,0));
+
+	SFX[6] = match->addAudio("sound/sgx/sfx_special_unitDie_attackKobold.wav", SFX_DIE_KOBOLD, new Vector(0,0,0));
+	SFX[7] = match->addAudio("sound/sgx/sfx_special_unitDie_attackGnoll.wav", SFX_DIE_GNOLL, new Vector(0,0,0));
+	SFX[8] = match->addAudio("sound/sgx/sfx_special_unitDie_attackTroll.wav", SFX_DIE_TROLL, new Vector(0,0,0));
+	SFX[9] = match->addAudio("sound/sgx/sfx_special_unitDie_attackHog.wav", SFX_DIE_HOG, new Vector(0,0,0));
+
+	SFX[10] = match->addAudio("sound/sgx/sfx_special_unitDie_trapKobold.wav", SFX_TRAP_KOBOLD, new Vector(0,0,0));
+	SFX[11] = match->addAudio("sound/sgx/sfx_special_unitDie_trapGnoll.wav", SFX_TRAP_GNOLL, new Vector(0,0,0));
+	SFX[12] = match->addAudio("sound/sgx/sfx_special_unitDie_trapTroll.wav", SFX_TRAP_TROLL, new Vector(0,0,0));
+	SFX[13] = match->addAudio("sound/sgx/sfx_special_unitDie_trapHog.wav", SFX_TRAP_HOG, new Vector(0,0,0));
+}
+
 void PrimeGameStateManager::SortTurnOrder()
 {
 	vector<int> turnOrder;
@@ -251,66 +304,147 @@ void PrimeGameStateManager::SortTurnOrder()
 
 void PrimeGameStateManager::ManageTitleScreen()
 {
-	int transition = 0;
+	if (fade == FADED_OUT)
+	{
+		//Fade in screen
+		guimgr.env_title->fadeIn(fTimeOutGame);
+		fade = FADING_IN;
+
+		//Start playing outgame BGM
+		BGM[BGM_OUTGAME]->getAudio()->setLoopingStreamMode();
+	}
 
 	//Update title screen and return a possible screen transition
-	transition = guimgr.ManageGUITitleScreen(&player1, &player2, &player3, &player4);
+	if (!transition) transition = guimgr.ManageGUITitleScreen(&player1, &player2, &player3, &player4);
 
 	//Transfer to Match screen
 	if (transition == MATCH_TRANSITION)
 	{
-		//Initialize match
-		SetupMatch();
+		if (!fade)
+		{
+			//Fade out screen
+			guimgr.env_title->fadeOut(fTimeInGame, SColor(255,255,255,255));
+			fade = FADING_OUT;
+
+			//Stop playing outgame BGM
+			BGM[BGM_OUTGAME]->getAudio()->stop();
+		}
+
+		//When fade is complete...
+		if (guimgr.env_title->isReadyfade())
+		{
+			transition = 0; fade = FADED_OUT;
+
+			//Fade match screen in full white
+			guimgr.env_match->fadeOut(0, SColor(255,255,255,255));
+
+			//Initialize match
+			SetupMatch();
+		}
 	}
 
 	//Transfer to Tutorial screen
 	else if (transition == TUTORIAL_TRANSITION)
 	{
-		//Initialize Tutorial
-		guimgr.SetTutorialPage(1);
-		
-		//Change scene and GUI
-		engine->setCurrentScene(tutorial);
-		engine->setCurrentGUI(guimgr.env_tutorial);
+		//Fade out screen
+		if (!fade) { guimgr.env_title->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+
+		//When fade is complete...
+		if (guimgr.env_title->isReadyfade())
+		{
+			transition = 0; fade = FADED_OUT;
+
+			//Initialize Tutorial
+			guimgr.SetTutorialPage(1);
+
+			//Change scene and GUI
+			engine->setCurrentScene(tutorial);
+			engine->setCurrentGUI(guimgr.env_tutorial);
+		}
 	}
 
 	//Transfer to Credits screen
 	else if (transition == CREDITS_TRANSITION)
 	{
-		//Change scene and GUI
-		engine->setCurrentScene(credits);
-		engine->setCurrentGUI(guimgr.env_credits);
+		//Fade out screen
+		if (!fade) { guimgr.env_title->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+
+		//When fade is complete...
+		if (guimgr.env_title->isReadyfade())
+		{
+			transition = 0; fade = FADED_OUT;
+			
+			//Change scene and GUI
+			engine->setCurrentScene(credits);
+			engine->setCurrentGUI(guimgr.env_credits);
+		}
 	}
 }
 
 void PrimeGameStateManager::ManageTutorialScreen()
 {
-	//Manage tutorial screen and return to title when
-	//"Back to Title" button is pressed.
+	//Fade in screen
+	if (fade == FADED_OUT) { guimgr.env_tutorial->fadeIn(fTimeOutGame); fade = FADING_IN; }
 
-	if (guimgr.ManageGUITutorialScreen())
+	//Manage tutorial screen
+	if (!transition) transition = guimgr.ManageGUITutorialScreen();
+
+	//Return to title when "Back to Title" button is pressed
+	if (transition == TITLE_TRANSITION)
 	{
-		//Change scene and GUI
-		engine->setCurrentScene(title);
-		engine->setCurrentGUI(guimgr.env_title);
+		//Fade out screen
+		if (!fade) { guimgr.env_tutorial->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+
+		//When fade is complete...
+		if (guimgr.env_tutorial->isReadyfade())
+		{
+			transition = 0; fade = FADED_OUT;
+
+			//Change scene and GUI
+			engine->setCurrentScene(title);
+			engine->setCurrentGUI(guimgr.env_title);
+		}
 	}
 }
 
 void PrimeGameStateManager::ManageCreditsScreen()
 {
-	//Manage credits screen and return to title when
-	//"Back to Title" button is pressed.
+	//Fade in screen
+	if (fade == FADED_OUT) { guimgr.env_credits->fadeIn(fTimeOutGame); fade = FADING_IN; }
 
-	if (guimgr.ManageGUICreditsScreen())
+	//Manage credits screen
+	if (!transition) transition = guimgr.ManageGUICreditsScreen();
+
+	//Return to title when "Back to Title" button is pressed
+	if (transition == TITLE_TRANSITION)
 	{
-		//Change scene and GUI
-		engine->setCurrentScene(title);
-		engine->setCurrentGUI(guimgr.env_title);
+		//Fade out screen
+		if (!fade) { guimgr.env_credits->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+
+		//When fade is complete...
+		if (guimgr.env_credits->isReadyfade())
+		{
+			transition = 0; fade = FADED_OUT;
+
+			//Change scene and GUI
+			engine->setCurrentScene(title);
+			engine->setCurrentGUI(guimgr.env_title);
+		}
 	}
 }
 
 void PrimeGameStateManager::ManageMatch()
 {
+	if (fade == FADED_OUT)
+	{
+		//Fade in match screen (white)
+		guimgr.env_match->fadeIn(fTimeInGame, SColor(255,255,255,255));
+		fade = FADING_IN;
+
+		//Fade out title screen (full black)
+		guimgr.env_title->fadeOut(0, SColor(255,0,0,0));
+	}
+
 	//While play state hasn't signaled match termination...
 	if (!playState.signalBackToTitle)
 	{
@@ -328,16 +462,34 @@ void PrimeGameStateManager::ManageMatch()
 	//If play state signaled match has ended, head back to title screen
 	else if (playState.signalBackToTitle)
 	{
-		//Deactivate board
-		if (board != NULL)
-		{
-			match->removeBoard();
-			board = NULL;
-		}
+		//Fade out screen
+		if (!fade) { guimgr.env_match->fadeOut(fTimeInGame); fade = FADING_OUT; }
 
-		//Change scene and GUI
-		engine->setCurrentScene(title);
-		engine->setCurrentGUI(guimgr.env_title);
+		//When fade is complete...
+		if (guimgr.env_match->isReadyfade())
+		{
+			transition = 0; fade = FADED_OUT;
+
+			//Deactivate board
+			if (board != NULL)
+			{
+				match->removeBoard();
+				board = NULL;
+			}
+
+			//Deactivate particle systems
+
+			if (bloodParticles != NULL) { bloodParticles->node->remove(); bloodParticles = NULL; }
+			if (abilityParticles != NULL) { abilityParticles->node->remove(); abilityParticles = NULL; }
+			if (resourceParticlesNW != NULL) { resourceParticlesNW->node->remove(); resourceParticlesNW = NULL; }
+			if (resourceParticlesNE != NULL) { resourceParticlesNE->node->remove(); resourceParticlesNE = NULL; }
+			if (resourceParticlesSW != NULL) { resourceParticlesSW->node->remove(); resourceParticlesSW = NULL; }
+			if (resourceParticlesSE != NULL) { resourceParticlesSE->node->remove(); resourceParticlesSE = NULL; }
+
+			//Change scene and GUI
+			engine->setCurrentScene(title);
+			engine->setCurrentGUI(guimgr.env_title);
+		}
 	}
 }
 
