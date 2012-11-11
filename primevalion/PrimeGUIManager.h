@@ -11,10 +11,14 @@
 	#define SORT_MESSAGE true
 	#define TURN_MESSAGE true
 
-	#define TITLE_TRANSITION 1
-	#define MATCH_TRANSITION 1
-	#define TUTORIAL_TRANSITION 2
-	#define CREDITS_TRANSITION 3
+	#define BUTTON_LIGHT 1
+	#define BUTTON_HEAVY 2
+	#define BUTTON_RACE 2
+
+	#define TITLE_TRANSITION 3
+	#define MATCH_TRANSITION 4
+	#define TUTORIAL_TRANSITION 5
+	#define CREDITS_TRANSITION 6
 
 	#define FADING_IN 0
 	#define FADING_OUT 1
@@ -39,6 +43,7 @@ private:
 		FONT_DUNGEON_RESOURCES,
 
 		//Backgrounds
+		BACKGROUND_LOADING_SCREEN,
 		BACKGROUND_TITLE_SCREEN,
 		BACKGROUND_CREDITS_SCREEN,
 		BACKGROUND_TUTORIAL_SCREEN_PAGE_1,
@@ -298,6 +303,7 @@ public:
 	~PrimeGUIManager();
 
 	//GUI environments
+	IrrGUI* env_loader;
 	IrrGUI* env_title;
 	IrrGUI* env_credits;
 	IrrGUI* env_tutorial;
@@ -344,8 +350,8 @@ public:
 	//Button press verification methods
 
 		//Title screen
-		void VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
-		void VerifyTitleRaceButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+		bool VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
+		bool VerifyTitleRaceButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
 		bool VerifyTitleStartMatchButton(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
 		bool VerifyTitleTutorialButton();
 		bool VerifyTitleCreditsButton();
@@ -366,6 +372,7 @@ public:
 
 
 	//Methods that create GUI elements
+	void BuildGUILoadingScreen();
 	void BuildGUITitleScreen();
 	void BuildGUITutorialScreen();
 	void BuildGUICreditsScreen();
@@ -375,7 +382,7 @@ public:
 	int ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4);
 	int ManageGUICreditsScreen();
 	int ManageGUITutorialScreen();
-	void ManageGUIMatchScreen(int turn, PrimePlayState* playState);
+	int ManageGUIMatchScreen(int turn, PrimePlayState* playState);
 };
 
 #endif

@@ -892,58 +892,66 @@ void PrimeGUIManager::FlipTutorialPages()
 	}
 }
 
-void PrimeGUIManager::VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+bool PrimeGUIManager::VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
 {
+	bool press = false;
+
 	//Activate teams when activation buttons are pressed
 
-	if (env_title->isPressedButton(BUTTON_PLAYER_1_ACTIVATE)) { p1->isActive = true; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_2_ACTIVATE)) { p2->isActive = true; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_3_ACTIVATE)) { p3->isActive = true; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_4_ACTIVATE)) { p4->isActive = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_1_ACTIVATE)) { p1->isActive = true; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_2_ACTIVATE)) { p2->isActive = true; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_3_ACTIVATE)) { p3->isActive = true; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_4_ACTIVATE)) { p4->isActive = true; press = true; }
 
 	//Deactivate teams when deactivation buttons are pressed
 
-	if (env_title->isPressedButton(BUTTON_PLAYER_1_DEACTIVATE)) { p1->isActive = false; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_2_DEACTIVATE)) { p2->isActive = false; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_3_DEACTIVATE)) { p3->isActive = false; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_4_DEACTIVATE)) { p4->isActive = false; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_1_DEACTIVATE)) { p1->isActive = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_2_DEACTIVATE)) { p2->isActive = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_3_DEACTIVATE)) { p3->isActive = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_4_DEACTIVATE)) { p4->isActive = false; press = true; }
+
+	return press;
 }
 
-void PrimeGUIManager::VerifyTitleRaceButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
+bool PrimeGUIManager::VerifyTitleRaceButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
 {
+	bool press = false;
+
 	//Set player races when buttons are pressed
 	
 	if (p1->isActive)
 	{
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P1)) { p1->assignedRace = KOBOLD; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P1)) { p1->assignedRace = GNOLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P1)) { p1->assignedRace = TROLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P1)) { p1->assignedRace = HOG; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P1)) { p1->assignedRace = KOBOLD; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P1)) { p1->assignedRace = GNOLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P1)) { p1->assignedRace = TROLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P1)) { p1->assignedRace = HOG; press = true; }
 	}
 
 	if (p2->isActive)
 	{
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P2)) { p2->assignedRace = KOBOLD; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P2)) { p2->assignedRace = GNOLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P2)) { p2->assignedRace = TROLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P2)) { p2->assignedRace = HOG; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P2)) { p2->assignedRace = KOBOLD; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P2)) { p2->assignedRace = GNOLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P2)) { p2->assignedRace = TROLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P2)) { p2->assignedRace = HOG; press = true; }
 	}
 
 	if (p3->isActive)
 	{
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P3)) { p3->assignedRace = KOBOLD; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P3)) { p3->assignedRace = GNOLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P3)) { p3->assignedRace = TROLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P3)) { p3->assignedRace = HOG; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P3)) { p3->assignedRace = KOBOLD; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P3)) { p3->assignedRace = GNOLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P3)) { p3->assignedRace = TROLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P3)) { p3->assignedRace = HOG; press = true; }
 	}
 
 	if (p4->isActive)
 	{
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P4)) { p4->assignedRace = KOBOLD; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P4)) { p4->assignedRace = GNOLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P4)) { p4->assignedRace = TROLL; }
-		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P4)) { p4->assignedRace = HOG; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_KOBOLD_P4)) { p4->assignedRace = KOBOLD; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_GNOLL_P4)) { p4->assignedRace = GNOLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_TROLL_P4)) { p4->assignedRace = TROLL; press = true; }
+		if (env_title->isPressedButton(BUTTON_UNSELECTED_HOG_P4)) { p4->assignedRace = HOG; press = true; }
 	}
+
+	return press;
 }
 
 bool PrimeGUIManager::VerifyTitleStartMatchButton(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
@@ -1046,6 +1054,12 @@ bool PrimeGUIManager::VerifyMatchEndMatchButton()
 	//Check if this button has been pressed
 	if (env_match->isPressedButton(BUTTON_END_MATCH)) return true;
 	else return false;
+}
+
+void PrimeGUIManager::BuildGUILoadingScreen()
+{
+	//Background
+	env_loader->addImage(BACKGROUND_LOADING_SCREEN,"gui/loader/gui_bg_loading_screen.jpg",0,0);
 }
 
 void PrimeGUIManager::BuildGUITitleScreen()
@@ -1422,10 +1436,10 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 
 	//Victory messages
 
-	env_match->addImage(MESSAGE_VICTORY_SINGLE,"gui/match/gui_image_message_victory.png",280,285);
-	env_match->addImage(MESSAGE_VICTORY_DOUBLE,"gui/match/gui_image_message_victory.png",280,330);
-	env_match->addImage(MESSAGE_VICTORY_TRIPLE,"gui/match/gui_image_message_victory.png",280,370);
-	env_match->addImage(MESSAGE_VICTORY_QUADRUPLE,"gui/match/gui_image_message_victory.png",280,400);
+	env_match->addImage(MESSAGE_VICTORY_SINGLE,"gui/match/gui_image_message_victory.png",207,262);
+	env_match->addImage(MESSAGE_VICTORY_DOUBLE,"gui/match/gui_image_message_victory.png",207,308);
+	env_match->addImage(MESSAGE_VICTORY_TRIPLE,"gui/match/gui_image_message_victory.png",207,348);
+	env_match->addImage(MESSAGE_VICTORY_QUADRUPLE,"gui/match/gui_image_message_victory.png",207,378);
 
 	env_match->addImage(MESSAGE_VICTORY_P1_SINGLE,"gui/match/gui_image_message_player_1.png",382,285);
 	env_match->addImage(MESSAGE_VICTORY_P1_DOUBLE_TOP,"gui/match/gui_image_message_player_1.png",382,250);
@@ -1487,12 +1501,12 @@ void PrimeGUIManager::BuildGUIMatchScreen()
 
 int PrimeGUIManager::ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
 {
-	int screenTransition = 0;
+	int buttonPress = 0;
 
 	//Verify team and race selection button presses
 
-	VerifyTitlePlayerOnOffButtons(p1, p2, p3, p4);
-	VerifyTitleRaceButtons(p1, p2, p3, p4);
+	if (VerifyTitlePlayerOnOffButtons(p1, p2, p3, p4)) buttonPress = BUTTON_LIGHT;
+	if (VerifyTitleRaceButtons(p1, p2, p3, p4)) buttonPress = BUTTON_RACE;
 
 	//Update team and race selection indicators and buttons
 
@@ -1502,21 +1516,39 @@ int PrimeGUIManager::ManageGUITitleScreen(PrimeTeam* p1, PrimeTeam* p2, PrimeTea
 
 	//Return screen transition, if any transition button was pressed
 	
-	if (VerifyTitleStartMatchButton(p1, p2, p3, p4)) screenTransition = MATCH_TRANSITION;
-	if (VerifyTitleTutorialButton()) screenTransition = TUTORIAL_TRANSITION;
-	if (VerifyTitleCreditsButton()) screenTransition = CREDITS_TRANSITION;
+	if (VerifyTitleStartMatchButton(p1, p2, p3, p4)) buttonPress = MATCH_TRANSITION;
+	if (VerifyTitleTutorialButton()) buttonPress = TUTORIAL_TRANSITION;
+	if (VerifyTitleCreditsButton()) buttonPress = CREDITS_TRANSITION;
 
 	//Set all buttons as "released"
 	env_title->setPressedButton(false);
 
-	return screenTransition;
+	return buttonPress;
 }
 
 int PrimeGUIManager::ManageGUITutorialScreen()
 {
+	int buttonPress = 0;
+
 	//Browse pages when "Next" or "Previous" buttons are pressed
-	if (VerifyTutorialNextButtonPressed()) { if (nextReleased) tutorialPage += 1; }
-	if (VerifyTutorialPreviousButtonPressed()) { if (previousReleased) tutorialPage -= 1; }
+
+	if (VerifyTutorialNextButtonPressed())
+	{
+		if (nextReleased)
+		{
+			tutorialPage += 1;
+			buttonPress = BUTTON_HEAVY;
+		}
+	}
+
+	if (VerifyTutorialPreviousButtonPressed())
+	{
+		if (previousReleased)
+		{
+			tutorialPage -= 1;
+			buttonPress = BUTTON_HEAVY;
+		}
+	}
 
 	//Get page browsing buttons released state (not pressed)
 	nextReleased = VerifyTutorialNextButtonReleased();
@@ -1535,10 +1567,10 @@ int PrimeGUIManager::ManageGUITutorialScreen()
 		//Set all buttons as "released"
 		env_tutorial->setPressedButton(false);
 
-		return TITLE_TRANSITION;
+		buttonPress = TITLE_TRANSITION;
 	}
 
-	else return 0;
+	return buttonPress;
 }
 
 int PrimeGUIManager::ManageGUICreditsScreen()
@@ -1555,8 +1587,10 @@ int PrimeGUIManager::ManageGUICreditsScreen()
 	else return 0;
 }
 
-void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
+int PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 {
+	int buttonPress = 0;
+
 	//Victory message is hidden by default
 	HideVictoryMessage();
 
@@ -1625,8 +1659,10 @@ void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 			}
 
 			//Verify match button presses and signal play state accordingly (set button as "released" after that)
-			if (VerifyMatchEndTurnButton()) { playState->signalEndTurn = true; env_match->setPressedButton(false); }
-			if (VerifyMatchEndMatchButton()) { playState->signalEndMatch = true; env_match->setPressedButton(false); }
+			if (VerifyMatchEndTurnButton()) { playState->signalEndTurn = true; env_match->setPressedButton(false);
+											  buttonPress = BUTTON_HEAVY; }
+			if (VerifyMatchEndMatchButton()) { playState->signalEndMatch = true; env_match->setPressedButton(false);
+											   buttonPress = BUTTON_LIGHT; }
 
 			//Update match GUI!
 			//---------------------------------------
@@ -1677,4 +1713,6 @@ void PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 			}
 		}
 	}
+
+	return buttonPress;
 }

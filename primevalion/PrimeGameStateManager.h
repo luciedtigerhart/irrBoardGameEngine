@@ -20,6 +20,7 @@ private:
 	IrrEngine* engine;
 
 	//Scenes
+	IrrScene* loader;
 	IrrScene* title;
 	IrrScene* credits;
 	IrrScene* tutorial;
@@ -42,6 +43,7 @@ private:
 
 	//GUI Manager
 	PrimeGUIManager guimgr;
+	bool loadComplete;
 	int transition, fade, fTimeOutGame, fTimeInGame;
 
 	//Audio
@@ -69,6 +71,9 @@ private:
 	int playersActive; //How many players are playing
 	int tokensActive; //How many tokens each player controls
 
+	//Initialize game
+	void Init();
+
 	//Method to set up a match
 	void SetupMatch();
 
@@ -82,6 +87,7 @@ private:
 		void SortTurnOrder();
 
 	//Scene management methods
+	void ManageLoadingScreen();
 	void ManageTitleScreen();
 	void ManageTutorialScreen();
 	void ManageCreditsScreen();
@@ -91,7 +97,7 @@ public:
 	PrimeGameStateManager();
 	~PrimeGameStateManager();
 
-	void loop(void(*f)()); //Runs game
+	void loop(); //Runs game
 	void Update(); //Update game states
 };
 

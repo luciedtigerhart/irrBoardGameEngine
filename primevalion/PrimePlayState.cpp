@@ -756,6 +756,12 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 			//Disable any active abilities
 			token->getBehavior(0)->setBool("isAbilityActive", false);
 
+			//Play attack death sound
+			if (token->getBehavior(0)->getInt("race") == KOBOLD) SFX->at(SFX_DIE_KOBOLD)->getAudio()->setPlayOnceMode();
+			if (token->getBehavior(0)->getInt("race") == GNOLL) SFX->at(SFX_DIE_GNOLL)->getAudio()->setPlayOnceMode();
+			if (token->getBehavior(0)->getInt("race") == TROLL) SFX->at(SFX_DIE_TROLL)->getAudio()->setPlayOnceMode();
+			if (token->getBehavior(0)->getInt("race") == HOG) SFX->at(SFX_DIE_HOG)->getAudio()->setPlayOnceMode();
+
 			//Start animation!
 			token->getBehavior(0)->setBool("isAnimRunning", true);
 
@@ -921,6 +927,12 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Disable any active abilities
 			token->getBehavior(0)->setBool("isAbilityActive", false);
+
+			//Play trap death sound
+			if (token->getBehavior(0)->getInt("race") == KOBOLD) SFX->at(SFX_TRAP_KOBOLD)->getAudio()->setPlayOnceMode();
+			if (token->getBehavior(0)->getInt("race") == GNOLL) SFX->at(SFX_TRAP_GNOLL)->getAudio()->setPlayOnceMode();
+			if (token->getBehavior(0)->getInt("race") == TROLL) SFX->at(SFX_TRAP_TROLL)->getAudio()->setPlayOnceMode();
+			if (token->getBehavior(0)->getInt("race") == HOG) SFX->at(SFX_TRAP_HOG)->getAudio()->setPlayOnceMode();
 
 			//Start animation!
 			token->getBehavior(0)->setBool("isAnimRunning", true);
@@ -1187,6 +1199,9 @@ void PrimePlayState::RessurrectToken(IrrToken* token, IrrBoard* board, int i, in
 				//Make sure the token cannot move this turn
 				token->getBehavior(0)->setBool("isFinished", true);
 			}
+
+			//Play position fitting sound
+			SFX->at(SFX_TOKEN_FIT)->getAudio()->setPlayOnceMode();
 
 			//Disable highlight on safe zone tiles momentarily
 			tokenRessurrected = true;
@@ -1559,6 +1574,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 				//Perform resource extraction
 				VerifyResourceExtraction(board, false);
 
+				//Play resource extraction sound
+				if (resourcesExtracted) SFX->at(SFX_EXTRACTION)->getAudio()->setPlayOnceMode();
+
 				resourcesVerified = true;
 			}
 
@@ -1631,6 +1649,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			//Inform game state manager the match is over
 			signalBackToTitle = true;
 
+			//Stop playing victory BGM
+			BGM->at(BGM_VICTORY)->getAudio()->stop();
+
 			//IrrEngine::getInstance()->getDevice()->closeDevice(); //Exit application
 		}
 	}
@@ -1658,6 +1679,9 @@ void PrimePlayState::SwapPhaseOnClick(IrrBoard* board, int i, int j)
 
 				//Execute move (start animations)
 				phase = ANIMATION_EXECUTION;
+
+				//Play token movement sound
+				SFX->at(SFX_TOKEN_DRAG)->getAudio()->setPlayOnceMode();
 			}
 		}
 
@@ -1670,6 +1694,9 @@ void PrimePlayState::SwapPhaseOnClick(IrrBoard* board, int i, int j)
 				//Select the hovered token
 				selectedToken = board->getToken(i,j);
 				board->board[i][j]->token->getBehavior(0)->setBool("isSelected", true);
+
+				//Play token selection sound
+				SFX->at(SFX_TOKEN_SELECT_LIGHT)->getAudio()->setPlayOnceMode();
 			}
 
 			//Otherwise, if a token has already been selected...
@@ -1689,6 +1716,9 @@ void PrimePlayState::SwapPhaseOnClick(IrrBoard* board, int i, int j)
 
 					//Execute move (start animations)
 					phase = ANIMATION_EXECUTION;
+
+					//Play token movement sound
+					SFX->at(SFX_TOKEN_DRAG)->getAudio()->setPlayOnceMode();
 				}
 
 				//Otherwise...
@@ -1703,6 +1733,9 @@ void PrimePlayState::SwapPhaseOnClick(IrrBoard* board, int i, int j)
 						//Select new token
 						selectedToken = board->getToken(i,j);
 						board->board[i][j]->token->getBehavior(0)->setBool("isSelected", true);
+
+						//Play token selection sound
+						SFX->at(SFX_TOKEN_SELECT_LIGHT)->getAudio()->setPlayOnceMode();
 					}
 									
 					//...If mouse is over an enemy token...
@@ -1958,10 +1991,14 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 	//KOBOLDs...
 	if (token->getBehavior(0)->getInt("race") == KOBOLD)
 	{
-		//ADVANCED PROSPECTION activates when a Kobold unit is placed on an extraction tile
+		//ADVANCED PROSPECTION activates when a Kobold unit is placed on an extraction tile...
 		if (board->board[token->parentNode->posi][token->parentNode->posj]->inf == RESOURCE)
 		{
-			if (!token->getBehavior(0)->getBool("isAbilityActive"))
+			//...As long as its not dead nor dying.
+			if (!token->getBehavior(0)->getBool("isAbilityActive")
+				&& !token->getBehavior(0)->getBool("isDead")
+				&& !token->getBehavior(0)->getBool("isTargeted")
+				&& !token->getBehavior(0)->getBool("isGonnaBeTrapped"))
 			{
 				//Activate ability and show special effect
 				token->getBehavior(0)->setBool("isAbilityActive", true);
@@ -1969,6 +2006,9 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 				StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
 												   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
 												   token->parentNode->node->getAbsolutePosition().Z));
+
+				//Play ability activation sound
+				SFX->at(SFX_ABILITY)->getAudio()->setPlayOnceMode();
 			}
 		}
 
@@ -1990,6 +2030,9 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 				StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
 												   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
 												   token->parentNode->node->getAbsolutePosition().Z));
+
+				//Play ability activation sound
+				SFX->at(SFX_ABILITY)->getAudio()->setPlayOnceMode();
 			}
 		}
 
@@ -2018,6 +2061,9 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 					StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
 													   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
 													   token->parentNode->node->getAbsolutePosition().Z));
+
+					//Play ability activation sound
+					SFX->at(SFX_ABILITY)->getAudio()->setPlayOnceMode();
 				}
 			}
 		}
@@ -2045,6 +2091,9 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 						StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
 														   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
 														   token->parentNode->node->getAbsolutePosition().Z));
+
+						//Play ability activation sound
+						SFX->at(SFX_ABILITY)->getAudio()->setPlayOnceMode();
 
 						//This ability cannot be activated again for 3 rounds
 						token->getBehavior(0)->setInt("abilityCooldown", (3 * playersActive));

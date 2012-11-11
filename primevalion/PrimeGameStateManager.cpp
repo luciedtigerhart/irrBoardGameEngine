@@ -11,14 +11,49 @@ ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
 
 PrimeGameStateManager::PrimeGameStateManager()
 {
+	//Initialize engine
+	engine = IrrEngine::getInstance(video::EDT_OPENGL, dimension2d<u32>(1024,768), 16, WINDOWED, false, false,L"Primevalion");
+
+	//Initialize loading screen
+	guimgr.env_loader = engine->createGUI();
+	guimgr.BuildGUILoadingScreen();
+	loader = engine->createScene();
+	loadComplete = false;
+
+	//Specify initial scene and GUI (Loading Screen)
+	engine->setCurrentScene(loader);
+	engine->setCurrentGUI(guimgr.env_loader);
+
+	//Set up initial fade
+	fade = FADED_OUT;
+};
+
+PrimeGameStateManager::~PrimeGameStateManager()
+{
+	//Bye bye engine and GUI environment!
+	delete engine;
+	
+	//Bye bye scenes!
+	delete title;
+	delete credits;
+	delete tutorial;
+	delete match;
+	
+	//Bye bye camera!
+	delete camera;
+
+	//Bye bye audio!
+	BGM.clear();
+	SFX.clear();
+};
+
+void PrimeGameStateManager::Init()
+{
 	//Specify game goal, in resources
-	gameGoal = 100;
+	gameGoal = 2000;
 
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );
-
-	//Initialize engine
-	engine = IrrEngine::getInstance(video::EDT_OPENGL, dimension2d<u32>(1024,768), 16, WINDOWED, false, false,L"Primevalion");
 
 	//Initialize GUI environments
 	guimgr.env_title = engine->createGUI();
@@ -40,7 +75,6 @@ PrimeGameStateManager::PrimeGameStateManager()
 
 	//Initialize GUI transition variables
 	transition = 0;
-	fade = FADED_OUT;
 	fTimeOutGame = 350;
 	fTimeInGame = 1200;
 
@@ -71,29 +105,9 @@ PrimeGameStateManager::PrimeGameStateManager()
 
 	ResetPlayers();
 
-	//Specify initial scene and GUI (Title Screen)
-	engine->setCurrentScene(title);
-	engine->setCurrentGUI(guimgr.env_title);
-};
-
-PrimeGameStateManager::~PrimeGameStateManager()
-{
-	//Bye bye engine and GUI environment!
-	delete engine;
-	
-	//Bye bye scenes!
-	delete title;
-	delete credits;
-	delete tutorial;
-	delete match;
-	
-	//Bye bye camera!
-	delete camera;
-
-	//Bye bye audio!
-	BGM.clear();
-	SFX.clear();
-};
+	//Complete initialization
+	loadComplete = true;
+}
 
 void PrimeGameStateManager::SetupMatch()
 {
@@ -246,7 +260,7 @@ void PrimeGameStateManager::LoadAudio()
 {
 	//Add 3 musics to BGM list and 14 sound effects to SFX list
 	for (int i=0; i<3; i++) BGM.push_back(new IrrGameObject);
-	for (int i=0; i<14; i++) SFX.push_back(new IrrGameObject);
+	for (int i=0; i<16; i++) SFX.push_back(new IrrGameObject);
 
 	//Load music files
 
@@ -256,23 +270,25 @@ void PrimeGameStateManager::LoadAudio()
 
 	//Load sound effect files
 
-	SFX[0] = match->addAudio("sound/sgx/sfx_iface_button.wav", SFX_BUTTON, new Vector(0,0,0));
-	SFX[1] = match->addAudio("sound/sgx/sfx_iface_unitSelect.wav", SFX_TOKEN_SELECT, new Vector(0,0,0));
-	SFX[2] = match->addAudio("sound/sgx/sfx_motion_drag.wav", SFX_TOKEN_DRAG, new Vector(0,0,0));
-	SFX[3] = match->addAudio("sound/sgx/sfx_motion_positionFit.wav", SFX_TOKEN_FIT, new Vector(0,0,0));
+	SFX[0] = match->addAudio("sound/sfx/sfx_iface_button_light.wav", SFX_BUTTON_LIGHT, new Vector(0,0,0));
+	SFX[1] = match->addAudio("sound/sfx/sfx_iface_button_heavy.wav", SFX_BUTTON_HEAVY, new Vector(0,0,0));
+	SFX[2] = match->addAudio("sound/sfx/sfx_iface_unitSelect_light.wav", SFX_TOKEN_SELECT_LIGHT, new Vector(0,0,0));
+	SFX[3] = match->addAudio("sound/sfx/sfx_iface_unitSelect_heavy.wav", SFX_TOKEN_SELECT_HEAVY, new Vector(0,0,0));
+	SFX[4] = match->addAudio("sound/sfx/sfx_motion_drag.wav", SFX_TOKEN_DRAG, new Vector(0,0,0));
+	SFX[5] = match->addAudio("sound/sfx/sfx_motion_positionFit.wav", SFX_TOKEN_FIT, new Vector(0,0,0));
 
-	SFX[4] = match->addAudio("sound/sgx/sfx_gameplay_abilityActivate.wav", SFX_ABILITY, new Vector(0,0,0));
-	SFX[5] = match->addAudio("sound/sgx/sfx_gameplay_bonusExtract.wav", SFX_EXTRACTION, new Vector(0,0,0));
+	SFX[6] = match->addAudio("sound/sfx/sfx_gameplay_abilityActivate.wav", SFX_ABILITY, new Vector(0,0,0));
+	SFX[7] = match->addAudio("sound/sfx/sfx_gameplay_bonusExtract.wav", SFX_EXTRACTION, new Vector(0,0,0));
 
-	SFX[6] = match->addAudio("sound/sgx/sfx_special_unitDie_attackKobold.wav", SFX_DIE_KOBOLD, new Vector(0,0,0));
-	SFX[7] = match->addAudio("sound/sgx/sfx_special_unitDie_attackGnoll.wav", SFX_DIE_GNOLL, new Vector(0,0,0));
-	SFX[8] = match->addAudio("sound/sgx/sfx_special_unitDie_attackTroll.wav", SFX_DIE_TROLL, new Vector(0,0,0));
-	SFX[9] = match->addAudio("sound/sgx/sfx_special_unitDie_attackHog.wav", SFX_DIE_HOG, new Vector(0,0,0));
+	SFX[8] = match->addAudio("sound/sfx/sfx_special_unitDie_attackKobold.wav", SFX_DIE_KOBOLD, new Vector(0,0,0));
+	SFX[9] = match->addAudio("sound/sfx/sfx_special_unitDie_attackGnoll.wav", SFX_DIE_GNOLL, new Vector(0,0,0));
+	SFX[10] = match->addAudio("sound/sfx/sfx_special_unitDie_attackTroll.wav", SFX_DIE_TROLL, new Vector(0,0,0));
+	SFX[11] = match->addAudio("sound/sfx/sfx_special_unitDie_attackHog.wav", SFX_DIE_HOG, new Vector(0,0,0));
 
-	SFX[10] = match->addAudio("sound/sgx/sfx_special_unitDie_trapKobold.wav", SFX_TRAP_KOBOLD, new Vector(0,0,0));
-	SFX[11] = match->addAudio("sound/sgx/sfx_special_unitDie_trapGnoll.wav", SFX_TRAP_GNOLL, new Vector(0,0,0));
-	SFX[12] = match->addAudio("sound/sgx/sfx_special_unitDie_trapTroll.wav", SFX_TRAP_TROLL, new Vector(0,0,0));
-	SFX[13] = match->addAudio("sound/sgx/sfx_special_unitDie_trapHog.wav", SFX_TRAP_HOG, new Vector(0,0,0));
+	SFX[12] = match->addAudio("sound/sfx/sfx_special_unitDie_trapKobold.wav", SFX_TRAP_KOBOLD, new Vector(0,0,0));
+	SFX[13] = match->addAudio("sound/sfx/sfx_special_unitDie_trapGnoll.wav", SFX_TRAP_GNOLL, new Vector(0,0,0));
+	SFX[14] = match->addAudio("sound/sfx/sfx_special_unitDie_trapTroll.wav", SFX_TRAP_TROLL, new Vector(0,0,0));
+	SFX[15] = match->addAudio("sound/sfx/sfx_special_unitDie_trapHog.wav", SFX_TRAP_HOG, new Vector(0,0,0));
 }
 
 void PrimeGameStateManager::SortTurnOrder()
@@ -302,6 +318,34 @@ void PrimeGameStateManager::SortTurnOrder()
 	}
 }
 
+void PrimeGameStateManager::ManageLoadingScreen()
+{
+	//Fade in screen
+	if (fade == FADED_OUT) { guimgr.env_loader->fadeIn(350); fade = FADING_IN; }
+
+	if (fade != FADED_OUT && guimgr.env_loader->isReadyfade())
+	{
+		//Initialize game scenes, GUI and everything else
+		if (!loadComplete) Init();
+
+		else if (loadComplete)
+		{
+			//Fade out screen
+			if (!fade) { guimgr.env_loader->fadeOut(600); fade = FADING_OUT; }
+
+			//When fade is complete...
+			if (guimgr.env_loader->isReadyfade())
+			{
+				transition = 0; fade = FADED_OUT;
+
+				//Change scene and GUI
+				engine->setCurrentScene(title);
+				engine->setCurrentGUI(guimgr.env_title);
+			}
+		}
+	}
+}
+
 void PrimeGameStateManager::ManageTitleScreen()
 {
 	if (fade == FADED_OUT)
@@ -315,16 +359,22 @@ void PrimeGameStateManager::ManageTitleScreen()
 	}
 
 	//Update title screen and return a possible screen transition
-	if (!transition) transition = guimgr.ManageGUITitleScreen(&player1, &player2, &player3, &player4);
+	if (transition < TITLE_TRANSITION) transition = guimgr.ManageGUITitleScreen(&player1, &player2, &player3, &player4);
 
 	//Transfer to Match screen
 	if (transition == MATCH_TRANSITION)
 	{
 		if (!fade)
 		{
-			//Fade out screen
+			//Fade out title screen (white)
 			guimgr.env_title->fadeOut(fTimeInGame, SColor(255,255,255,255));
 			fade = FADING_OUT;
+
+			//Fade int match screen (full white)
+			guimgr.env_match->fadeOut(0, SColor(255,255,255,255));
+
+			//Play button sound
+			SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
 
 			//Stop playing outgame BGM
 			BGM[BGM_OUTGAME]->getAudio()->stop();
@@ -335,9 +385,6 @@ void PrimeGameStateManager::ManageTitleScreen()
 		{
 			transition = 0; fade = FADED_OUT;
 
-			//Fade match screen in full white
-			guimgr.env_match->fadeOut(0, SColor(255,255,255,255));
-
 			//Initialize match
 			SetupMatch();
 		}
@@ -346,8 +393,15 @@ void PrimeGameStateManager::ManageTitleScreen()
 	//Transfer to Tutorial screen
 	else if (transition == TUTORIAL_TRANSITION)
 	{
-		//Fade out screen
-		if (!fade) { guimgr.env_title->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+		if (!fade)
+		{
+			//Fade out screen
+			guimgr.env_title->fadeOut(fTimeOutGame);
+			fade = FADING_OUT;
+
+			//Play button sound
+			SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
+		}
 
 		//When fade is complete...
 		if (guimgr.env_title->isReadyfade())
@@ -366,8 +420,15 @@ void PrimeGameStateManager::ManageTitleScreen()
 	//Transfer to Credits screen
 	else if (transition == CREDITS_TRANSITION)
 	{
-		//Fade out screen
-		if (!fade) { guimgr.env_title->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+		if (!fade)
+		{
+			//Fade out screen
+			guimgr.env_title->fadeOut(fTimeOutGame);
+			fade = FADING_OUT;
+
+			//Play button sound
+			SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
+		}
 
 		//When fade is complete...
 		if (guimgr.env_title->isReadyfade())
@@ -379,6 +440,12 @@ void PrimeGameStateManager::ManageTitleScreen()
 			engine->setCurrentGUI(guimgr.env_credits);
 		}
 	}
+
+	//Player activation/deactivation button sound
+	else if (transition == BUTTON_LIGHT) SFX[SFX_BUTTON_LIGHT]->getAudio()->setPlayOnceMode();
+
+	//Race selection button sound
+	else if (transition == BUTTON_RACE) SFX[SFX_TOKEN_SELECT_HEAVY]->getAudio()->setPlayOnceMode();
 }
 
 void PrimeGameStateManager::ManageTutorialScreen()
@@ -387,13 +454,20 @@ void PrimeGameStateManager::ManageTutorialScreen()
 	if (fade == FADED_OUT) { guimgr.env_tutorial->fadeIn(fTimeOutGame); fade = FADING_IN; }
 
 	//Manage tutorial screen
-	if (!transition) transition = guimgr.ManageGUITutorialScreen();
+	if (transition < TITLE_TRANSITION) transition = guimgr.ManageGUITutorialScreen();
 
 	//Return to title when "Back to Title" button is pressed
 	if (transition == TITLE_TRANSITION)
 	{
 		//Fade out screen
-		if (!fade) { guimgr.env_tutorial->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+		if (!fade)
+		{
+			guimgr.env_tutorial->fadeOut(fTimeOutGame);
+			fade = FADING_OUT;
+
+			//Play button sound
+			SFX[SFX_BUTTON_LIGHT]->getAudio()->setPlayOnceMode();
+		}
 
 		//When fade is complete...
 		if (guimgr.env_tutorial->isReadyfade())
@@ -405,6 +479,9 @@ void PrimeGameStateManager::ManageTutorialScreen()
 			engine->setCurrentGUI(guimgr.env_title);
 		}
 	}
+
+	//Browsing buttons sound
+	else if (transition == BUTTON_HEAVY) SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
 }
 
 void PrimeGameStateManager::ManageCreditsScreen()
@@ -418,8 +495,15 @@ void PrimeGameStateManager::ManageCreditsScreen()
 	//Return to title when "Back to Title" button is pressed
 	if (transition == TITLE_TRANSITION)
 	{
-		//Fade out screen
-		if (!fade) { guimgr.env_credits->fadeOut(fTimeOutGame); fade = FADING_OUT; }
+		if (!fade)
+		{
+			//Fade out screen
+			guimgr.env_credits->fadeOut(fTimeOutGame);
+			fade = FADING_OUT;
+
+			//Play button sound
+			SFX[SFX_BUTTON_LIGHT]->getAudio()->setPlayOnceMode();
+		}
 
 		//When fade is complete...
 		if (guimgr.env_credits->isReadyfade())
@@ -453,7 +537,13 @@ void PrimeGameStateManager::ManageMatch()
 
 		//Update match interface
 		//!! Must come AFTER play state updates, otherwise game breaks !!
-		guimgr.ManageGUIMatchScreen(turn, &playState);
+		transition = guimgr.ManageGUIMatchScreen(turn, &playState);
+
+		//Play "End Turn" button sound
+		if (transition == BUTTON_HEAVY) SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
+
+		//Play "End Match" button sound
+		if (transition == BUTTON_LIGHT) SFX[SFX_BUTTON_LIGHT]->getAudio()->setPlayOnceMode();
 
 		//When a turn is over, go to the next one
 		if (playState.turnOver) turn++;
@@ -498,14 +588,32 @@ void PrimeGameStateManager::Update()
 	//Manage game states/scenes
 	IrrScene* currentScene = engine->getScene();
 
-	if (currentScene == title) ManageTitleScreen();
+	if (currentScene == loader) ManageLoadingScreen();
+	else if (currentScene == title) ManageTitleScreen();
 	else if (currentScene == tutorial) ManageTutorialScreen();
 	else if (currentScene == credits) ManageCreditsScreen();
 	else if (currentScene == match) ManageMatch();
 }
 
-void PrimeGameStateManager::loop(void(*f)())
+void PrimeGameStateManager::loop()
 {
 	//Run game!
-	engine->loop(f);
+	while (engine->run())
+	{
+		//Engine updates
+		engine->update();
+
+		//Game update
+		Update();
+
+		//Draw everything
+		engine->draw();
+	}
+
+	//Stop all sounds if application is closed
+	for (int i=0; i<3; i++) BGM[i]->getAudio()->stop();
+	for (int i=0; i<16; i++) SFX[i]->getAudio()->stop();
+
+	//Close application
+	engine->getDevice()->drop();
 }

@@ -12,23 +12,25 @@
 	#define BGM_MATCH 1
 	#define BGM_VICTORY 2
 
-	#define SFX_BUTTON 0
-	#define SFX_TOKEN_SELECT 1
-	#define SFX_TOKEN_DRAG 2
-	#define SFX_TOKEN_FIT 3
+	#define SFX_BUTTON_LIGHT 0
+	#define SFX_BUTTON_HEAVY 1
+	#define SFX_TOKEN_SELECT_LIGHT 2
+	#define SFX_TOKEN_SELECT_HEAVY 3
+	#define SFX_TOKEN_DRAG 4
+	#define SFX_TOKEN_FIT 5
 
-	#define SFX_ABILITY 4
-	#define SFX_EXTRACTION 5
+	#define SFX_ABILITY 6
+	#define SFX_EXTRACTION 7
 
-	#define SFX_DIE_KOBOLD 6
-	#define SFX_DIE_GNOLL 7
-	#define SFX_DIE_TROLL 8
-	#define SFX_DIE_HOG 9
+	#define SFX_DIE_KOBOLD 8
+	#define SFX_DIE_GNOLL 9
+	#define SFX_DIE_TROLL 10
+	#define SFX_DIE_HOG 11
 
-	#define SFX_TRAP_KOBOLD 10
-	#define SFX_TRAP_GNOLL 11
-	#define SFX_TRAP_TROLL 12
-	#define SFX_TRAP_HOG 13
+	#define SFX_TRAP_KOBOLD 12
+	#define SFX_TRAP_GNOLL 13
+	#define SFX_TRAP_TROLL 14
+	#define SFX_TRAP_HOG 15
 
 //Direction definitions
 //----------------------------

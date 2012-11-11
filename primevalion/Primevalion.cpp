@@ -1,3 +1,5 @@
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
 #include <string>
 #include <iostream>
 
@@ -8,13 +10,10 @@ using namespace IrrBoardGameEngine;
 
 PrimeGameStateManager Primevalion;
 
-//Game update method
-void game() { Primevalion.Update(); }
-
 int main() {
 
 	//Run game!
-	Primevalion.loop(game);
+	Primevalion.loop();
 
 	return 0;
 }
