@@ -2,7 +2,6 @@
 #define _PRIMEPLAYSTATE_H
 
 #include <iostream>
-#include "IrrEngine.h"
 #include "PrimeToken.h"
 
 //Audio definitions

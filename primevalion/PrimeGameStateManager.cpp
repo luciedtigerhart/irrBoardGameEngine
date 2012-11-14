@@ -50,7 +50,7 @@ PrimeGameStateManager::~PrimeGameStateManager()
 void PrimeGameStateManager::Init()
 {
 	//Specify game goal, in resources
-	gameGoal = 2000;
+	gameGoal = 100;
 
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );
@@ -371,7 +371,7 @@ void PrimeGameStateManager::ManageTitleScreen()
 		guimgr.env_title->fadeIn(fTimeOutGame);
 		fade = FADING_IN;
 
-		//Start playing outgame BGM
+		//Start playing outgame BGM, if its not already playing
 		BGM[BGM_OUTGAME]->getAudio()->setLoopingStreamMode();
 	}
 
@@ -394,7 +394,7 @@ void PrimeGameStateManager::ManageTitleScreen()
 			SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
 
 			//Stop playing outgame BGM
-			BGM[BGM_OUTGAME]->getAudio()->stop();
+			BGM[BGM_OUTGAME]->getAudio()->stop(true, 0.25f);
 		}
 
 		//When fade is complete...

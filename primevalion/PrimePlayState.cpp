@@ -1562,6 +1562,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 		//If "End Match" button has been pressed...
 		if (signalEndMatch)
 		{
+			//Stop playing match BGM
+			BGM->at(BGM_MATCH)->getAudio()->stop();
+
 			//Advance straight to match end
 			phase = MATCH_END;
 		}
@@ -1595,6 +1598,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 					//Signal victory music
 					signalVictoryBGM = true;
 
+					//Stop playing match BGM
+					BGM->at(BGM_MATCH)->getAudio()->stop();
+
 					//End match if there's one or more victors
 					phase = MATCH_END;
 				}
@@ -1619,9 +1625,6 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 	//Show victory messages and finish up match
 	else if (phase == MATCH_END)
 	{
-		//Stop playing match BGM
-		BGM->at(BGM_MATCH)->getAudio()->stop();
-
 		//Wait until victory song is over,
 		//meanwhile displaying victory message.
 
