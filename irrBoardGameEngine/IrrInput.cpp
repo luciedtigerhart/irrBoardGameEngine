@@ -95,6 +95,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 		if( event.EventType == EET_KEY_INPUT_EVENT )
 		{
 			const SEvent::SKeyInput *ev = &event.KeyInput;
+			/*
 			if( ev->Key == KEY_LEFT )
 				camera->m_Rot.Y -= 0.1f;
 			else if( ev->Key == KEY_RIGHT )
@@ -103,6 +104,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 				camera->m_Rot.X += 0.1f;
 			else if( ev->Key == KEY_DOWN )
 				camera->m_Rot.X -= 0.1f;
+			*/
 
 			/*
 			else if( ev->Key == KEY_KEY_W )
@@ -134,7 +136,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 			}
 			else
 			{
-				if( ! camera->m_Dragging && ev->isRightPressed() )
+				if( !camera->m_Dragging && ev->isRightPressed() )
 				{
 					camera->m_DragStart.X = (f32)ev->X;
 					camera->m_DragStart.Y = (f32)ev->Y;
@@ -147,11 +149,10 @@ bool IrrInput::OnEvent(const SEvent& event)
 					camera->m_Dragging = false;
 				}
 				else if( camera->m_Dragging && ev->isRightPressed() )
-				{
+				{					
 					// Calculate a rotational offset in the range of -PI to +PI
 					f32 dx = (( ev->X - camera->m_DragStart.X ) / driver->getScreenSize().Width ) * PI;
 					f32 dy = (( ev->Y - camera->m_DragStart.Y ) / driver->getScreenSize().Height ) * PI;
-
 					// Calculate the new total rotation
 					camera->m_Rot.X = camera->m_DragStartRotation.X + dy;
 					camera->m_Rot.Y = camera->m_DragStartRotation.Y + dx;
