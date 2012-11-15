@@ -372,7 +372,7 @@ void PrimeGameStateManager::ManageTitleScreen()
 		fade = FADING_IN;
 
 		//Start playing outgame BGM, if its not already playing
-		BGM[BGM_OUTGAME]->getAudio()->setLoopingStreamMode();
+		if (BGM[BGM_OUTGAME]->getAudio()->isFinished()) BGM[BGM_OUTGAME]->getAudio()->setLoopingStreamMode();
 	}
 
 	//Update title screen and return a possible screen transition
@@ -394,7 +394,7 @@ void PrimeGameStateManager::ManageTitleScreen()
 			SFX[SFX_BUTTON_HEAVY]->getAudio()->setPlayOnceMode();
 
 			//Stop playing outgame BGM
-			BGM[BGM_OUTGAME]->getAudio()->stop(true, 0.25f);
+			BGM[BGM_OUTGAME]->getAudio()->stop(true, 2.0f);
 		}
 
 		//When fade is complete...
