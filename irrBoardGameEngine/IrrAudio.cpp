@@ -29,7 +29,9 @@ IrrAudio::IrrAudio(irrklang::ISoundEngine* soundEngine, scene::ISceneNode* paren
 	fade_in = false;
 	fade_out = false;
 	fade_velocidade = 0.1f;
+	fade_intervalo_tempo = 50.0f;
 	fade_volume = 0.0f;
+	fade_tempo_then = 0.0f;
 
 	if (SoundEngine) SoundEngine->grab();
 }
@@ -55,6 +57,23 @@ void IrrAudio::OnAnimate(u32 timeMs)
 {
 	ISceneNode::OnAnimate(timeMs);
 
+	if(fade_out || fade_in)
+	{
+		fade_tempo_now = (float)timeMs;
+		if(fade_tempo_then == 0)
+		{
+			fade_tempo_delta = 0;
+		}
+		else
+		{
+			fade_tempo_delta = fade_tempo_now - fade_tempo_then;
+		}
+		fade_tempo_then = fade_tempo_now;
+
+		fade_inc_tempo += 1.0f * fade_tempo_delta;
+
+		//std::cout << fade_inc_tempo << std::endl;
+	}
 	// play the sound
 
 	core::vector3df pos = getAbsolutePosition();
@@ -67,16 +86,22 @@ void IrrAudio::OnAnimate(u32 timeMs)
 		{
 			fade_volume = Sound->getVolume();
 
-			if(timeMs % 1000 == 0)
+			if(fade_inc_tempo > fade_intervalo_tempo)
 			{
 				fade_volume -= fade_velocidade;
-			}
+				fade_inc_tempo = 0;
 
-			Sound->setVolume(fade_volume);
+				//std::cout << fade_volume << std::endl;
+			}
 
 			if(fade_volume <= 0)
 			{
+				Sound->setVolume(0);
 				stop();
+			}
+			else
+			{
+				Sound->setVolume(fade_volume);
 			}
 		}
 
@@ -88,9 +113,12 @@ void IrrAudio::OnAnimate(u32 timeMs)
 				fade_volume += fade_velocidade;
 			}
 
-			if(timeMs % 1000 == 0)
+			if(fade_inc_tempo > fade_intervalo_tempo)
 			{
-				fade_volume += fade_velocidade;				
+				fade_volume += fade_velocidade;	
+				fade_inc_tempo = 0;
+
+				//std::cout << fade_volume << std::endl;
 			}
 
 			Sound->setVolume(fade_volume);			
@@ -295,8 +323,7 @@ ESCENE_NODE_TYPE IrrAudio::getType() const
 	return (ESCENE_NODE_TYPE)IRRKLANG_SCENE_NODE_ID;
 }
 
-
-void IrrAudio::stop(bool fadeOut, float velocidade)
+void IrrAudio::stop(bool fadeOut, float tempo)
 {
 	PlayMode = EPM_NOTHING;
 	PlayedCount = 0;
@@ -305,7 +332,6 @@ void IrrAudio::stop(bool fadeOut, float velocidade)
 	{
 		fade_in = false;
 		fade_out = fadeOut;
-		fade_velocidade = velocidade;
 
 		if(!fade_out)
 		{
@@ -313,12 +339,18 @@ void IrrAudio::stop(bool fadeOut, float velocidade)
 			Sound->drop();
 			Sound = 0;
 		}
+		else
+		{
+			fade_inc_tempo = 0.0f;
+			fade_tempo_then = 0.0f;
+			fade_velocidade = (1 / ((tempo * 1000) / fade_intervalo_tempo));
+		}
 	}
 }
 
 bool IrrAudio::isFinished()
 {
-	return Sound->isFinished();
+	return Sound == 0 ? true : false;
 }
 
 void IrrAudio::setVolume(ik_f32 volume)
@@ -328,36 +360,39 @@ void IrrAudio::setVolume(ik_f32 volume)
 
 //! Sets the play mode to 'play once', a sound file is played once, and 
 //! the scene node deletes itself then, if wished.
-void IrrAudio::setPlayOnceMode(bool fadeIn, float velocidade,bool deleteWhenFinished)
+void IrrAudio::setPlayOnceMode(bool fadeIn, float tempo, bool deleteWhenFinished)
 {
 	stop();
 	PlayMode = EPM_ONCE;
 	PlayedCount = 0;
-
+	
+	fade_out = false;
 	fade_in = fadeIn;
-	fade_velocidade = velocidade;
 	DeleteWhenFinished = deleteWhenFinished;
 	if(fade_in)
 	{
-		//fade_volume_atual = Sound->getVolume();
 		fade_volume = 0.0f;
-		//Sound->setVolume(fade_volume);
+		fade_inc_tempo = 0.0f;
+		fade_tempo_then = 0.0f;
+		fade_velocidade = (1 / ((tempo * 1000) / fade_intervalo_tempo));
 	}
 }
 
 
 //! Sets the play mode to 'looping stream', plays a looped sound over and over again.
-void IrrAudio::setLoopingStreamMode(bool fadeIn, float velocidade)
+void IrrAudio::setLoopingStreamMode(bool fadeIn, float tempo)
 {
 	stop();
 	PlayMode = EPM_LOOPING;
-	fade_in = fadeIn;
-	fade_velocidade = velocidade;
+
+	fade_out = false;
+	fade_in = fadeIn;	
 	if(fade_in)
 	{
-		//fade_volume_atual = Sound->getVolume();
 		fade_volume = 0.0f;
-		//Sound->setVolume(fade_volume);
+		fade_inc_tempo = 0.0f;
+		fade_tempo_then = 0.0f;
+		fade_velocidade = (1 / ((tempo * 1000) / fade_intervalo_tempo));
 	}
 }
 

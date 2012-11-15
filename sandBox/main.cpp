@@ -33,7 +33,7 @@ void myLoop()
 	if(engine->getInput()->isKeyDown(KEY_SPACE))
 	{
 		fgui->fadeIn(5000);
-		audio->getAudio()->stop(true,0.05);
+		audio->getAudio()->stop(true,10);
 		//fgui->setDisabledButton(GUI_ID_BUTTON_02,true);
 	}
 	/*
@@ -48,7 +48,7 @@ void myLoop()
 	if(fgui->isPressedButton(GUI_ID_BUTTON_02))
 	{
 		fgui->fadeOut(5000,SColor(124, 255, 0, 0));
-		audio->getAudio()->setLoopingStreamMode(true,0.05);
+		audio->getAudio()->setLoopingStreamMode(true,10);
 	}
 
 	if(fgui->isPressedButton(GUI_ID_BUTTON))

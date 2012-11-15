@@ -24,7 +24,7 @@ namespace IrrBoardGameEngine
 		void setPlayOnceMode(bool fadeIn = false, float velocidade = 0.1f,bool deleteWhenFinished=false);
 
 		//! Sets the play mode to 'looping stream', plays a looped sound over and over again.
-		void setLoopingStreamMode(bool fadeIn = false, float velocidade = 0.1f);
+		void setLoopingStreamMode(bool fadeIn = false, float tempo = 1.0f);
 
 		//! Sets the play mode to 'random'. Plays a sound with a variable, random interval
 		//! over and over again.
@@ -45,7 +45,7 @@ namespace IrrBoardGameEngine
 		void setMinMaxSoundDistance(f32 minDistance=1.0f, f32 maxDistance=10000000.0f);
 
 		//! stops playback, releases sound, sets playmode to 'nothing'
-		void stop(bool fadeOut = false, float velocidade = 0.1f);
+		void stop(bool fadeOut = false, float tempo = 1.0f);
 
 		//
 		bool isFinished();
@@ -71,6 +71,13 @@ namespace IrrBoardGameEngine
 		bool fade_in;
 		bool fade_out;
 		float fade_velocidade;
+		float fade_intervalo_tempo;
+		float fade_inc_tempo;
+
+		float fade_tempo_now;
+		float fade_tempo_then;
+		float fade_tempo_delta;
+
 		float fade_volume;
 		float fade_volume_atual;
 
