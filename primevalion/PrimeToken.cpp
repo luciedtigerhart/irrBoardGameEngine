@@ -155,7 +155,7 @@ void PrimeToken::init()
 	billboardAbility->setVisible(false);
 
 	//Create extraction billboard
-	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.0f, 2.0f), vector3df(0.0f,5.0f,0.0f));
+	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.1f, 2.1f), vector3df(0.0f,5.0f,0.0f));
 	billboardExtraction->getMaterial(0).setTexture(0, driver->getTexture(pathBBEXT));
 	billboardExtraction->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
 	billboardExtraction->getMaterial(0).Lighting = false;

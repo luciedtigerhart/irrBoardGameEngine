@@ -50,7 +50,7 @@ PrimeGameStateManager::~PrimeGameStateManager()
 void PrimeGameStateManager::Init()
 {
 	//Specify game goal, in resources
-	gameGoal = 100;
+	gameGoal = 2000;
 
 	//Initialize random seed
 	srand ( unsigned (time(NULL)) );

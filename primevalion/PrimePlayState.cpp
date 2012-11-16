@@ -690,7 +690,7 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, float speed)
 	zDiff = destination.z - token->node->getAbsolutePosition().Z;
 
 	//Decreases speed the closer token gets to destination (trap fall only)
-	speed -= abs((destination.y - origin.y) - yDiff);
+	speed -= abs((destination.y - origin.y) - yDiff) * speed;
 	if (speed < 0.05f) speed = 0.05f; //Minimum speed
 
 	//If distance between token and destination is still higher than "okDiff"...
@@ -947,7 +947,7 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 		else if (animStarted && animRunning && !animFinished)
 		{
 			//Translate token, and when destination has been reached...
-			if (TokenHasTranslated(token, (speed * 1.5f)))
+			if (TokenHasTranslated(token, speed * 0.6f))
 			{
 				//Finish up animation
 				token->getBehavior(0)->setBool("isAnimRunning", false);
