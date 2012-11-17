@@ -10,7 +10,8 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 								PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 								std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 								std::list<IrrToken*>* team3, std::list<IrrToken*>* team4,
-								std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound)
+								std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound,
+								ICameraSceneNode* camera)
 {
 	//Get input from engine
 	input = engine->getInput();
@@ -24,6 +25,20 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 
 	//Get audio lists from game state manager
 	BGM = music; SFX = sound;
+
+	//Get active camera from scene
+	activeCamera = camera;
+
+	//Create camera crosshair billboard
+	billboardCameraCrosshair = engine->getSceneManager()->addBillboardSceneNode(0, dimension2d<f32>(2.5f, 2.5f), activeCamera->getTarget());
+	billboardCameraCrosshair->getMaterial(0).setTexture(0, engine->getDriver()->getTexture("billboard/crosshair/billboard_crosshair.png"));
+	billboardCameraCrosshair->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
+	billboardCameraCrosshair->getMaterial(0).Lighting = false;
+
+	//Crosshair is invisible by default
+	billboardCameraCrosshair->setVisible(false);
+	crosshairActive = false;
+	middleMousePressed = false;
 
 	//Initialize token lists
 
@@ -408,6 +423,31 @@ void PrimePlayState::StopParticles(int particleSystemID)
 		resourceParticlesSE->node->getEmitter()->setMinParticlesPerSecond(0);
 		resourceParticlesSE->node->getEmitter()->setMaxParticlesPerSecond(0);
 	}
+}
+
+void PrimePlayState::SetCrosshairPosition(void)
+{
+	//Update crosshair position
+	billboardCameraCrosshair->setPosition(activeCamera->getTarget());
+
+	//When middle mouse button is released...
+	if (middleMousePressed && !input->getMouseState().middleButtonDown)
+	{
+		//Activate or deactivate crosshair
+		if (crosshairActive) crosshairActive = false;
+		else crosshairActive = true;
+
+		middleMousePressed = false;
+	}
+
+	//When middle mouse button is pressed...
+	if (input->getMouseState().middleButtonDown) middleMousePressed = true;
+
+	//Show crosshair if its active
+	if (crosshairActive) billboardCameraCrosshair->setVisible(true);
+
+	//Otherwise, hide crosshair
+	else billboardCameraCrosshair->setVisible(false);
 }
 
 void PrimePlayState::SetTurnPlayer(int turn)
@@ -1655,7 +1695,8 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			//Stop playing victory BGM
 			BGM->at(BGM_VICTORY)->getAudio()->stop();
 
-			//IrrEngine::getInstance()->getDevice()->closeDevice(); //Exit application
+			//Remove camera crosshair billboard
+			billboardCameraCrosshair->remove();
 		}
 	}
 }
@@ -2314,6 +2355,9 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	bool tileSelected = false;
 	bool tokenSelected = false;
 	bool mouseClickedOnHighlight = false;
+
+	//Manage camera crosshair
+	SetCrosshairPosition();
 
 	//Advance phases when conditions are met
 	SwapPhase(board);

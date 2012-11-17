@@ -42,7 +42,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 
 	// Usando o mouse
     if (event.EventType == irr::EET_MOUSE_INPUT_EVENT)
-    {		
+    {
         switch(event.MouseInput.Event)
         {
 			case EMIE_LMOUSE_PRESSED_DOWN:
@@ -64,14 +64,21 @@ bool IrrInput::OnEvent(const SEvent& event)
 				mouseState.rightButtonDown = false;
 				break;
 
+			case EMIE_MMOUSE_PRESSED_DOWN:
+				mouseState.middleButtonDown = true;
+				break;
+
+			case EMIE_MMOUSE_LEFT_UP:
+				mouseState.middleButtonDown = false;
+				break;
+
 			case EMIE_MOUSE_MOVED:
 				mouseState.position.X = event.MouseInput.X;
 				mouseState.position.Y = event.MouseInput.Y;
 				break;
 
 			default:
-                // We use the wheel
-                break;
+				break;
         }
     }
 
@@ -105,29 +112,50 @@ bool IrrInput::OnEvent(const SEvent& event)
 				camera->m_Rot.X -= 0.1f;
 			*/			
 
-			if( ev->Key == KEY_KEY_W )
+			if (!camera->m_Dragging)
 			{
-				camera->m_LookAt.Z += 0.1f;
-				camera->m_Trans.Z += 0.1f;
-				camera->is_move = true;
-			}
-			else if( ev->Key == KEY_KEY_S )
-			{
-				camera->m_LookAt.Z -= 0.1f;
-				camera->m_Trans.Z -= 0.1f;
-				camera->is_move = true;
-			}
-			else if( ev->Key == KEY_KEY_A )
-			{
-				camera->m_LookAt.X -= 0.1f;
-				camera->m_Trans.X -= 0.1f;
-				camera->is_move = true;
-			}
-			else if( ev->Key == KEY_KEY_D )
-			{
-				camera->m_LookAt.X += 0.1f;
-				camera->m_Trans.X += 0.1f;
-				camera->is_move = true;
+				if( ev->Key == KEY_KEY_W || ev->Key == KEY_UP )
+				{
+					//camera->m_LookAt.Z += 0.1f;
+					//camera->m_Trans.Z += 0.1f;
+				
+					camera->moveForward(0.5f);
+					camera->is_move = true;
+				}
+				else if( ev->Key == KEY_KEY_S  || ev->Key == KEY_DOWN )
+				{
+					//camera->m_LookAt.Z -= 0.1f;
+					//camera->m_Trans.Z -= 0.1f;
+				
+					camera->moveBackward(0.5f);
+					camera->is_move = true;
+				}
+				else if( ev->Key == KEY_KEY_A  || ev->Key == KEY_LEFT )
+				{
+					//camera->m_LookAt.X -= 0.1f;
+					//camera->m_Trans.X -= 0.1f;
+				
+					camera->moveLeft(0.5f);
+					camera->is_move = true;
+				}
+				else if( ev->Key == KEY_KEY_D  || ev->Key == KEY_RIGHT )
+				{
+					//camera->m_LookAt.X += 0.1f;
+					//camera->m_Trans.X += 0.1f;
+				
+					camera->moveRight(0.5f);
+					camera->is_move = true;
+				}
+				else if( ev->Key == KEY_KEY_E  || ev->Key == KEY_PRIOR )
+				{
+					camera->moveUp(0.5f);
+					camera->is_move = true;
+				}
+				else if( ev->Key == KEY_KEY_Q  || ev->Key == KEY_NEXT )
+				{
+					camera->moveDown(0.5f);
+					camera->is_move = true;
+				}
 			}
 
 			if(!ev->PressedDown) camera->is_move = false;
@@ -151,28 +179,31 @@ bool IrrInput::OnEvent(const SEvent& event)
 			}
 			else
 			{
-				if( !camera->m_Dragging && ev->isRightPressed() )
+				if (!camera->is_move)
 				{
-					camera->m_DragStart.X = (f32)ev->X;
-					camera->m_DragStart.Y = (f32)ev->Y;
-					camera->m_DragStartRotation.X = camera->m_Rot.X;
-					camera->m_DragStartRotation.Y = camera->m_Rot.Y;
-					camera->m_Dragging = true;
-				}
-				else if( camera->m_Dragging && ! ev->isRightPressed() )
-				{
-					camera->m_Dragging = false;
-				}
-				else if( camera->m_Dragging && ev->isRightPressed() )
-				{					
-					// Calculate a rotational offset in the range of -PI to +PI
-					f32 dx = (( ev->X - camera->m_DragStart.X ) / driver->getScreenSize().Width ) * PI;
-					f32 dy = (( ev->Y - camera->m_DragStart.Y ) / driver->getScreenSize().Height ) * PI;
-					// Calculate the new total rotation
-					camera->m_Rot.X = camera->m_DragStartRotation.X + dy;
-					camera->m_Rot.Y = camera->m_DragStartRotation.Y + dx;
+					if( !camera->m_Dragging && ev->isRightPressed() )
+					{
+						camera->m_DragStart.X = (f32)ev->X;
+						camera->m_DragStart.Y = (f32)ev->Y;
+						camera->m_DragStartRotation.X = camera->m_Rot.X;
+						camera->m_DragStartRotation.Y = camera->m_Rot.Y;
+						camera->m_Dragging = true;
+					}
+					else if( camera->m_Dragging && ! ev->isRightPressed() )
+					{
+						camera->m_Dragging = false;
+					}
+					else if( camera->m_Dragging && ev->isRightPressed() )
+					{					
+						// Calculate a rotational offset in the range of -PI to +PI
+						f32 dx = (( ev->X - camera->m_DragStart.X ) / driver->getScreenSize().Width ) * PI;
+						f32 dy = (( ev->Y - camera->m_DragStart.Y ) / driver->getScreenSize().Height ) * PI;
+						// Calculate the new total rotation
+						camera->m_Rot.X = camera->m_DragStartRotation.X + dy;
+						camera->m_Rot.Y = camera->m_DragStartRotation.Y + dx;
 
-					//camera->update();
+						//camera->update();
+					}
 				}
 			}
 		}

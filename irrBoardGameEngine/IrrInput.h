@@ -24,7 +24,8 @@ namespace IrrBoardGameEngine {
 			core::position2di position;
 			bool leftButtonDown;
 			bool rightButtonDown;
-			SMouseState() : leftButtonDown(false), rightButtonDown(false) { }
+			bool middleButtonDown;
+			SMouseState() : leftButtonDown(false), rightButtonDown(false), middleButtonDown(false) { }
 		} mouseState;
 
 		IrrInput();

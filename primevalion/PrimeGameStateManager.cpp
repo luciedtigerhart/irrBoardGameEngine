@@ -137,10 +137,8 @@ void PrimeGameStateManager::SetupMatch()
 	engine->setCurrentScene(match);
 	engine->setCurrentGUI(guimgr.env_match);
 
-	//Configure camera
-	//camera = match->addCamera(new Vector(0.0f, 25.0f, 0.0f), new Vector(0.0f, 0.0f, 1.0f));
-	camera = match->addCameraDefault(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
-	camera->setName("Match Camera");
+	//Add camera
+	camera = match->addCameraBoardGame(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
 
 	//Add particle systems to scene
 	CreateParticles();
@@ -155,7 +153,7 @@ void PrimeGameStateManager::SetupMatch()
 						 resourceParticlesSW, resourceParticlesSE,
 						 player1, player2, player3, player4,
 						 tokensTeam1, tokensTeam2, tokensTeam3, tokensTeam4,
-						 &BGM, &SFX);
+						 &BGM, &SFX, match->getSceneManager()->getActiveCamera());
 }
 
 void PrimeGameStateManager::ResetPlayers()

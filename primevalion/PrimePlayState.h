@@ -73,6 +73,24 @@
 	#define RESOURCES_SW 791
 	#define RESOURCES_SE 792
 
+//Camera movement definitions
+//----------------------------
+
+	#define W 87
+	#define A 65
+	#define S 83
+	#define D 68
+	#define F 70
+	#define R 82
+	#define Q 81
+	#define E 69
+	#define ARROW_LEFT 37
+	#define ARROW_RIGHT 39
+	#define ARROW_UP 38
+	#define ARROW_DOWN 40
+	#define PAGE_UP 33
+	#define PAGE_DOWN 34
+
 //Other helpful definitions
 //----------------------------
 
@@ -155,6 +173,11 @@ private:
 	//Particle initialization
 	bool particlesOK;
 
+	//Camera and crosshair
+	ICameraSceneNode* activeCamera;
+	ISceneNode* billboardCameraCrosshair;
+	bool crosshairActive, middleMousePressed;
+
 	//Audio lists
 	std::vector<IrrGameObject*>* BGM;
 	std::vector<IrrGameObject*>* SFX;
@@ -206,7 +229,8 @@ public:
 					PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4,
 					std::list<IrrToken*>* team1, std::list<IrrToken*>* team2,
 					std::list<IrrToken*>* team3, std::list<IrrToken*>* team4,
-					std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound);
+					std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound,
+					ICameraSceneNode* camera);
 
 	//Update "Wait" mini-engine
 	void Wait();
@@ -225,6 +249,9 @@ public:
 
 	//Stop a particle system's emission
 	void StopParticles(int particleSystemID);
+
+	//Update camera crosshair position
+	void SetCrosshairPosition(void);
 
 	//Find out which player this turn belongs to
 	void SetTurnPlayer(int turn);

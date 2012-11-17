@@ -22,8 +22,15 @@ namespace IrrBoardGameEngine {
 		ICameraSceneNode *node;
 		~IrrCamera(void);
 
+		void updateVectors();
 		void update();
 		void move();
+		void moveForward(f32 speed);
+		void moveBackward(f32 speed);
+		void moveRight(f32 speed);
+		void moveLeft(f32 speed);
+		void moveUp(f32 speed);
+		void moveDown(f32 speed);
 
 		bool is_move;
 		bool is_manager;
@@ -35,5 +42,12 @@ namespace IrrBoardGameEngine {
 		bool m_Dragging;                   // Is currently dragging?
 		vector2df m_DragStart;             // 2D Position on screen where the drag started
 		vector3df m_DragStartRotation;     // Rotation when drag started
+
+		vector3df forwardVector;
+		vector3df backwardVector;
+		vector3df rightVector;
+		vector3df leftVector;
+		vector3df upVector;
+		vector3df downVector;
 	};
 }

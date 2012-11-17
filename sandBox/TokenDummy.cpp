@@ -13,7 +13,7 @@ void TokenDummy::init(void)
 	token->node = animNode;
 	token->node->setParent(token->parentNode->node);
 
-	token->node->setScale(vector3df(0.05,0.05,0.05));
+	token->node->setScale(vector3df(0.05f,0.05f,0.05f));
 
 	//
 	// SOMBRA

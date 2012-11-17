@@ -33,9 +33,11 @@ IrrCamera::IrrCamera(ICameraSceneNode *n, bool isManager){
 
 		m_Rad = n->getAbsolutePosition().getDistanceFrom(n->getTarget());
 		m_Dragging = false;
-		is_move - false;
+		is_move = false;
 	}
 	
+	m_Trans = n->getAbsolutePosition();
+
 	m_LookAt.X = n->getTarget().X;
 	m_LookAt.Y = n->getTarget().Y;
 	m_LookAt.Z = n->getTarget().Z;
@@ -50,27 +52,28 @@ vector3df IrrCamera::getPositionOnSphere( f32 angleH, f32 angleV, f32 radius )
 {
 	//std::cout << angleH << " " << angleV << " " << radius << std::endl;
 	
-	//Limit Y angle
+	//Limit Y angle to avoid Z-axis flipping
 	if(angleV > 1.4f)
 	{
 		angleV = 1.4f;
 		m_Rot.X = angleV;
 	}
-	else if (angleV < 0.2f)
+	else if (angleV < -1.4f)
 	{
-		angleV = 0.2f;
+		angleV = -1.4f;
 		m_Rot.X = angleV;
 	}
 
-	//Limit radius (zooming)
+	//Limit radius (zooming) to avoid Z-axis flipping
+	//and to prevent camera from going too far
 	if (radius < 8.5f)
 	{
 		radius = 8.5f;
 		m_Rad = radius;
 	}
-	else if (radius > 35.0f)
+	else if (radius > 25.0f)
 	{
-		radius = 35.0f;
+		radius = 25.0f;
 		m_Rad = radius;
 	}
 
@@ -112,15 +115,42 @@ void IrrCamera::lookAt(Vector &v)
 	this->node->setTarget(m_LookAt);
 }
 
+void IrrCamera::updateVectors()
+{
+    vector3df camTarget = this->node->getTarget();
+    vector3df camPosition = this->node->getAbsolutePosition();
+    vector3df camDirection = camTarget - camPosition;
+
+	vector3df worldDownVector(0.0f, -1.0f, 0.0f);
+	vector3df worldUpVector(0.0f, 1.0f, 0.0f);
+
+    leftVector = worldDownVector.crossProduct(camDirection);
+	rightVector = worldUpVector.crossProduct(camDirection);
+
+	upVector = leftVector.crossProduct(camDirection);
+	downVector = rightVector.crossProduct(camDirection);
+
+	forwardVector = upVector.crossProduct(leftVector);
+	backwardVector = upVector.crossProduct(rightVector);
+}
+
 void IrrCamera::update()
 {
 	if(is_manager)
 	{
+		updateVectors();
+
 		this->node->setTarget(m_LookAt);
-	
-		if (!is_move) m_Trans = getPositionOnSphere( m_Rot.Y, m_Rot.X, m_Rad );
-	
+
+		if (!is_move)
+		{
+			this->node->getParent()->setPosition(m_LookAt); //Parent node is the rotation sphere center
+
+			m_Trans = getPositionOnSphere( m_Rot.Y, m_Rot.X, m_Rad );
+		}
+		
 		this->node->setPosition( m_Trans );
+		this->node->updateAbsolutePosition();
 	}
 }
 
@@ -128,4 +158,82 @@ void IrrCamera::move()
 {
 	//this->node->setTarget(m_LookAt);
 	//this->node->setPosition( m_Trans );
+}
+
+void IrrCamera::moveForward(f32 speed)
+{
+    vector3df camMovement = forwardVector.normalize();
+    camMovement = camMovement * speed;
+	
+	m_Trans = this->node->getPosition() + camMovement;
+	m_LookAt = this->node->getTarget() + camMovement;
+
+    this->node->setPosition(m_Trans);
+	this->node->updateAbsolutePosition();
+    this->node->setTarget(m_LookAt);
+}
+
+void IrrCamera::moveBackward(f32 speed)
+{
+    vector3df camMovement = backwardVector.normalize();
+    camMovement = camMovement * speed;
+	
+	m_Trans = this->node->getPosition() + camMovement;
+	m_LookAt = this->node->getTarget() + camMovement;
+
+    this->node->setPosition(m_Trans);
+	this->node->updateAbsolutePosition();
+    this->node->setTarget(m_LookAt);
+}
+
+void IrrCamera::moveRight(f32 speed)
+{
+	vector3df camMovement = rightVector.normalize();
+    camMovement = camMovement * speed;
+ 
+	m_Trans = this->node->getPosition() + camMovement;
+	m_LookAt = this->node->getTarget() + camMovement;
+
+    this->node->setPosition(m_Trans);
+	this->node->updateAbsolutePosition();
+    this->node->setTarget(m_LookAt);
+}
+
+void IrrCamera::moveLeft(f32 speed)
+{
+	vector3df camMovement = leftVector.normalize();
+    camMovement = camMovement * speed;
+ 
+	m_Trans = this->node->getPosition() + camMovement;
+	m_LookAt = this->node->getTarget() + camMovement;
+
+    this->node->setPosition(m_Trans);
+	this->node->updateAbsolutePosition();
+    this->node->setTarget(m_LookAt);
+}
+
+void IrrCamera::moveUp(f32 speed)
+{
+	vector3df camMovement = upVector.normalize();
+	camMovement = camMovement * speed;
+
+	m_Trans = this->node->getPosition() + camMovement;
+	m_LookAt = this->node->getTarget() + camMovement;
+
+    this->node->setPosition(m_Trans);
+	this->node->updateAbsolutePosition();
+    this->node->setTarget(m_LookAt);
+}
+
+void IrrCamera::moveDown(f32 speed)
+{
+	vector3df camMovement = downVector.normalize();
+	camMovement = camMovement * speed;
+
+	m_Trans = this->node->getPosition() + camMovement;
+	m_LookAt = this->node->getTarget() + camMovement;
+
+    this->node->setPosition(m_Trans);
+	this->node->updateAbsolutePosition();
+    this->node->setTarget(m_LookAt);
 }
