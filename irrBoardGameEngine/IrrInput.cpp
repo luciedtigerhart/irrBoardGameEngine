@@ -89,8 +89,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 		}
 	}
 
-
-	if(camera != NULL)
+	if(camera != NULL && camera->is_manager)
 	{
 		if( event.EventType == EET_KEY_INPUT_EVENT )
 		{
@@ -104,20 +103,36 @@ bool IrrInput::OnEvent(const SEvent& event)
 				camera->m_Rot.X += 0.1f;
 			else if( ev->Key == KEY_DOWN )
 				camera->m_Rot.X -= 0.1f;
-			*/
+			*/			
 
-			/*
-			else if( ev->Key == KEY_KEY_W )
+			if( ev->Key == KEY_KEY_W )
+			{
 				camera->m_LookAt.Z += 0.1f;
+				camera->m_Trans.Z += 0.1f;
+				camera->is_move = true;
+			}
 			else if( ev->Key == KEY_KEY_S )
+			{
 				camera->m_LookAt.Z -= 0.1f;
+				camera->m_Trans.Z -= 0.1f;
+				camera->is_move = true;
+			}
 			else if( ev->Key == KEY_KEY_A )
+			{
 				camera->m_LookAt.X -= 0.1f;
+				camera->m_Trans.X -= 0.1f;
+				camera->is_move = true;
+			}
 			else if( ev->Key == KEY_KEY_D )
+			{
 				camera->m_LookAt.X += 0.1f;
-			*/
+				camera->m_Trans.X += 0.1f;
+				camera->is_move = true;
+			}
 
-			camera->update();
+			if(!ev->PressedDown) camera->is_move = false;
+
+			//camera->update();
 
 			return true;
 		}
@@ -132,7 +147,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 				else
 					camera->m_Rad += 0.5f;
 
-				camera->update();
+				//camera->update();
 			}
 			else
 			{
@@ -157,7 +172,7 @@ bool IrrInput::OnEvent(const SEvent& event)
 					camera->m_Rot.X = camera->m_DragStartRotation.X + dy;
 					camera->m_Rot.Y = camera->m_DragStartRotation.Y + dx;
 
-					camera->update();
+					//camera->update();
 				}
 			}
 		}

@@ -77,7 +77,10 @@ namespace IrrBoardGameEngine {
 		IrrBoard *addAnimatedBoard(std::string src,Vector*,bool shadow = false);
 		
 		IrrGameObject *addCameraDefault(Vector*,Vector*);
-		IrrGameObject *addCameraFPS(Vector*,Vector*);
+		IrrGameObject *addCameraFPS(f32 rotateSpeed = 100.0f, f32 moveSpeed = 0.5f, s32 id=-1,
+			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false,
+			f32 jumpSpeed = 0.f, bool invertMouse=false,
+			bool makeActive=true);
 		IrrGameObject *addCameraBoardGame(Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 

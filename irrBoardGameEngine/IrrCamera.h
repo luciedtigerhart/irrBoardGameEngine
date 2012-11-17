@@ -16,7 +16,7 @@ namespace IrrBoardGameEngine {
 		void dumpVector( const vector3df &vec );
 
 	public:
-		IrrCamera(ICameraSceneNode *);
+		IrrCamera(ICameraSceneNode *, bool isManager = false);
 		void lookAt(Vector&);
 
 		ICameraSceneNode *node;
@@ -24,6 +24,9 @@ namespace IrrBoardGameEngine {
 
 		void update();
 		void move();
+
+		bool is_move;
+		bool is_manager;
 
 		vector3df m_Trans;
 		vector3df m_LookAt;                // 
