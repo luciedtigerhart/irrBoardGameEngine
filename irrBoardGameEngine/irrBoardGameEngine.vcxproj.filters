@@ -95,9 +95,6 @@
     <ClCompile Include="IrrMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IrrTokenRoot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IrrBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

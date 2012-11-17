@@ -180,7 +180,7 @@ void PrimeGameStateManager::CreateParticles()
 void PrimeGameStateManager::CreateBoard()
 {
 	//Add new board to scene
-	board = match->addStaticBoard("boards/board-01.txt",new Vector(0.0f, 1.0f, 0.0f));
+	board = match->addStaticBoard("boards/board-01.txt",new Vector(1.0f, 1.0f, -1.0f));
 
 	//Create light
 	light = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);

@@ -48,7 +48,6 @@
     <ClCompile Include="IrrScene.cpp" />
     <ClCompile Include="IrrTile.cpp" />
     <ClCompile Include="IrrToken.cpp" />
-    <ClCompile Include="IrrTokenRoot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tarefas.txt" />
