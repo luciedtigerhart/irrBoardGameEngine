@@ -53,6 +53,7 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	driver = device->getVideoDriver();
 
 	input->setDriver(driver);
+	input->setDevice(device);
 
 	//
 	// GUI

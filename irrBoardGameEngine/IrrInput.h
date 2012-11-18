@@ -37,6 +37,7 @@ namespace IrrBoardGameEngine {
 		void update();
 
 		void setDriver(IVideoDriver *);
+		void setDevice(IrrlichtDevice *);
 		void setGUI(IrrGUI *);
 		s32 guiElementid;
 
@@ -58,6 +59,7 @@ namespace IrrBoardGameEngine {
 		IrrGUI * gui;
 		IrrCamera * camera;
 		IVideoDriver * driver;
+		IrrlichtDevice * device;
 
 		void setKeyStatus(int* k, int keyCode, bool value);
 		bool getKeyStatus(int* k, int keyCode);
@@ -66,5 +68,8 @@ namespace IrrBoardGameEngine {
 		int keyStatusDown[KEY_KEY_CODES_COUNT / 32];
 		int keyStatusPressed[KEY_KEY_CODES_COUNT / 32];
 		int keyStatusReleased[KEY_KEY_CODES_COUNT / 32];
+
+		float deltaTime;
+		int now, then;
 	};
 }

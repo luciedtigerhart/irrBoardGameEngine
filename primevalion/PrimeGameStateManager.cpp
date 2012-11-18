@@ -138,7 +138,8 @@ void PrimeGameStateManager::SetupMatch()
 	engine->setCurrentGUI(guimgr.env_match);
 
 	//Add camera
-	camera = match->addCameraBoardGame(new Vector(0.0f, 20.0f, -10.0f), new Vector(0.0f, 0.0f, 1.0f));
+	camera = match->addCameraBoardGame(new Vector(0.0f, 22.0f, -8.0f), new Vector(0.0f, 1.0f, 1.0f), //Initial position and target
+									   new Vector(0.0f, 23.0f, -1.0f), new Vector(0.0f, 1.0f, 1.0f)); //Focus position and target
 
 	//Add particle systems to scene
 	CreateParticles();
@@ -178,7 +179,7 @@ void PrimeGameStateManager::CreateParticles()
 void PrimeGameStateManager::CreateBoard()
 {
 	//Add new board to scene
-	board = match->addStaticBoard("boards/board-01.txt",new Vector(1.0f, 1.0f, -1.0f));
+	board = match->addStaticBoard("boards/board-01.txt",new Vector(1.0f, 1.0f, 0.0f));
 
 	//Create light
 	light = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);

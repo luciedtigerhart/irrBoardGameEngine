@@ -34,15 +34,13 @@ IrrCamera::IrrCamera(ICameraSceneNode *n, bool isManager){
 		m_Rad = n->getAbsolutePosition().getDistanceFrom(n->getTarget());
 		m_Dragging = false;
 		is_move = false;
+		is_focused = false;
+		is_reset = false;
 	}
 	
-	m_Trans = n->getAbsolutePosition();
-
-	m_LookAt.X = n->getTarget().X;
-	m_LookAt.Y = n->getTarget().Y;
-	m_LookAt.Z = n->getTarget().Z;
+	init_Trans = m_Trans = n->getAbsolutePosition();
+	init_LookAt = m_LookAt = n->getTarget();
 }
-
 
 IrrCamera::~IrrCamera(void)
 {
@@ -140,24 +138,33 @@ void IrrCamera::update()
 	{
 		updateVectors();
 
-		this->node->setTarget(m_LookAt);
+		if (is_focused) this->node->setTarget( focus_LookAt );
+		else this->node->setTarget( m_LookAt );
 
-		if (!is_move)
+		if (!is_move && !is_focused)
 		{
 			this->node->getParent()->setPosition(m_LookAt); //Parent node is the rotation sphere center
 
 			m_Trans = getPositionOnSphere( m_Rot.Y, m_Rot.X, m_Rad );
 		}
+		else if (is_focused) this->node->getParent()->setPosition(focus_LookAt);
+
+		if (is_focused) this->node->setPosition( focus_Trans );
+		else this->node->setPosition( m_Trans );
 		
-		this->node->setPosition( m_Trans );
 		this->node->updateAbsolutePosition();
 	}
 }
 
-void IrrCamera::move()
+void IrrCamera::reset()
 {
-	//this->node->setTarget(m_LookAt);
-	//this->node->setPosition( m_Trans );
+	if (!is_reset)
+	{
+		m_Trans = init_Trans;
+		m_LookAt = init_LookAt;
+
+		is_reset = true;
+	}
 }
 
 void IrrCamera::moveForward(f32 speed)
@@ -168,9 +175,8 @@ void IrrCamera::moveForward(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-    this->node->setPosition(m_Trans);
-	this->node->updateAbsolutePosition();
-    this->node->setTarget(m_LookAt);
+	//Camera has moved, so enable resetting
+	is_reset = false;
 }
 
 void IrrCamera::moveBackward(f32 speed)
@@ -181,9 +187,8 @@ void IrrCamera::moveBackward(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-    this->node->setPosition(m_Trans);
-	this->node->updateAbsolutePosition();
-    this->node->setTarget(m_LookAt);
+	//Camera has moved, so enable resetting
+	is_reset = false;
 }
 
 void IrrCamera::moveRight(f32 speed)
@@ -194,9 +199,8 @@ void IrrCamera::moveRight(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-    this->node->setPosition(m_Trans);
-	this->node->updateAbsolutePosition();
-    this->node->setTarget(m_LookAt);
+	//Camera has moved, so enable resetting
+	is_reset = false;
 }
 
 void IrrCamera::moveLeft(f32 speed)
@@ -207,9 +211,8 @@ void IrrCamera::moveLeft(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-    this->node->setPosition(m_Trans);
-	this->node->updateAbsolutePosition();
-    this->node->setTarget(m_LookAt);
+	//Camera has moved, so enable resetting
+	is_reset = false;
 }
 
 void IrrCamera::moveUp(f32 speed)
@@ -220,9 +223,8 @@ void IrrCamera::moveUp(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-    this->node->setPosition(m_Trans);
-	this->node->updateAbsolutePosition();
-    this->node->setTarget(m_LookAt);
+	//Camera has moved, so enable resetting
+	is_reset = false;
 }
 
 void IrrCamera::moveDown(f32 speed)
@@ -233,7 +235,12 @@ void IrrCamera::moveDown(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-    this->node->setPosition(m_Trans);
-	this->node->updateAbsolutePosition();
-    this->node->setTarget(m_LookAt);
+	//Camera has moved, so enable resetting
+	is_reset = false;
+}
+
+void IrrCamera::setFocus(vector3df position, vector3df lookAt)
+{
+	focus_Trans = position;
+	focus_LookAt = lookAt;
 }

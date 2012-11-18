@@ -133,13 +133,14 @@ IrrGameObject *IrrScene::addCameraFPS(f32 rotateSpeed, f32 moveSpeed, s32 id,
 	return go;
 }
 
-IrrGameObject *IrrScene::addCameraBoardGame(Vector* p, Vector* lookAt)
+IrrGameObject *IrrScene::addCameraBoardGame(Vector* p, Vector* lookAt, Vector* focus_p, Vector* focus_lookAt)
 {
 	IrrGameObject *go = new IrrGameObject();
 	go->node = smgr->addEmptySceneNode();
 	go->node->setParent(rootScene);
 
-	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)),true);	
+	IrrCamera * cam = new IrrCamera(smgr->addCameraSceneNode(go->node, vector3df(p->x,p->y,p->z), vector3df(lookAt->x,lookAt->y,lookAt->z)),true);
+	cam->setFocus(vector3df(focus_p->x,focus_p->y,focus_p->z), vector3df(focus_lookAt->x,focus_lookAt->y,focus_lookAt->z));
 	go->setCamera(cam);
 	currentCamera = cam->node;
 

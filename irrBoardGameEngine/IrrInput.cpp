@@ -20,6 +20,13 @@ void IrrInput::setDriver(IVideoDriver * d)
 	driver = d;
 }
 
+void IrrInput::setDevice(IrrlichtDevice * d)
+{
+	device = d;
+
+	then = device->getTimer()->getTime();
+}
+
 bool IrrInput::OnEvent(const SEvent& event)
 {
 	// Usando o teclado
@@ -114,51 +121,68 @@ bool IrrInput::OnEvent(const SEvent& event)
 
 			if (!camera->m_Dragging)
 			{
-				if( ev->Key == KEY_KEY_W || ev->Key == KEY_UP )
+				if ( ev->Key == KEY_KEY_F || ev->Key == KEY_SPACE ) camera->is_focused = true;
+
+				else if ( ev->Key != KEY_KEY_F && ev->Key != KEY_SPACE )
 				{
-					//camera->m_LookAt.Z += 0.1f;
-					//camera->m_Trans.Z += 0.1f;
+					if ( ev->Key == KEY_KEY_R || ev->Key == KEY_HOME )
+					{
+						camera->is_move = false;
+						camera->reset();
+					}
+					else
+					{
+						if( ev->Key == KEY_KEY_W || ev->Key == KEY_UP )
+						{
+							//camera->m_LookAt.Z += 0.1f;
+							//camera->m_Trans.Z += 0.1f;
 				
-					camera->moveForward(0.5f);
-					camera->is_move = true;
-				}
-				else if( ev->Key == KEY_KEY_S  || ev->Key == KEY_DOWN )
-				{
-					//camera->m_LookAt.Z -= 0.1f;
-					//camera->m_Trans.Z -= 0.1f;
+							camera->moveForward(100.0f * deltaTime);
+							camera->is_move = true;
+						}
+						else if( ev->Key == KEY_KEY_S  || ev->Key == KEY_DOWN )
+						{
+							//camera->m_LookAt.Z -= 0.1f;
+							//camera->m_Trans.Z -= 0.1f;
 				
-					camera->moveBackward(0.5f);
-					camera->is_move = true;
-				}
-				else if( ev->Key == KEY_KEY_A  || ev->Key == KEY_LEFT )
-				{
-					//camera->m_LookAt.X -= 0.1f;
-					//camera->m_Trans.X -= 0.1f;
+							camera->moveBackward(100.0f * deltaTime);
+							camera->is_move = true;
+						}
+						else if( ev->Key == KEY_KEY_A  || ev->Key == KEY_LEFT )
+						{
+							//camera->m_LookAt.X -= 0.1f;
+							//camera->m_Trans.X -= 0.1f;
 				
-					camera->moveLeft(0.5f);
-					camera->is_move = true;
-				}
-				else if( ev->Key == KEY_KEY_D  || ev->Key == KEY_RIGHT )
-				{
-					//camera->m_LookAt.X += 0.1f;
-					//camera->m_Trans.X += 0.1f;
+							camera->moveLeft(100.0f * deltaTime);
+							camera->is_move = true;
+						}
+						else if( ev->Key == KEY_KEY_D  || ev->Key == KEY_RIGHT )
+						{
+							//camera->m_LookAt.X += 0.1f;
+							//camera->m_Trans.X += 0.1f;
 				
-					camera->moveRight(0.5f);
-					camera->is_move = true;
-				}
-				else if( ev->Key == KEY_KEY_E  || ev->Key == KEY_PRIOR )
-				{
-					camera->moveUp(0.5f);
-					camera->is_move = true;
-				}
-				else if( ev->Key == KEY_KEY_Q  || ev->Key == KEY_NEXT )
-				{
-					camera->moveDown(0.5f);
-					camera->is_move = true;
+							camera->moveRight(100.0f * deltaTime);
+							camera->is_move = true;
+						}
+						else if( ev->Key == KEY_KEY_E  || ev->Key == KEY_PRIOR )
+						{
+							camera->moveUp(100.0f * deltaTime);
+							camera->is_move = true;
+						}
+						else if( ev->Key == KEY_KEY_Q  || ev->Key == KEY_NEXT )
+						{
+							camera->moveDown(100.0f * deltaTime);
+							camera->is_move = true;
+						}
+					}
 				}
 			}
 
-			if(!ev->PressedDown) camera->is_move = false;
+			if(!ev->PressedDown)
+			{
+				camera->is_focused = false;
+				camera->is_move = false;
+			}
 
 			//camera->update();
 
@@ -170,16 +194,20 @@ bool IrrInput::OnEvent(const SEvent& event)
 			if( ev->Event == EMIE_MOUSE_WHEEL )
 			{
 				//cout << "Wheel event: " << ev->Wheel << endl;
-				if( ev->Wheel >= 0 )
-					camera->m_Rad -= 0.5f;
-				else
-					camera->m_Rad += 0.5f;
+
+				if (!camera->is_focused)
+				{
+					if( ev->Wheel >= 0 )
+						camera->m_Rad -= 100.0f * deltaTime;
+					else
+						camera->m_Rad += 100.0f * deltaTime;
+				}
 
 				//camera->update();
 			}
 			else
 			{
-				if (!camera->is_move)
+				if (!camera->is_move && !camera->is_focused)
 				{
 					if( !camera->m_Dragging && ev->isRightPressed() )
 					{
@@ -235,10 +263,15 @@ void IrrInput::clear()
 
 void IrrInput::update()
 {
+	now = device->getTimer()->getTime();
+	deltaTime = (float)(now - then) / 1000.f;
+
 	for (u32 i=0; i<KEY_KEY_CODES_COUNT / 32; ++i){
 		keyStatusReleased[i] = 0;
 		keyStatusPressed[i] = 0;
 	}
+
+	then = device->getTimer()->getTime();
 }
 
 void IrrInput::setKeyStatus(int* k, int keyCode, bool value)

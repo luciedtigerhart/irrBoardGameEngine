@@ -81,7 +81,7 @@ namespace IrrBoardGameEngine {
 			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false,
 			f32 jumpSpeed = 0.f, bool invertMouse=false,
 			bool makeActive=true);
-		IrrGameObject *addCameraBoardGame(Vector*,Vector*);
+		IrrGameObject *addCameraBoardGame(Vector*,Vector*,Vector*,Vector*);
 		IrrGameObject *addAudio(const char *,int,Vector*);
 
 		ILightSceneNode * addLightSceneNode(const core::vector3df& position = core::vector3df(0,0,0),

@@ -12,6 +12,9 @@ namespace IrrBoardGameEngine {
 	class IrrCamera
 	{
 	private:
+		vector3df init_Trans;
+		vector3df init_LookAt;
+
 		vector3df getPositionOnSphere( f32 angleH, f32 angleV, f32 radius );
 		void dumpVector( const vector3df &vec );
 
@@ -24,19 +27,24 @@ namespace IrrBoardGameEngine {
 
 		void updateVectors();
 		void update();
-		void move();
+		void reset();
 		void moveForward(f32 speed);
 		void moveBackward(f32 speed);
 		void moveRight(f32 speed);
 		void moveLeft(f32 speed);
 		void moveUp(f32 speed);
 		void moveDown(f32 speed);
+		void setFocus(vector3df position, vector3df lookAt);
 
 		bool is_move;
 		bool is_manager;
+		bool is_focused;
+		bool is_reset;
 
+		vector3df focus_Trans;
+		vector3df focus_LookAt;
 		vector3df m_Trans;
-		vector3df m_LookAt;                // 
+		vector3df m_LookAt;
 		vector3df m_Rot;                   // H/V Position of camera on sphere (only X/Y used)
 		f32 m_Rad;                         // Radius of sphere
 		bool m_Dragging;                   // Is currently dragging?
