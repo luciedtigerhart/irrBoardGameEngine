@@ -34,7 +34,11 @@ private:
 	ISceneNode* skybox;
 
 	//Lights
-	ILightSceneNode* light;
+	ILightSceneNode* light1;
+	ILightSceneNode* light2;
+	ILightSceneNode* light3;
+	ILightSceneNode* light4;
+	ILightSceneNode* light5;
 
 	//Particle systems
 	IrrParticleSystem* bloodParticles;

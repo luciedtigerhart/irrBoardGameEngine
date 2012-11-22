@@ -85,15 +85,6 @@ void PrimeGameStateManager::Init()
 	match = engine->createScene();
 	
 	//Add a skybox to match scene
-	/*
-	skybox = match->getSceneManager()->addSkyBoxSceneNode(engine->getDriver()->getTexture("obj/skybox/skybox_top.jpg"),
-														  engine->getDriver()->getTexture("obj/skybox/skybox_bottom.jpg"),
-														  engine->getDriver()->getTexture("obj/skybox/skybox_left.jpg"),
-														  engine->getDriver()->getTexture("obj/skybox/skybox_right.jpg"),
-														  engine->getDriver()->getTexture("obj/skybox/skybox_front.jpg"),
-														  engine->getDriver()->getTexture("obj/skybox/skybox_back.jpg"));
-	*/
-	
 	skybox = match->getSceneManager()->addSkyBoxSceneNode(engine->getDriver()->getTexture("obj/skybox/plain_sky_top.jpg"),
 														  engine->getDriver()->getTexture("obj/skybox/plain_sky_bottom.jpg"),
 														  engine->getDriver()->getTexture("obj/skybox/plain_sky_left.jpg"),
@@ -181,8 +172,13 @@ void PrimeGameStateManager::CreateBoard()
 	//Add new board to scene
 	board = match->addStaticBoard("boards/board-01.txt",new Vector(1.0f, 1.0f, 0.0f));
 
-	//Create light
-	light = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+	//Create lights
+	//light1 = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
+	light1 = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
+	light2 = match->addLightSceneNode(board->node, -1, vector3df(0,5,20), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
+	light3 = match->addLightSceneNode(board->node, -1, vector3df(-20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
+	light4 = match->addLightSceneNode(board->node, -1, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
+	light5 = match->addLightSceneNode(board->node, -1, vector3df(0,20,0), SColorf(1.0f,1.0f,1.0f,1.0f), 10.0f);
 
 	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();

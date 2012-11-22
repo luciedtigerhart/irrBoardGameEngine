@@ -129,6 +129,12 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 	safeZone1TilesOccupied = safeZone2TilesOccupied = 0;
 	safeZone3TilesOccupied = safeZone4TilesOccupied = 0;
 	safeZone1Full = safeZone2Full = safeZone3Full = safeZone4Full = false;
+
+	//Initialize animation variables
+	animSpeed = 0.0f;
+	fallCounter = 0.0f;
+	moveCounter = 0.0f;
+	tokensPushed = 0;
 }
 
 void PrimePlayState::Wait()
@@ -206,15 +212,15 @@ void PrimePlayState::InitParticles(IrrBoard* board)
 	resources.setTexture(0, IrrEngine::getInstance()->getDriver()->getTexture("billboard/particle/particle_light01.png"));
 
 	//Create blood particles emitter
-	IParticleEmitter* bEmitter = bloodParticles->createBoxEmitter(BLOOD, aabbox3d<f32>(-0.5f,-0.5f,-0.5f,0.5f,0.5f,0.5f), // emitter size
+	IParticleEmitter* bEmitter = bloodParticles->createBoxEmitter(BLOOD, aabbox3d<f32>(-0.25f,-0.5f,-0.0f,0.75f,0.5f,1.0f), // emitter size
 																  vector3df(0.0f,0.04f,0.0f),   // direction and translation speed
 																  0,0,						  // emit rate (zero by default)
 																  SColor(0,255,255,255),       // darkest color
 																  SColor(0,255,255,255),       // brightest color
 																  2000,3000,					// min and max age
 																  10,							  //angle
-																  dimension2df(0.2f,0.2f),      // min size
-																  dimension2df(0.7f,0.7f));     // max size
+																  dimension2df(0.1f,0.1f),      // min size
+																  dimension2df(0.4f,0.4f));     // max size
 	
 	//Create ability particles emitter
 	IParticleEmitter* aEmitter = abilityParticles->createSphereEmitter(ABILITY, vector3df(0.0f,0.0f,0.0f), 1.0f, // emitter size
@@ -268,7 +274,7 @@ void PrimePlayState::InitParticles(IrrBoard* board)
 void PrimePlayState::CreateResourceEmitters(void)
 {
 	//Create NORTHWEST resource particles emitter
-	IParticleEmitter* rnwEmitter = resourceParticlesNW->createRingEmitter(RESOURCES_NW, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+	IParticleEmitter* rnwEmitter = resourceParticlesNW->createRingEmitter(RESOURCES_NW, vector3df(0.0f,0.0f,0.0f), 0.6f, 0.1f, // emitter size
 																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
 																		  0,0,					      // emit rate (zero by default)
 																		  SColor(0,255,255,255),       // darkest color
@@ -279,7 +285,7 @@ void PrimePlayState::CreateResourceEmitters(void)
 																		  dimension2df(1.0f,1.0f));     // max size
 
 	//Create NORTHEAST resource particles emitter
-	IParticleEmitter* rneEmitter = resourceParticlesNE->createRingEmitter(RESOURCES_NE, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+	IParticleEmitter* rneEmitter = resourceParticlesNE->createRingEmitter(RESOURCES_NE, vector3df(0.0f,0.0f,0.0f), 0.6f, 0.1f, // emitter size
 																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
 																		  0,0,					      // emit rate (zero by default)
 																		  SColor(0,255,255,255),       // darkest color
@@ -290,7 +296,7 @@ void PrimePlayState::CreateResourceEmitters(void)
 																		  dimension2df(1.0f,1.0f));     // max size
 
 	//Create SOUTHWEST resource particles emitter
-	IParticleEmitter* rswEmitter = resourceParticlesSW->createRingEmitter(RESOURCES_SW, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+	IParticleEmitter* rswEmitter = resourceParticlesSW->createRingEmitter(RESOURCES_SW, vector3df(0.0f,0.0f,0.0f), 0.6f, 0.1f, // emitter size
 																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
 																		  0,0,					      // emit rate (zero by default)
 																		  SColor(0,255,255,255),       // darkest color
@@ -301,7 +307,7 @@ void PrimePlayState::CreateResourceEmitters(void)
 																		  dimension2df(1.0f,1.0f));     // max size
 
 	//Create NORTHWEST resource particles emitter
-	IParticleEmitter* rseEmitter = resourceParticlesSE->createRingEmitter(RESOURCES_SE, vector3df(0.0f,0.0f,0.0f), 0.7f, 0.1f, // emitter size
+	IParticleEmitter* rseEmitter = resourceParticlesSE->createRingEmitter(RESOURCES_SE, vector3df(0.0f,0.0f,0.0f), 0.6f, 0.1f, // emitter size
 																		  vector3df(0.0f,0.0005f,0.0f),   // direction and translation speed
 																		  0,0,					      // emit rate (zero by default)
 																		  SColor(0,255,255,255),       // darkest color
@@ -469,9 +475,10 @@ void PrimePlayState::SetTurnPlayer(int turn)
 	else if (player4.assignedTurn == counter) turnPlayer = player4.idx;
 }
 
-void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iStart, int jStart)
+int PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iStart, int jStart)
 {
 	bool breakScan = false;
+	int tokensToPush = 0;
 
 	int iTile = -1;
 	int jTile = -1;
@@ -504,6 +511,8 @@ void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iSt
 
 				//Startup this token's animation
 				board->board[iTile][jTile]->token->getBehavior(0)->setBool("isAnimStarted", true);
+
+				tokensToPush++;
 			}
 
 			//Otherwise, if mouse is just hovering a pushable token...
@@ -530,6 +539,8 @@ void PrimePlayState::SetPushLine(bool clicked, int dir, IrrBoard* board, int iSt
 		iTile += iAdd;
 		jTile += jAdd;
 	}
+
+	return tokensToPush;
 }
 
 bool PrimePlayState::PlayIsValid(int play, int dir, IrrBoard* board, int i, int j)
@@ -709,7 +720,14 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, float speed)
 	bool destReached = false;
 	vector3df newRelativePosition;
 
-	float okDiff = 0.02f * speed; //Acceptable difference in distance between token and destination
+	//Acceptable differences in distance between token and destination
+	//float xOkDiff = 0.02f * speed;
+	//float yOkDiff = 0.085f * speed;
+	//float zOkDiff = 0.02f * speed;
+	//float xOkDiff = 0.086f;
+	//float yOkDiff = 0.18f;
+	//float zOkDiff = 0.086f;
+
 	float xDiff, yDiff, zDiff;
 	float xStep, yStep, zStep;
 
@@ -733,30 +751,64 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, float speed)
 	speed -= abs((destination.y - origin.y) - yDiff) * speed;
 	if (speed < 0.05f) speed = 0.05f; //Minimum speed
 
-	//If distance between token and destination is still higher than "okDiff"...
-	if (abs(xDiff) > okDiff || abs(yDiff) > okDiff || abs(zDiff) > okDiff)
+	//cout<<endl<<"yDiff: "<<abs(yDiff)<<endl;
+	//cout<<"yOkDiff: "<<abs(yOkDiff)<<endl;
+	//cout<<endl<<"xDiff: "<<abs(xDiff)<<endl;
+	//cout<<"xOkDiff: "<<abs(xOkDiff)<<endl;
+	//cout<<endl<<"zDiff: "<<abs(zDiff)<<endl;
+	//cout<<"zOkDiff: "<<abs(zOkDiff)<<endl;
+	//cout<<"fallCounter: "<<fallCounter<<endl;
+	//cout<<"moveCounter: "<<moveCounter<<endl;
+
+	//If this is a movement animation running for less than 1 second,
+	//or a trap death animation running for less than 3 seconds...
+	if ((origin.y == destination.y && moveCounter < (0.73f * (tokensPushed + 1))) || (origin.y != destination.y && fallCounter < 2.3f))
 	{
-		//...Then destination hasn't been reached.
+		//If distance between token and destination is still higher than "okDiff"...
+		//if (abs(xDiff) > xOkDiff || abs(yDiff) > yOkDiff || abs(zDiff) > zOkDiff)
+		//{
+			//...Then destination hasn't been reached.
 
-		//Calculate next step offset
-		xStep = ((destination.x - origin.x) / 100) * speed;
-		yStep = ((destination.y - origin.y) / 100) * speed;
-		zStep = ((destination.z - origin.z) / 100) * speed;
+			//Calculate next step offset
+			xStep = ((destination.x - origin.x) / 100) * speed;
+			yStep = ((destination.y - origin.y) / 100) * speed;
+			zStep = ((destination.z - origin.z) / 100) * speed;
 
-		//Calculate new position
-		newRelativePosition.X = token->node->getPosition().X + xStep;
-		newRelativePosition.Y = token->node->getPosition().Y + yStep;
-		newRelativePosition.Z = token->node->getPosition().Z + zStep;
+			//Calculate new position
+			newRelativePosition.X = token->node->getPosition().X + xStep;
+			newRelativePosition.Y = token->node->getPosition().Y + yStep;
+			newRelativePosition.Z = token->node->getPosition().Z + zStep;
 		
-		//Move token closer to destination
-		token->node->setPosition(newRelativePosition);
+			//Move token closer to destination
+			token->node->setPosition(newRelativePosition);
+
+			//Increment trap falling counter
+			fallCounter += 1.0f * deltaTime;
+
+			//Increment movement counter
+			moveCounter += 1.0f * deltaTime;
+		//}
+		/*
+		//Otherwise, if token is close enough to destination...
+		else
+		{
+			//...Consider destination as reached.
+			destReached = true;
+			fallCounter = 0.0f;
+			moveCounter = 0.0f;
+			tokensPushed = 0;
+		}
+		*/
 	}
 
-	//Otherwise, if token is close enough to destination...
+	//Otherwise, if this is an animation which has been running for too long...
 	else
 	{
 		//...Consider destination as reached.
 		destReached = true;
+		//fallCounter = 0.0f;
+		//moveCounter = 0.0f;
+		//tokensPushed = 0;
 	}
 
 	//Report whether destination is reached
@@ -807,7 +859,7 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Activate particle effect!
 			StartParticles(BLOOD, new Vector(token->node->getAbsolutePosition().X,
-											 token->node->getAbsolutePosition().Y + 2.5f,
+											 token->node->getAbsolutePosition().Y,
 											 token->node->getAbsolutePosition().Z));
 		}
 
@@ -817,7 +869,7 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 			// TEMPORARY ANIMATION
 			//-----------------------
 
-				if (Wait(1.0f))
+				if (Wait(1.75f))
 				{
 					token->getBehavior(0)->setBool("isAnimRunning", false);
 					token->getBehavior(0)->setBool("isAnimFinished", true);
@@ -932,6 +984,11 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 					//Inform other tokens that the selected token's movement has ended
 					animSimpleMove = false;
+
+					//Reset animation variables
+					fallCounter = 0.0f;
+					moveCounter = 0.0f;
+					tokensPushed = 0;
 				}
 			}
 		}
@@ -953,11 +1010,11 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 		if (animStarted && !animRunning && !animFinished)
 		{
 			//Get tile height
-			int trapHeight = board->tile_height;
+			//int trapHeight = board->tile_height;
 
 			//Pass destination coordinates to token (deeper into the trap hole)
 			token->getBehavior(0)->setFloat("destPosition.x", token->node->getAbsolutePosition().X);
-			token->getBehavior(0)->setFloat("destPosition.y", token->node->getAbsolutePosition().Y - trapHeight);
+			token->getBehavior(0)->setFloat("destPosition.y", board->node->getAbsolutePosition().Y); //token->node->getAbsolutePosition().Y - trapHeight);
 			token->getBehavior(0)->setFloat("destPosition.z", token->node->getAbsolutePosition().Z);
 
 			//Pass origin coordinates to token (current position)
@@ -979,7 +1036,7 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//Activate particle effect!
 			StartParticles(BLOOD, new Vector(token->node->getAbsolutePosition().X,
-											 token->node->getAbsolutePosition().Y + 2.5f,
+											 token->node->getAbsolutePosition().Y,
 											 token->node->getAbsolutePosition().Z));
 		}
 
@@ -1012,6 +1069,11 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 
 			//End particle effect
 			StopParticles(BLOOD);
+
+			//Reset animation variables
+			fallCounter = 0.0f;
+			moveCounter = 0.0f;
+			tokensPushed = 0;
 		}
 
 		//If animation is done, inform the other tokens
@@ -1320,7 +1382,7 @@ void PrimePlayState::VerifyResourceExtraction(IrrBoard* board, bool effectVerifi
 					{
 						//Begin particle emission
 						StartParticles(RESOURCES_NW, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
-																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Y + 0.5f,
 																board->board[i][j]->node->getAbsolutePosition().Z));
 					}
 
@@ -1329,7 +1391,7 @@ void PrimePlayState::VerifyResourceExtraction(IrrBoard* board, bool effectVerifi
 					{
 						//Begin particle emission
 						StartParticles(RESOURCES_NE, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
-																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Y + 0.5f,
 																board->board[i][j]->node->getAbsolutePosition().Z));
 					}
 
@@ -1338,7 +1400,7 @@ void PrimePlayState::VerifyResourceExtraction(IrrBoard* board, bool effectVerifi
 					{
 						//Begin particle emission
 						StartParticles(RESOURCES_SW, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
-																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Y + 0.5f,
 																board->board[i][j]->node->getAbsolutePosition().Z));
 					}
 
@@ -1347,7 +1409,7 @@ void PrimePlayState::VerifyResourceExtraction(IrrBoard* board, bool effectVerifi
 					{
 						//Begin particle emission
 						StartParticles(RESOURCES_SE, new Vector(board->board[i][j]->node->getAbsolutePosition().X,
-																board->board[i][j]->node->getAbsolutePosition().Y + 1.0f,
+																board->board[i][j]->node->getAbsolutePosition().Y + 0.5f,
 																board->board[i][j]->node->getAbsolutePosition().Z));
 					}
 				}
@@ -1750,7 +1812,7 @@ void PrimePlayState::SwapPhaseOnClick(IrrBoard* board, int i, int j)
 				if (board->board[i][j]->token->highlight == PUSH_HOVER)
 				{
 					//Mark this token and the tokens behind it for pushing
-					SetPushLine(CLICKED, selectedToken->getBehavior(0)->getInt("moveDir"), board, i, j);
+					tokensPushed = SetPushLine(CLICKED, selectedToken->getBehavior(0)->getInt("moveDir"), board, i, j);
 									
 					//Mark selected token for movement
 					selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
@@ -2048,7 +2110,7 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 				token->getBehavior(0)->setBool("isAbilityActive", true);
 
 				StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
-												   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+												   token->parentNode->node->getAbsolutePosition().Y + 1.0f,
 												   token->parentNode->node->getAbsolutePosition().Z));
 
 				//Play ability activation sound
@@ -2072,7 +2134,7 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 				token->getBehavior(0)->setBool("isFinished", false);
 
 				StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
-												   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+												   token->parentNode->node->getAbsolutePosition().Y + 1.0f,
 												   token->parentNode->node->getAbsolutePosition().Z));
 
 				//Play ability activation sound
@@ -2103,7 +2165,7 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 					token->getBehavior(0)->setBool("isAbilityActive", true);
 
 					StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
-													   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+													   token->parentNode->node->getAbsolutePosition().Y + 1.0f,
 													   token->parentNode->node->getAbsolutePosition().Z));
 
 					//Play ability activation sound
@@ -2133,7 +2195,7 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 						token->getBehavior(0)->setBool("isFinished", false);
 
 						StartParticles(ABILITY, new Vector(token->parentNode->node->getAbsolutePosition().X,
-														   token->parentNode->node->getAbsolutePosition().Y + 4.0f,
+														   token->parentNode->node->getAbsolutePosition().Y + 1.0f,
 														   token->parentNode->node->getAbsolutePosition().Z));
 
 						//Play ability activation sound
@@ -2483,7 +2545,7 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 
 
 	//Set animation speed
-	animSpeed = 150.0f * deltaTime;
+	animSpeed = 620.0f * deltaTime;
 
 	if (phase == ANIMATION_EXECUTION)
 	{

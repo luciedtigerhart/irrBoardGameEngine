@@ -122,8 +122,9 @@ private:
 	float sleep;
 	bool awake;
 	
-	//Animation speed
-	float animSpeed;
+	//Animation variables
+	float animSpeed, fallCounter, moveCounter;
+	int tokensPushed;
 	
 	//Animations to be executed
 	bool animSimpleMove, animPushMove, animTrapDeath, animAttackDeath;
@@ -257,7 +258,7 @@ public:
 	void SetTurnPlayer(int turn);
 
 	//Find all tokens in a line and set them to be pushed
-	void SetPushLine(bool clicked, int dir, IrrBoard* board, int iStart, int jStart);
+	int SetPushLine(bool clicked, int dir, IrrBoard* board, int iStart, int jStart);
 
 	//Validate whether a move can be performed, setting the state of involved tiles and tokens
 	bool PlayIsValid(int play, int dir, IrrBoard* board, int i, int j);

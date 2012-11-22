@@ -49,6 +49,9 @@ private:
 	float deltaTime;
 	int now, then;
 
+	//Tile material
+	SMaterial matTile;
+
 public:
 	PrimeTile(PrimeTeam p1, PrimeTeam p2, PrimeTeam p3, PrimeTeam p4);
 	~PrimeTile();

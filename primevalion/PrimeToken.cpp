@@ -49,16 +49,18 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 	else if (race == TROLL)
 	{
-		pathOBJ = "obj/tokens/token02.obj";
+		//pathOBJ = "obj/tokens/token02.obj";
+		pathOBJ = "obj/tokens/troll.obj";
 
 		//Set texture according to team
-		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
-		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
-		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
-		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
+		if (team == 1) pathTEX = "obj/tokens/troll2_mapa.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/troll2_mapa2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/troll2_mapa3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/troll2_mapa4.jpg";
 
 		//Highlight texture
-		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+		//pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+		pathTEXHL = "obj/tokens/troll2_mapa_hl.jpg";
 
 		//Ability icon texture
 		if (team == 1) pathBBICO = "billboard/ability/billboard_troll_icon_t1.png";
@@ -125,6 +127,7 @@ void PrimeToken::PaintVanilla()
 {
 	//Color token normally (Full White)
 	token->node->getMaterial(0) = matNormal;
+	token->node->getMaterial(0).Shininess = 0.0f;
 	token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
 	token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
 }
@@ -147,15 +150,24 @@ void PrimeToken::init()
 	token->node->setParent(token->parentNode->node);
 	token->player = team;
 
+	//Set correct scale
+	token->setScale(Vector(0.9f,0.9f,0.9f));
+	token->node->getMaterial(0).NormalizeNormals = true;
+
+	//Set correct rotation
+	if (token->player == 1) token->setRotation(Vector(0.0f,90.0f,0.0f));
+	else if (token->player == 2) token->setRotation(Vector(0.0f,270.0f,0.0f));
+	else if (token->player == 3) token->setRotation(Vector(0.0f,180.0f,0.0f));
+
 	//Create ability icon billboard
-	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(1.5f, 1.5f), vector3df(0.0f,5.0f,0.0f));
+	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(1.5f, 1.5f), vector3df(0.0f,15.0f,0.0f));
 	billboardAbility->getMaterial(0).setTexture(0, driver->getTexture(pathBBICO));
 	billboardAbility->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
 	billboardAbility->getMaterial(0).Lighting = false;
 	billboardAbility->setVisible(false);
 
 	//Create extraction billboard
-	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.1f, 2.1f), vector3df(0.0f,5.0f,0.0f));
+	billboardExtraction = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(2.1f, 2.1f), vector3df(0.0f,15.0f,0.0f));
 	billboardExtraction->getMaterial(0).setTexture(0, driver->getTexture(pathBBEXT));
 	billboardExtraction->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
 	billboardExtraction->getMaterial(0).Lighting = false;
@@ -262,8 +274,9 @@ void PrimeToken::update()
 				if (token->highlight == MOVE_HOVER)
 				{
 					//Selection hover highlight (Light Blue)
-					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,40,80,255);
+					token->node->getMaterial(0) = matNormal;
+					token->node->getMaterial(0).Shininess = 0.5f;
+					token->node->getMaterial(0).EmissiveColor.set(10,40,80,255);
 					token->node->getMaterial(0).SpecularColor.set(255,40,80,255);
 				}
 
@@ -271,15 +284,17 @@ void PrimeToken::update()
 				{
 					//Push target hover highlight (Orange)
 					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,210,120,0);
-					token->node->getMaterial(0).SpecularColor.set(255,210,120,0);
+					token->node->getMaterial(0).Shininess = 0.5f;
+					token->node->getMaterial(0).EmissiveColor.set(10,210,60,0);
+					token->node->getMaterial(0).SpecularColor.set(255,210,60,0);
 				}
 
 				else if (token->highlight == ATTACK_HOVER)
 				{
 					//Attack target hover highlight (Red)
 					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,255,0,0);
+					token->node->getMaterial(0).Shininess = 0.5f;
+					token->node->getMaterial(0).EmissiveColor.set(10,255,0,0);
 					token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
 				}
 
@@ -291,8 +306,9 @@ void PrimeToken::update()
 				if (token->highlight == MOVE)
 				{
 					//Selected highlight (Very Light Blue)
-					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,100,180,255);
+					token->node->getMaterial(0) = matNormal;
+					token->node->getMaterial(0).Shininess = 0.5f;
+					token->node->getMaterial(0).EmissiveColor.set(10,100,180,255);
 					token->node->getMaterial(0).SpecularColor.set(255,100,180,255);
 				}
 
@@ -300,8 +316,9 @@ void PrimeToken::update()
 				{
 					//Push victim highlight (Orange)
 					token->node->getMaterial(0) = matHighlight;
-					token->node->getMaterial(0).EmissiveColor.set(255,210,120,0);
-					token->node->getMaterial(0).SpecularColor.set(255,210,120,0);
+					token->node->getMaterial(0).Shininess = 0.5f;
+					token->node->getMaterial(0).EmissiveColor.set(10,210,60,0);
+					token->node->getMaterial(0).SpecularColor.set(255,210,60,0);
 				}
 
 				else PaintVanilla();
@@ -327,8 +344,9 @@ void PrimeToken::update()
 			{
 				//Push victim highlight (Orange)
 				token->node->getMaterial(0) = matHighlight;
-				token->node->getMaterial(0).EmissiveColor.set(255,255,70,0);
-				token->node->getMaterial(0).SpecularColor.set(255,255,70,0);
+				token->node->getMaterial(0).Shininess = 0.5f;
+				token->node->getMaterial(0).EmissiveColor.set(10,255,35,0);
+				token->node->getMaterial(0).SpecularColor.set(255,255,35,0);
 			}
 		}
 
@@ -337,8 +355,9 @@ void PrimeToken::update()
 		{
 			//Color it darker and grayer
 			token->node->getMaterial(0) = matHighlight;
+			token->node->getMaterial(0).Shininess = 0.0f;
 			token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
-			token->node->getMaterial(0).SpecularColor.set(255,100,100,100);
+			token->node->getMaterial(0).SpecularColor.set(255,70,70,70);
 		}
 	}
 
@@ -356,6 +375,7 @@ void PrimeToken::update()
 
 			//Blink briefly, indicating ability is "On"
 			token->node->getMaterial(0) = matHighlight;
+			token->node->getMaterial(0).Shininess = 20.0f;
 			token->node->getMaterial(0).EmissiveColor.set(200,255,255,255);
 			token->node->getMaterial(0).SpecularColor.set(255,255,255,255);
 
@@ -393,13 +413,6 @@ void PrimeToken::update()
 			{
 				//Run animation
 				//...
-
-				//When animation is over...
-				//if (animation over)
-				//{
-					//isAnimRunning = false;
-					//isAnimFinished = true;
-				//}
 			}
 
 			//Periodically change material to simulate
@@ -411,6 +424,7 @@ void PrimeToken::update()
 			{
 				//Red
 				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).Shininess = 0.5f;
 				token->node->getMaterial(0).EmissiveColor.set(255,255,0,0);
 				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
 			}
@@ -423,6 +437,7 @@ void PrimeToken::update()
 			{
 				//Light Red
 				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).Shininess = 0.0f;
 				token->node->getMaterial(0).EmissiveColor.set(255,150,0,0);
 				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
 			}
@@ -434,6 +449,7 @@ void PrimeToken::update()
 			{
 				//Transparent red
 				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).Shininess = 0.0f;
 				token->node->getMaterial(0).EmissiveColor.set(255,255,0,0);
 				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
 
@@ -448,6 +464,7 @@ void PrimeToken::update()
 			{
 				//Transparent white
 				token->node->getMaterial(0) = matHighlight;
+				token->node->getMaterial(0).Shininess = 0.0f;
 				token->node->getMaterial(0).EmissiveColor.set(255,0,0,0);
 				token->node->getMaterial(0).SpecularColor.set(255,255,0,0);
 

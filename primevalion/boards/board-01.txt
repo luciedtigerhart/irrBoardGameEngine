@@ -1,21 +1,23 @@
 10 10
 2 1 2
-0 obj\tiles\01.obj
-1 obj\tiles\01_b.obj
-2 obj\tiles\03.obj
-3 obj\tiles\03_b.obj
-4 obj\tiles\04.obj
-5 obj\tiles\04_b.obj
-6 obj\tiles\02.obj
+0 obj\tiles\grama1.obj
+1 obj\tiles\grama2.obj
+2 obj\tiles\ruinas1.obj
+3 obj\tiles\ruinas2.obj
+4 obj\tiles\recursos1.obj
+5 obj\tiles\recursos2.obj
+6 obj\tiles\recursos3.obj
+7 obj\tiles\recursos4.obj
+8 obj\tiles\armadilha.obj
 *
 2 0 1 0 1 0 1 0 3 2
 3 1 0 1 0 1 0 1 0 1
-1 0 6 0 1 0 1 6 1 0
-0 1 0 1 6 1 0 1 0 1
-1 0 1 0 4 5 6 0 1 0
-0 1 0 6 5 4 0 1 0 1
-1 0 1 0 1 6 1 0 1 0
-0 1 6 1 0 1 0 6 0 1
+1 0 8 0 1 0 1 8 1 0
+0 1 0 1 8 1 0 1 0 1
+1 0 1 0 7 4 8 0 1 0
+0 1 0 8 6 5 0 1 0 1
+1 0 1 0 1 8 1 0 1 0
+0 1 8 1 0 1 0 8 0 1
 1 0 1 0 1 0 1 0 1 3
 2 3 0 1 0 1 0 1 0 2
 *
@@ -31,12 +33,12 @@
 1 1 4 4 4 4 4 4 4 1
 *
 0 0 3 0 3 0 3 0 0 0
-0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 4 0 0 0 0
 0 0 0 0 0 0 0 0 0 2
+1 0 0 0 0 3 0 0 0 0
+0 2 0 1 0 0 0 0 0 2
+1 0 0 0 0 0 2 0 1 0
+0 0 0 0 4 0 0 0 0 2
 1 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 2
-1 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 2
-1 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
+0 0 0 0 3 0 0 0 0 0
 0 0 0 4 0 4 0 4 0 0

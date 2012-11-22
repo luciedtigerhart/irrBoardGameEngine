@@ -108,32 +108,32 @@ void PrimeTile::turnOnHighlight(int type)
 		{
 			//Move and ressurrect highlight (Light blue)
 			highlightPlane->getMaterial(0) = matPlaneNormal;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,40,80,255);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,40,80,255);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,20,40,255);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,20,40,255);
 		}
 
 		else if (type == MOVE_HOVER)
 		{
 			//Move and ressurrect hover highlight (Very Light blue)
 			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,100,180,255);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,100,180,255);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,50,90,255);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,50,90,255);
 		}
 
 		else if (type == PUSH)
 		{
 			//Push highlight (Orange)
 			highlightPlane->getMaterial(0) = matPlaneNormal;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,210,120,0);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,210,120,0);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,210,60,0);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,210,60,0);
 		}
 
 		else if (type == PUSH_HOVER)
 		{
 			//Push hover highlight (Light Orange)
 			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,250,160,80);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,250,160,80);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,210,90,0);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,210,90,0);
 		}
 
 		else if (type == ATTACK)
@@ -148,8 +148,8 @@ void PrimeTile::turnOnHighlight(int type)
 		{
 			//Attack hover highlight (Light Red)
 			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,80,80);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,255,80,80);
+			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,40,40);
+			highlightPlane->getMaterial(0).SpecularColor.set(255,255,40,40);
 		}
 	}
 }
@@ -160,23 +160,23 @@ void PrimeTile::paintSafeZone()
 
 	if (tile->inf == SAFE_ZONE_TEAM_1)
 	{
-		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t1.jpg"));
-		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t1_b.jpg"));
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_1_sf1.jpg"));
+		if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_2_sf1.jpg"));
 	}
 	else if (tile->inf == SAFE_ZONE_TEAM_2)
 	{
-		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t2.jpg"));
-		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t2_b.jpg"));
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_1_sf2.jpg"));
+		if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_2_sf2.jpg"));
 	}
 	else if (tile->inf == SAFE_ZONE_TEAM_3)
 	{
-		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t3.jpg"));
-		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t3_b.jpg"));
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_1_sf3.jpg"));
+		if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_2_sf3.jpg"));
 	}
 	else if (tile->inf == SAFE_ZONE_TEAM_4)
 	{
-		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t4.jpg"));
-		else if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/texturas/01_t4_b.jpg"));
+		if (tile->idx == GRASS_1) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_1_sf4.jpg"));
+		if (tile->idx == GRASS_2) tile->node->getMaterial(0).setTexture(0, driver->getTexture("obj/tiles/tile_grama_2_sf4.jpg"));
 	}
 }
 
@@ -214,13 +214,13 @@ void PrimeTile::init()
 
 	//Create highlight plane
 	IAnimatedMesh* plane = smgr->addHillPlaneMesh("Highlight Plane", // Name of mesh
-      core::dimension2d<f32>(2.2f,2.2f), //	Size of a tile of the mesh
+      core::dimension2d<f32>(8.8f,8.8f), //	Size of a tile of the mesh
       core::dimension2d<u32>(1,1), 0, 0, // Specifies how many tiles there will be
       core::dimension2d<f32>(0,0), //Material 
       core::dimension2d<f32>(1,1)); //countHills 
 	
 	//Add highlight plane to scene
-	highlightPlane = smgr->addMeshSceneNode(plane->getMesh(0), tile->node, -1, vector3df(0.0f,0.25f,0.0f));
+	highlightPlane = smgr->addMeshSceneNode(plane->getMesh(0), tile->node, -1, vector3df(0.0f,0.05f,0.0f));
 	highlightPlane->getMaterial(0) = matPlaneNormal;
 
 	//Highlights are deactivated by default
@@ -233,7 +233,12 @@ void PrimeTile::init()
 	if (ghost != NULL) ghost->setActive(false);
 
 	//Activate lighting
+	tile->node->setMaterialType(EMT_SOLID);
 	tile->node->setMaterialFlag(EMF_LIGHTING, true);
+
+	//Set correct tile scale
+	tile->setScale(Vector(0.2145f,0.2145f,0.2145f));
+	tile->node->getMaterial(0).NormalizeNormals = true;
 }
 
 void PrimeTile::reset()

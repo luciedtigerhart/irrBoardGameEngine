@@ -64,9 +64,9 @@ vector3df IrrCamera::getPositionOnSphere( f32 angleH, f32 angleV, f32 radius )
 
 	//Limit radius (zooming) to avoid Z-axis flipping
 	//and to prevent camera from going too far
-	if (radius < 8.5f)
+	if (radius < 2.0f)
 	{
-		radius = 8.5f;
+		radius = 2.0f;
 		m_Rad = radius;
 	}
 	else if (radius > 25.0f)
