@@ -104,53 +104,22 @@ void PrimeTile::turnOnHighlight(int type)
 		highlightPlane->setVisible(true);
 
 		//Set material to correct type of highlight
-		if (type == MOVE)
-		{
-			//Move and ressurrect highlight (Light blue)
-			highlightPlane->getMaterial(0) = matPlaneNormal;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,20,40,255);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,20,40,255);
-		}
 
-		else if (type == MOVE_HOVER)
-		{
-			//Move and ressurrect hover highlight (Very Light blue)
-			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,50,90,255);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,50,90,255);
-		}
+		//Ressurrect highlight (White)
+		if (type == RESSURRECT) highlightPlane->getMaterial(0) = matPlaneRessurrectNormal;
+		else if (type == RESSURRECT_HOVER) highlightPlane->getMaterial(0) = matPlaneRessurrectHover;
 
-		else if (type == PUSH)
-		{
-			//Push highlight (Orange)
-			highlightPlane->getMaterial(0) = matPlaneNormal;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,210,60,0);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,210,60,0);
-		}
+		//Move highlight (Light blue)
+		else if (type == MOVE) highlightPlane->getMaterial(0) = matPlaneMoveNormal;
+		else if (type == MOVE_HOVER) highlightPlane->getMaterial(0) = matPlaneMoveHover;
 
-		else if (type == PUSH_HOVER)
-		{
-			//Push hover highlight (Light Orange)
-			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,210,90,0);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,210,90,0);
-		}
+		//Push highlight (Orange)
+		else if (type == PUSH) highlightPlane->getMaterial(0) = matPlanePushNormal;
+		else if (type == PUSH_HOVER) highlightPlane->getMaterial(0) = matPlanePushHover;
 
-		else if (type == ATTACK)
-		{
-			//Attack highlight (Red)
-			highlightPlane->getMaterial(0) = matPlaneNormal;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,0,0);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,255,0,0);
-		}
-
-		else if (type == ATTACK_HOVER)
-		{
-			//Attack hover highlight (Light Red)
-			highlightPlane->getMaterial(0) = matPlaneHover;
-			highlightPlane->getMaterial(0).EmissiveColor.set(255,255,40,40);
-			highlightPlane->getMaterial(0).SpecularColor.set(255,255,40,40);
-		}
+		//Attack highlight (Red)
+		else if (type == ATTACK) highlightPlane->getMaterial(0) = matPlaneAttackNormal;
+		else if (type == ATTACK_HOVER) highlightPlane->getMaterial(0) = matPlaneAttackHover;
 	}
 }
 
@@ -202,26 +171,56 @@ void PrimeTile::init()
 	//Re-texture and paint this tile if its a safe zone
 	paintSafeZone();
 
-	//Highlight plane has tranparent texture
-	matPlaneNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_normal.jpg"));
-	matPlaneNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
-	matPlaneNormal.Lighting = true;
+	//Ressurrection highlight plane normal state
+	matPlaneRessurrectNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_ressurrect_normal.jpg"));
+	matPlaneRessurrectNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR; //Highlight planes have tranparent texture
+	matPlaneRessurrectNormal.Lighting = true;
 
-	//Highlight plane hover has a symbol on the texture
-	matPlaneHover.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_hover.jpg"));
-	matPlaneHover.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
-	matPlaneHover.Lighting = true;
+	//Ressurrection highlight plane hovered state
+	matPlaneRessurrectHover.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_ressurrect_hover.jpg"));
+	matPlaneRessurrectHover.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneRessurrectHover.Lighting = true;
+
+	//Movement highlight plane normal state
+	matPlaneMoveNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_move_normal.jpg"));
+	matPlaneMoveNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneMoveNormal.Lighting = true;
+
+	//Movement highlight plane hovered state
+	matPlaneMoveHover.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_move_hover.jpg"));
+	matPlaneMoveHover.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneMoveHover.Lighting = true;
+
+	//Push highlight plane normal state
+	matPlanePushNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_push_normal.jpg"));
+	matPlanePushNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlanePushNormal.Lighting = false;
+
+	//Push highlight plane hovered state
+	matPlanePushHover.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_push_hover.jpg"));
+	matPlanePushHover.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlanePushHover.Lighting = false;
+
+	//Attack highlight plane normal state
+	matPlaneAttackNormal.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_attack_normal.jpg"));
+	matPlaneAttackNormal.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneAttackNormal.Lighting = false;
+
+	//Attack highlight plane hovered state
+	matPlaneAttackHover.setTexture(0, driver->getTexture("obj/tiles/highlight/highlight_attack_hover.jpg"));
+	matPlaneAttackHover.MaterialType = EMT_TRANSPARENT_ADD_COLOR;
+	matPlaneAttackHover.Lighting = false;
 
 	//Create highlight plane
 	IAnimatedMesh* plane = smgr->addHillPlaneMesh("Highlight Plane", // Name of mesh
-      core::dimension2d<f32>(8.8f,8.8f), //	Size of a tile of the mesh
-      core::dimension2d<u32>(1,1), 0, 0, // Specifies how many tiles there will be
-      core::dimension2d<f32>(0,0), //Material 
-      core::dimension2d<f32>(1,1)); //countHills 
+		core::dimension2d<f32>(8.8f,8.8f), //	Size of a tile of the mesh
+		core::dimension2d<u32>(1,1), 0, 0, // Specifies how many tiles there will be
+		core::dimension2d<f32>(0,0), //Material
+		core::dimension2d<f32>(1,1)); //countHills
 	
 	//Add highlight plane to scene
 	highlightPlane = smgr->addMeshSceneNode(plane->getMesh(0), tile->node, -1, vector3df(0.0f,0.05f,0.0f));
-	highlightPlane->getMaterial(0) = matPlaneNormal;
+	highlightPlane->getMaterial(0) = matPlaneMoveNormal;
 
 	//Highlights are deactivated by default
 	turnOnHighlight(NONE);
@@ -247,6 +246,9 @@ void PrimeTile::reset()
 
 void PrimeTile::update()
 {
+	//Scale highlight plane back to original size, in case its been scaled elsewhere
+	highlightPlane->setScale(vector3df(1.0f, 1.0f, 1.0f));
+
 	//Rotate highlight plane
 	rotateHighlight(20.0f);
 
@@ -260,25 +262,36 @@ void PrimeTile::update()
 
 		if (tile->isMouseHover || (tile->token != NULL && tile->token->isMouseHover))
 		{
-			if (tile->highlight == MOVE_HOVER || tile->highlight == RESSURRECT_HOVER)
+			if (tile->highlight == RESSURRECT_HOVER)
+			{
+				turnOnHighlight(RESSURRECT_HOVER);
+
+				//Show ghost token when hovering a ressurrection tile
+				if (ghost != NULL) ghost->setActive(true);
+			}
+
+			else if (tile->highlight == MOVE_HOVER)
 			{
 				turnOnHighlight(MOVE_HOVER);
-				
-				if (tile->highlight == RESSURRECT_HOVER)
-				{
-					//Show ghost token when hovering a ressurrection tile
-					if (ghost != NULL) ghost->setActive(true);
-				}
 			}
 
 			else if (tile->highlight == PUSH_HOVER) turnOnHighlight(PUSH_HOVER);
 			else if (tile->highlight == ATTACK_HOVER) turnOnHighlight(ATTACK_HOVER);
 			else turnOnHighlight(NONE);
+
+			//If there's a token on this tile, and its not selected...
+			if (tile->token != NULL && !tile->token->getBehavior(0)->getBool("isSelected"))
+			{
+				//Scale highlight plane a bit
+				highlightPlane->setScale(vector3df(1.2f, 1.0f, 1.2f));
+			}
 		}
 
 		else
 		{
-			if (tile->highlight == MOVE || tile->highlight == RESSURRECT)
+			if (tile->highlight == RESSURRECT) turnOnHighlight(RESSURRECT);
+
+			else if (tile->highlight == MOVE)
 			{
 				turnOnHighlight(MOVE);
 			}
@@ -286,6 +299,13 @@ void PrimeTile::update()
 			else if (tile->highlight == PUSH) turnOnHighlight(PUSH);
 			else if (tile->highlight == ATTACK) turnOnHighlight(ATTACK);
 			else turnOnHighlight(NONE);
+
+			//If there's a token on this tile, and its not selected...
+			if (tile->token != NULL && !tile->token->getBehavior(0)->getBool("isSelected"))
+			{
+				//Scale highlight plane a bit
+				highlightPlane->setScale(vector3df(1.2f, 1.0f, 1.2f));
+			}
 		}
 	}
 

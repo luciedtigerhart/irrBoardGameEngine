@@ -178,7 +178,7 @@ void PrimeGameStateManager::CreateBoard()
 	light2 = match->addLightSceneNode(board->node, -1, vector3df(0,5,20), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
 	light3 = match->addLightSceneNode(board->node, -1, vector3df(-20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
 	light4 = match->addLightSceneNode(board->node, -1, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
-	light5 = match->addLightSceneNode(board->node, -1, vector3df(0,20,0), SColorf(1.0f,1.0f,1.0f,1.0f), 10.0f);
+	//light5 = match->addLightSceneNode(board->node, -1, vector3df(0,20,0), SColorf(1.0f,1.0f,1.0f,1.0f), 10.0f);
 
 	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();

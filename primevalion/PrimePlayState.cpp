@@ -97,7 +97,7 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 	player4.primevalium = p4.primevalium;
 
 	//Initialize signals
-	signalEndTurn = signalEndMatch = false;
+	signalEndTurn = signalEndMatch = signalButtonHover = false;
 	signalBackToTitle = signalVictoryBGM = false;
 
 	//Initialize match phase
@@ -720,14 +720,6 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, float speed)
 	bool destReached = false;
 	vector3df newRelativePosition;
 
-	//Acceptable differences in distance between token and destination
-	//float xOkDiff = 0.02f * speed;
-	//float yOkDiff = 0.085f * speed;
-	//float zOkDiff = 0.02f * speed;
-	//float xOkDiff = 0.086f;
-	//float yOkDiff = 0.18f;
-	//float zOkDiff = 0.086f;
-
 	float xDiff, yDiff, zDiff;
 	float xStep, yStep, zStep;
 
@@ -751,64 +743,37 @@ bool PrimePlayState::TokenHasTranslated(IrrToken* token, float speed)
 	speed -= abs((destination.y - origin.y) - yDiff) * speed;
 	if (speed < 0.05f) speed = 0.05f; //Minimum speed
 
-	//cout<<endl<<"yDiff: "<<abs(yDiff)<<endl;
-	//cout<<"yOkDiff: "<<abs(yOkDiff)<<endl;
-	//cout<<endl<<"xDiff: "<<abs(xDiff)<<endl;
-	//cout<<"xOkDiff: "<<abs(xOkDiff)<<endl;
-	//cout<<endl<<"zDiff: "<<abs(zDiff)<<endl;
-	//cout<<"zOkDiff: "<<abs(zOkDiff)<<endl;
-	//cout<<"fallCounter: "<<fallCounter<<endl;
-	//cout<<"moveCounter: "<<moveCounter<<endl;
-
 	//If this is a movement animation running for less than 1 second,
 	//or a trap death animation running for less than 3 seconds...
 	if ((origin.y == destination.y && moveCounter < (0.73f * (tokensPushed + 1))) || (origin.y != destination.y && fallCounter < 2.3f))
 	{
-		//If distance between token and destination is still higher than "okDiff"...
-		//if (abs(xDiff) > xOkDiff || abs(yDiff) > yOkDiff || abs(zDiff) > zOkDiff)
-		//{
-			//...Then destination hasn't been reached.
+		//...Then destination hasn't been reached.
 
-			//Calculate next step offset
-			xStep = ((destination.x - origin.x) / 100) * speed;
-			yStep = ((destination.y - origin.y) / 100) * speed;
-			zStep = ((destination.z - origin.z) / 100) * speed;
+		//Calculate next step offset
+		xStep = ((destination.x - origin.x) / 100) * speed;
+		yStep = ((destination.y - origin.y) / 100) * speed;
+		zStep = ((destination.z - origin.z) / 100) * speed;
 
-			//Calculate new position
-			newRelativePosition.X = token->node->getPosition().X + xStep;
-			newRelativePosition.Y = token->node->getPosition().Y + yStep;
-			newRelativePosition.Z = token->node->getPosition().Z + zStep;
+		//Calculate new position
+		newRelativePosition.X = token->node->getPosition().X + xStep;
+		newRelativePosition.Y = token->node->getPosition().Y + yStep;
+		newRelativePosition.Z = token->node->getPosition().Z + zStep;
 		
-			//Move token closer to destination
-			token->node->setPosition(newRelativePosition);
+		//Move token closer to destination
+		token->node->setPosition(newRelativePosition);
 
-			//Increment trap falling counter
-			fallCounter += 1.0f * deltaTime;
+		//Increment trap falling counter
+		fallCounter += 1.0f * deltaTime;
 
-			//Increment movement counter
-			moveCounter += 1.0f * deltaTime;
-		//}
-		/*
-		//Otherwise, if token is close enough to destination...
-		else
-		{
-			//...Consider destination as reached.
-			destReached = true;
-			fallCounter = 0.0f;
-			moveCounter = 0.0f;
-			tokensPushed = 0;
-		}
-		*/
-	}
+		//Increment movement counter
+		moveCounter += 1.0f * deltaTime;
+}
 
 	//Otherwise, if this is an animation which has been running for too long...
 	else
 	{
 		//...Consider destination as reached.
 		destReached = true;
-		//fallCounter = 0.0f;
-		//moveCounter = 0.0f;
-		//tokensPushed = 0;
 	}
 
 	//Report whether destination is reached
@@ -2435,8 +2400,6 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	{
 		for (int j=0; j < board->tile_j; j++)
 		{
-			//if (board->board[i][j]->isMouseHover) cout<<i<<", "<<j<<endl;
-
 			//No token or tile is selected by default
 			tileSelected = false;
 			tokenSelected = false;
@@ -2507,8 +2470,8 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 				}
 			}
 
-			//If mouse button is pressed...
-			if (input->getMouseState().leftButtonDown)
+			//If mouse button is pressed, and it isn't hovering a match button...
+			if (input->getMouseState().leftButtonDown && !signalButtonHover)
 			{
 				//If mouse cursor is above a highlighted tile or token...
 				if (tileSelected || tokenSelected)
@@ -2522,6 +2485,9 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 			}
 		}
 	}
+
+	//Enable board interaction again
+	signalButtonHover = false;
 
 
 	//-------------------------------------------

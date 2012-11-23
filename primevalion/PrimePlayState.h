@@ -203,6 +203,7 @@ public:
 	bool signalBackToTitle; //If "true", match has finished completely and game should return to title screen
 	bool signalEndTurn; //If "true", GUI has reported the "End Turn" button has been pressed
 	bool signalEndMatch; //If "true", GUI has reported the "End Match" button has been pressed
+	bool signalButtonHover; //If "true", one of the match buttons is hovered, so board interaction must be disabled
 	bool signalVictoryBGM; //If "true", victory BGM must be played as match ends
 	bool matchStart; //If "true", then "Sorting turn order" message is shown
 	bool matchOver; //If "true", then victory messages are shown

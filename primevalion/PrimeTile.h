@@ -63,8 +63,14 @@ public:
 	IrrToken* ghost;
 
 	//Highlight plane materials
-	SMaterial matPlaneNormal;
-	SMaterial matPlaneHover;
+	SMaterial matPlaneRessurrectNormal;
+	SMaterial matPlaneRessurrectHover;
+	SMaterial matPlaneMoveNormal;
+	SMaterial matPlaneMoveHover;
+	SMaterial matPlanePushNormal;
+	SMaterial matPlanePushHover;
+	SMaterial matPlaneAttackNormal;
+	SMaterial matPlaneAttackHover;
 
 	void init(); //Initializes tile
 	void update(); //Updates highlight when necessary

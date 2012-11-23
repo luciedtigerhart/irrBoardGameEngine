@@ -369,6 +369,8 @@ public:
 		//Match screen
 		bool VerifyMatchEndTurnButton();
 		bool VerifyMatchEndMatchButton();
+		bool VerifyMatchEndTurnButtonHover();
+		bool VerifyMatchEndMatchButtonHover();
 
 
 	//Methods that create GUI elements

@@ -1056,6 +1056,20 @@ bool PrimeGUIManager::VerifyMatchEndMatchButton()
 	else return false;
 }
 
+bool PrimeGUIManager::VerifyMatchEndTurnButtonHover()
+{
+	//Check if this button is being hovered by mouse
+	if (env_match->isMouseOver(BUTTON_END_TURN)) return true;
+	else return false;
+}
+
+bool PrimeGUIManager::VerifyMatchEndMatchButtonHover()
+{
+	//Check if this button is being hovered by mouse
+	if (env_match->isMouseOver(BUTTON_END_MATCH)) return true;
+	else return false;
+}
+
 void PrimeGUIManager::BuildGUILoadingScreen()
 {
 	//Background
@@ -1663,6 +1677,9 @@ int PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 											  buttonPress = BUTTON_HEAVY; }
 			if (VerifyMatchEndMatchButton()) { playState->signalEndMatch = true; env_match->setPressedButton(false);
 											   buttonPress = BUTTON_LIGHT; }
+
+			//Verify match button hovering and signal play state to disable board interaction
+			if (VerifyMatchEndTurnButtonHover() || VerifyMatchEndMatchButtonHover()) playState->signalButtonHover = true;
 
 			//Update match GUI!
 			//---------------------------------------
