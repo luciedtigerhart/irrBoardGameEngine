@@ -237,7 +237,7 @@ void PrimeTile::init()
 
 	//Set correct tile scale
 	tile->setScale(Vector(0.2145f,0.2145f,0.2145f));
-	tile->node->getMaterial(0).NormalizeNormals = true;
+	//tile->node->getMaterial(0).NormalizeNormals = true;
 }
 
 void PrimeTile::reset()

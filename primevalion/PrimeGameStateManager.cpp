@@ -109,7 +109,7 @@ void PrimeGameStateManager::Init()
 
 	player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
 	player1.isActive = player2.isActive = player3.isActive = player4.isActive = true;
-	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = KOBOLD;
+	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = TROLL;
 
 	ResetPlayers();
 
@@ -173,12 +173,11 @@ void PrimeGameStateManager::CreateBoard()
 	board = match->addStaticBoard("boards/board-01.txt",new Vector(1.0f, 1.0f, 0.0f));
 
 	//Create lights
-	//light1 = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 30.0f);
 	light1 = match->addLightSceneNode(board->node, -1, vector3df(0,5,-20), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
 	light2 = match->addLightSceneNode(board->node, -1, vector3df(0,5,20), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
 	light3 = match->addLightSceneNode(board->node, -1, vector3df(-20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
 	light4 = match->addLightSceneNode(board->node, -1, vector3df(20,5,0), SColorf(1.0f,1.0f,1.0f,1.0f), 2.0f);
-	//light5 = match->addLightSceneNode(board->node, -1, vector3df(0,20,0), SColorf(1.0f,1.0f,1.0f,1.0f), 10.0f);
+	light5 = match->addLightSceneNode(board->node, -1, vector3df(0,40,0), SColorf(1.0f,1.0f,1.0f,1.0f), 4.0f);
 
 	//Initialize game elements (tiles always BEFORE tokens)
 	LoadTiles();
