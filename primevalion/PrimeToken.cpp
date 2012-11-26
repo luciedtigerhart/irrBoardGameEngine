@@ -9,42 +9,46 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 	
 	if (race == KOBOLD)
 	{
-		pathOBJ = "obj/tokens/token01.obj";
+		pathOBJ = "obj/tokens/kobold.obj";
 
 		//Set texture according to team
-		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
-		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
-		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
-		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
+		if (team == 1) pathTEX = "obj/tokens/mapa_kobold_junto1.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/mapa_kobold_junto2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/mapa_kobold_junto3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/mapa_kobold_junto4.jpg";
 
 		//Highlight texture
-		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+		pathTEXHL = "obj/tokens/mapa_kobold_hl.jpg";
 
 		//Ability icon texture
 		if (team == 1) pathBBICO = "billboard/ability/billboard_kobold_icon_t1.png";
 		else if (team == 2) pathBBICO = "billboard/ability/billboard_kobold_icon_t2.png";
 		else if (team == 3) pathBBICO = "billboard/ability/billboard_kobold_icon_t3.png";
 		else if (team == 4) pathBBICO = "billboard/ability/billboard_kobold_icon_t4.png";
+
+		abilityOffset = 12.0f;
 	}
 
 	else if (race == GNOLL)
 	{
-		pathOBJ = "obj/tokens/token01.obj";
+		pathOBJ = "obj/tokens/gnoll.obj";
 
 		//Set texture according to team
-		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
-		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
-		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
-		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
+		if (team == 1) pathTEX = "obj/tokens/mapa_gnoll_tudo.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/mapa_gnoll_tudo2.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/mapa_gnoll_tudo3.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/mapa_gnoll_tudo4.jpg";
 
 		//Highlight texture
-		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+		pathTEXHL = "obj/tokens/mapa_gnoll_hl.jpg";
 
 		//Ability icon texture
 		if (team == 1) pathBBICO = "billboard/ability/billboard_gnoll_icon_t1.png";
 		else if (team == 2) pathBBICO = "billboard/ability/billboard_gnoll_icon_t2.png";
 		else if (team == 3) pathBBICO = "billboard/ability/billboard_gnoll_icon_t3.png";
 		else if (team == 4) pathBBICO = "billboard/ability/billboard_gnoll_icon_t4.png";
+
+		abilityOffset = 13.5f;
 	}
 
 	else if (race == TROLL)
@@ -59,7 +63,6 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		else if (team == 4) pathTEX = "obj/tokens/troll2_mapa4.jpg";
 
 		//Highlight texture
-		//pathTEXHL = "obj/tokens/texturas/highlight.jpg";
 		pathTEXHL = "obj/tokens/troll2_mapa_hl.jpg";
 
 		//Ability icon texture
@@ -67,6 +70,8 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		else if (team == 2) pathBBICO = "billboard/ability/billboard_troll_icon_t2.png";
 		else if (team == 3) pathBBICO = "billboard/ability/billboard_troll_icon_t3.png";
 		else if (team == 4) pathBBICO = "billboard/ability/billboard_troll_icon_t4.png";
+
+		abilityOffset = 15.0f;
 	}
 
 	else if (race == HOG)
@@ -87,6 +92,8 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		else if (team == 2) pathBBICO = "billboard/ability/billboard_hog_icon_t2.png";
 		else if (team == 3) pathBBICO = "billboard/ability/billboard_hog_icon_t3.png";
 		else if (team == 4) pathBBICO = "billboard/ability/billboard_hog_icon_t4.png";
+
+		abilityOffset = 15.0f;
 	}
 
 	//Billboard textures
@@ -142,6 +149,13 @@ void PrimeToken::init()
 	matNormal.setTexture(0, driver->getTexture(pathTEX));
 	matNormal.Lighting = true;
 
+	//Gnolls and Hogs must show inner faces because of armor
+	if (race == GNOLL || race == HOG)
+	{
+		matHighlight.BackfaceCulling = false;
+		matNormal.BackfaceCulling = false;
+	}
+
 	//Load model and texture
 	token->node = smgr->addMeshSceneNode(smgr->getMesh(pathOBJ), token->parentNode->node, -1, vector3df(0,0,0));
 	token->node->getMaterial(0) = matNormal;
@@ -160,7 +174,7 @@ void PrimeToken::init()
 	else if (token->player == 3) token->setRotation(Vector(0.0f,180.0f,0.0f));
 
 	//Create ability icon billboard
-	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(1.5f, 1.5f), vector3df(0.0f,15.0f,0.0f));
+	billboardAbility = smgr->addBillboardSceneNode(token->node, dimension2d<f32>(1.5f, 1.5f), vector3df(0.0f,abilityOffset,0.0f));
 	billboardAbility->getMaterial(0).setTexture(0, driver->getTexture(pathBBICO));
 	billboardAbility->getMaterial(0).MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
 	billboardAbility->getMaterial(0).Lighting = false;

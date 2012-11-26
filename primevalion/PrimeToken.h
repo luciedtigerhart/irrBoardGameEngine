@@ -78,6 +78,7 @@ private:
 
 	ISceneNode* billboardExtraction;
 	ISceneNode* billboardAbility;
+	float abilityOffset;
 
 	void PaintVanilla(); //Color token with original color
 
