@@ -50,7 +50,7 @@ void PrimeTile::addGhostBehavior(IrrTokenBehavior * behavior)
 void PrimeTile::loadGhost()
 {
 	PrimeTeam player;
-	bool playerLoaded;
+	bool playerLoaded = false;
 
 	//Load ghost token based on type of tile and teams
 	
