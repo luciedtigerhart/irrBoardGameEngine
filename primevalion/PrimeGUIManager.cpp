@@ -1141,43 +1141,43 @@ void PrimeGUIManager::BuildGUITitleScreen()
 	env_title->addImage(IMAGE_PLAYER_1_KOBOLD,"gui/title/gui_image_race_kobold_player_1.png",115,255);
 	env_title->addImage(IMAGE_PLAYER_1_GNOLL,"gui/title/gui_image_race_gnoll_player_1.png",195,255);
 	env_title->addImage(IMAGE_PLAYER_1_TROLL,"gui/title/gui_image_race_troll_player_1.png",277,256);
-	env_title->addImage(IMAGE_PLAYER_1_HOG,"gui/title/gui_image_race_hog_player_1.png",359,255);
+	env_title->addImage(IMAGE_PLAYER_1_HOG,"gui/title/gui_image_race_hog_player_1.png",359,256);
 
 	env_title->addImage(IMAGE_PLAYER_2_KOBOLD,"gui/title/gui_image_race_kobold_player_2.png",540,255);
 	env_title->addImage(IMAGE_PLAYER_2_GNOLL,"gui/title/gui_image_race_gnoll_player_2.png",620,255);
 	env_title->addImage(IMAGE_PLAYER_2_TROLL,"gui/title/gui_image_race_troll_player_2.png",702,256);
-	env_title->addImage(IMAGE_PLAYER_2_HOG,"gui/title/gui_image_race_hog_player_2.png",784,255);
+	env_title->addImage(IMAGE_PLAYER_2_HOG,"gui/title/gui_image_race_hog_player_2.png",784,256);
 
 	env_title->addImage(IMAGE_PLAYER_3_KOBOLD,"gui/title/gui_image_race_kobold_player_3.png",115,452);
 	env_title->addImage(IMAGE_PLAYER_3_GNOLL,"gui/title/gui_image_race_gnoll_player_3.png",195,452);
 	env_title->addImage(IMAGE_PLAYER_3_TROLL,"gui/title/gui_image_race_troll_player_3.png",277,453);
-	env_title->addImage(IMAGE_PLAYER_3_HOG,"gui/title/gui_image_race_hog_player_3.png",359,452);
+	env_title->addImage(IMAGE_PLAYER_3_HOG,"gui/title/gui_image_race_hog_player_3.png",359,453);
 
 	env_title->addImage(IMAGE_PLAYER_4_KOBOLD,"gui/title/gui_image_race_kobold_player_4.png",540,452);
 	env_title->addImage(IMAGE_PLAYER_4_GNOLL,"gui/title/gui_image_race_gnoll_player_4.png",620,452);
 	env_title->addImage(IMAGE_PLAYER_4_TROLL,"gui/title/gui_image_race_troll_player_4.png",702,453);
-	env_title->addImage(IMAGE_PLAYER_4_HOG,"gui/title/gui_image_race_hog_player_4.png",784,452);
+	env_title->addImage(IMAGE_PLAYER_4_HOG,"gui/title/gui_image_race_hog_player_4.png",784,453);
 
 	//Unselectable race images (for when a team is deactivated and no race can be selected)
 	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P1,"gui/title/gui_image_race_kobold_disabled.png",115,255);
 	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P1,"gui/title/gui_image_race_gnoll_disabled.png",195,255);
 	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P1,"gui/title/gui_image_race_troll_disabled.png",277,256);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P1,"gui/title/gui_image_race_hog_disabled.png",359,255);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P1,"gui/title/gui_image_race_hog_disabled.png",359,256);
 
 	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P2,"gui/title/gui_image_race_kobold_disabled.png",540,255);
 	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P2,"gui/title/gui_image_race_gnoll_disabled.png",620,255);
 	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P2,"gui/title/gui_image_race_troll_disabled.png",702,256);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P2,"gui/title/gui_image_race_hog_disabled.png",784,255);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P2,"gui/title/gui_image_race_hog_disabled.png",784,256);
 
 	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P3,"gui/title/gui_image_race_kobold_disabled.png",115,452);
 	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P3,"gui/title/gui_image_race_gnoll_disabled.png",195,452);
 	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P3,"gui/title/gui_image_race_troll_disabled.png",277,453);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P3,"gui/title/gui_image_race_hog_disabled.png",359,452);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P3,"gui/title/gui_image_race_hog_disabled.png",359,453);
 
 	env_title->addImage(IMAGE_UNSELECTABLE_KOBOLD_P4,"gui/title/gui_image_race_kobold_disabled.png",540,452);
 	env_title->addImage(IMAGE_UNSELECTABLE_GNOLL_P4,"gui/title/gui_image_race_gnoll_disabled.png",620,452);
 	env_title->addImage(IMAGE_UNSELECTABLE_TROLL_P4,"gui/title/gui_image_race_troll_disabled.png",702,453);
-	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P4,"gui/title/gui_image_race_hog_disabled.png",784,452);
+	env_title->addImage(IMAGE_UNSELECTABLE_HOG_P4,"gui/title/gui_image_race_hog_disabled.png",784,453);
 
 	//Unselected race buttons (which allow the selection of a race)
 	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P1,"gui/title/gui_button_race_kobold_normal.png",
@@ -1199,7 +1199,7 @@ void PrimeGUIManager::BuildGUITitleScreen()
 												  "gui/title/gui_button_race_hog_hover.png",
 												  "gui/title/gui_button_race_hog_normal.png",
 												  "gui/title/gui_button_race_hog_hover.png",
-												  359,255);
+												  359,256);
 
 	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P2,"gui/title/gui_button_race_kobold_normal.png",
 													 "gui/title/gui_button_race_kobold_hover.png",
@@ -1220,7 +1220,7 @@ void PrimeGUIManager::BuildGUITitleScreen()
 												  "gui/title/gui_button_race_hog_hover.png",
 												  "gui/title/gui_button_race_hog_normal.png",
 												  "gui/title/gui_button_race_hog_hover.png",
-												  784,255);
+												  784,256);
 
 	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P3,"gui/title/gui_button_race_kobold_normal.png",
 													 "gui/title/gui_button_race_kobold_hover.png",
@@ -1241,7 +1241,7 @@ void PrimeGUIManager::BuildGUITitleScreen()
 												  "gui/title/gui_button_race_hog_hover.png",
 												  "gui/title/gui_button_race_hog_normal.png",
 												  "gui/title/gui_button_race_hog_hover.png",
-												  359,452);
+												  359,453);
 
 	env_title->addButton(BUTTON_UNSELECTED_KOBOLD_P4,"gui/title/gui_button_race_kobold_normal.png",
 													 "gui/title/gui_button_race_kobold_hover.png",
@@ -1262,7 +1262,7 @@ void PrimeGUIManager::BuildGUITitleScreen()
 												  "gui/title/gui_button_race_hog_hover.png",
 												  "gui/title/gui_button_race_hog_normal.png",
 												  "gui/title/gui_button_race_hog_hover.png",
-												  784,452);
+												  784,453);
 
 	//Screen transition buttons
 	env_title->addButton(BUTTON_TUTORIAL,"gui/title/gui_button_tutorial_normal.png",

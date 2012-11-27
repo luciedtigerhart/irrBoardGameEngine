@@ -76,13 +76,13 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 	else if (race == HOG)
 	{
-		pathOBJ = "obj/tokens/token02.obj";
+		pathOBJ = "obj/tokens/hog.obj";
 
 		//Set texture according to team
-		if (team == 1) pathTEX = "obj/tokens/texturas/team1.jpg";
-		else if (team == 2) pathTEX = "obj/tokens/texturas/team2.jpg";
-		else if (team == 3) pathTEX = "obj/tokens/texturas/team3.jpg";
-		else if (team == 4) pathTEX = "obj/tokens/texturas/team4.jpg";
+		if (team == 1) pathTEX = "obj/tokens/map_hog.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/map_hog.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/map_hog.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/map_hog.jpg";
 
 		//Highlight texture
 		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
@@ -93,7 +93,7 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		else if (team == 3) pathBBICO = "billboard/ability/billboard_hog_icon_t3.png";
 		else if (team == 4) pathBBICO = "billboard/ability/billboard_hog_icon_t4.png";
 
-		abilityOffset = 15.0f;
+		abilityOffset = 13.0f;
 	}
 
 	//Billboard textures

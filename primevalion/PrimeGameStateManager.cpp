@@ -109,7 +109,7 @@ void PrimeGameStateManager::Init()
 
 	player1.isAI = player2.isAI = player3.isAI = player4.isAI = false;
 	player1.isActive = player2.isActive = player3.isActive = player4.isActive = true;
-	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = TROLL;
+	player1.assignedRace = player2.assignedRace = player3.assignedRace = player4.assignedRace = KOBOLD;
 
 	ResetPlayers();
 
