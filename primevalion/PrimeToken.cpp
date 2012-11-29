@@ -79,13 +79,13 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 		pathOBJ = "obj/tokens/hog.obj";
 
 		//Set texture according to team
-		if (team == 1) pathTEX = "obj/tokens/map_hog.jpg";
-		else if (team == 2) pathTEX = "obj/tokens/map_hog.jpg";
-		else if (team == 3) pathTEX = "obj/tokens/map_hog.jpg";
-		else if (team == 4) pathTEX = "obj/tokens/map_hog.jpg";
+		if (team == 1) pathTEX = "obj/tokens/textura1_hog.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/textura2_hog.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/textura3_hog.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/textura4_hog.jpg";
 
 		//Highlight texture
-		pathTEXHL = "obj/tokens/texturas/highlight.jpg";
+		pathTEXHL = "obj/tokens/textura_hog_hl.jpg";
 
 		//Ability icon texture
 		if (team == 1) pathBBICO = "billboard/ability/billboard_hog_icon_t1.png";
