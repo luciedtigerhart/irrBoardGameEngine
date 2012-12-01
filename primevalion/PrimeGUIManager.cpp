@@ -535,37 +535,200 @@ void PrimeGUIManager::HideResourceIndicators()
 
 void PrimeGUIManager::ShowPlayerIndicators(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
 {
-	//Show or hide player ON/OFF indicators
+	//Show or hide player ON/OFF/AI indicators
 
-	if (p1->isActive) { env_title->setImage(INDICATOR_PLAYER_1_ON, true); env_title->setImage(INDICATOR_PLAYER_1_OFF, false); }
-	else if (!p1->isActive) { env_title->setImage(INDICATOR_PLAYER_1_ON, false); env_title->setImage(INDICATOR_PLAYER_1_OFF, true); }
+	if (p1->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_1_OFF, false);
 
-	if (p2->isActive) { env_title->setImage(INDICATOR_PLAYER_2_ON, true); env_title->setImage(INDICATOR_PLAYER_2_OFF, false); }
-	else if (!p2->isActive) { env_title->setImage(INDICATOR_PLAYER_2_ON, false); env_title->setImage(INDICATOR_PLAYER_2_OFF, true); }
+		if (p1->isAI)
+		{
+			env_title->setImage(INDICATOR_PLAYER_1_ON, false);
+			env_title->setImage(INDICATOR_PLAYER_1_AI, true);
+			env_title->setImage(INDICATOR_PLAYER_1_AI_SIGN, true);
+		}
+		else
+		{
+			env_title->setImage(INDICATOR_PLAYER_1_ON, true);
+			env_title->setImage(INDICATOR_PLAYER_1_AI, false);
+			env_title->setImage(INDICATOR_PLAYER_1_AI_SIGN, false);
+		}
+	}
+	else if (!p1->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_1_OFF, true);
+		env_title->setImage(INDICATOR_PLAYER_1_ON, false);
+		env_title->setImage(INDICATOR_PLAYER_1_AI, false);
+		env_title->setImage(INDICATOR_PLAYER_1_AI_SIGN, false);
+	}
 
-	if (p3->isActive) { env_title->setImage(INDICATOR_PLAYER_3_ON, true); env_title->setImage(INDICATOR_PLAYER_3_OFF, false); }
-	else if (!p3->isActive) { env_title->setImage(INDICATOR_PLAYER_3_ON, false); env_title->setImage(INDICATOR_PLAYER_3_OFF, true); }
+	if (p2->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_2_OFF, false);
 
-	if (p4->isActive) { env_title->setImage(INDICATOR_PLAYER_4_ON, true); env_title->setImage(INDICATOR_PLAYER_4_OFF, false); }
-	else if (!p4->isActive) { env_title->setImage(INDICATOR_PLAYER_4_ON, false); env_title->setImage(INDICATOR_PLAYER_4_OFF, true); }
+		if (p2->isAI)
+		{
+			env_title->setImage(INDICATOR_PLAYER_2_ON, false);
+			env_title->setImage(INDICATOR_PLAYER_2_AI, true);
+			env_title->setImage(INDICATOR_PLAYER_2_AI_SIGN, true);
+		}
+		else
+		{
+			env_title->setImage(INDICATOR_PLAYER_2_ON, true);
+			env_title->setImage(INDICATOR_PLAYER_2_AI, false);
+			env_title->setImage(INDICATOR_PLAYER_2_AI_SIGN, false);
+		}
+	}
+	else if (!p2->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_2_OFF, true);
+		env_title->setImage(INDICATOR_PLAYER_2_ON, false);
+		env_title->setImage(INDICATOR_PLAYER_2_AI, false);
+		env_title->setImage(INDICATOR_PLAYER_2_AI_SIGN, false);
+	}
 
+	if (p3->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_3_OFF, false);
+
+		if (p3->isAI)
+		{
+			env_title->setImage(INDICATOR_PLAYER_3_ON, false);
+			env_title->setImage(INDICATOR_PLAYER_3_AI, true);
+			env_title->setImage(INDICATOR_PLAYER_3_AI_SIGN, true);
+		}
+		else
+		{
+			env_title->setImage(INDICATOR_PLAYER_3_ON, true);
+			env_title->setImage(INDICATOR_PLAYER_3_AI, false);
+			env_title->setImage(INDICATOR_PLAYER_3_AI_SIGN, false);
+		}
+	}
+	else if (!p3->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_3_OFF, true);
+		env_title->setImage(INDICATOR_PLAYER_3_ON, false);
+		env_title->setImage(INDICATOR_PLAYER_3_AI, false);
+		env_title->setImage(INDICATOR_PLAYER_3_AI_SIGN, false);
+	}
+
+	if (p4->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_4_OFF, false);
+
+		if (p4->isAI)
+		{
+			env_title->setImage(INDICATOR_PLAYER_4_ON, false);
+			env_title->setImage(INDICATOR_PLAYER_4_AI, true);
+			env_title->setImage(INDICATOR_PLAYER_4_AI_SIGN, true);
+		}
+		else
+		{
+			env_title->setImage(INDICATOR_PLAYER_4_ON, true);
+			env_title->setImage(INDICATOR_PLAYER_4_AI, false);
+			env_title->setImage(INDICATOR_PLAYER_4_AI_SIGN, false);
+		}
+	}
+	else if (!p4->isActive)
+	{
+		env_title->setImage(INDICATOR_PLAYER_4_OFF, true);
+		env_title->setImage(INDICATOR_PLAYER_4_ON, false);
+		env_title->setImage(INDICATOR_PLAYER_4_AI, false);
+		env_title->setImage(INDICATOR_PLAYER_4_AI_SIGN, false);
+	}
 }
 
 void PrimeGUIManager::ShowPlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
 {
-	//Hide and show activation/deactivation buttons, based on active teams
+	//Hide and show activation/deactivation/AI buttons, based on active teams
 
-	if (p1->isActive) { env_title->setButton(BUTTON_PLAYER_1_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, true); }
-	else if (!p1->isActive) { env_title->setButton(BUTTON_PLAYER_1_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, false); }
+	if (p1->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_1_ACTIVATE, false);
 
-	if (p2->isActive) { env_title->setButton(BUTTON_PLAYER_2_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, true); }
-	else if (!p2->isActive) { env_title->setButton(BUTTON_PLAYER_2_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, false); }
+		if (p1->isAI)
+		{
+			env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, true);
+			env_title->setButton(BUTTON_PLAYER_1_AI, false);
+		}
+		else
+		{
+			env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, false);
+			env_title->setButton(BUTTON_PLAYER_1_AI, true);
+		}
+	}
+	else if (!p1->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_1_ACTIVATE, true);
+		env_title->setButton(BUTTON_PLAYER_1_DEACTIVATE, false);
+		env_title->setButton(BUTTON_PLAYER_1_AI, false);
+	}
 
-	if (p3->isActive) { env_title->setButton(BUTTON_PLAYER_3_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, true); }
-	else if (!p3->isActive) { env_title->setButton(BUTTON_PLAYER_3_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, false); }
+	if (p2->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_2_ACTIVATE, false);
 
-	if (p4->isActive) { env_title->setButton(BUTTON_PLAYER_4_ACTIVATE, false); env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, true); }
-	else if (!p4->isActive) { env_title->setButton(BUTTON_PLAYER_4_ACTIVATE, true); env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, false); }
+		if (p2->isAI)
+		{
+			env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, true);
+			env_title->setButton(BUTTON_PLAYER_2_AI, false);
+		}
+		else
+		{
+			env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, false);
+			env_title->setButton(BUTTON_PLAYER_2_AI, true);
+		}
+	}
+	else if (!p2->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_2_ACTIVATE, true);
+		env_title->setButton(BUTTON_PLAYER_2_DEACTIVATE, false);
+		env_title->setButton(BUTTON_PLAYER_2_AI, false);
+	}
+
+	if (p3->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_3_ACTIVATE, false);
+
+		if (p3->isAI)
+		{
+			env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, true);
+			env_title->setButton(BUTTON_PLAYER_3_AI, false);
+		}
+		else
+		{
+			env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, false);
+			env_title->setButton(BUTTON_PLAYER_3_AI, true);
+		}
+	}
+	else if (!p3->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_3_ACTIVATE, true);
+		env_title->setButton(BUTTON_PLAYER_3_DEACTIVATE, false);
+		env_title->setButton(BUTTON_PLAYER_3_AI, false);
+	}
+
+	if (p4->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_4_ACTIVATE, false);
+
+		if (p4->isAI)
+		{
+			env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, true);
+			env_title->setButton(BUTTON_PLAYER_4_AI, false);
+		}
+		else
+		{
+			env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, false);
+			env_title->setButton(BUTTON_PLAYER_4_AI, true);
+		}
+	}
+	else if (!p4->isActive)
+	{
+		env_title->setButton(BUTTON_PLAYER_4_ACTIVATE, true);
+		env_title->setButton(BUTTON_PLAYER_4_DEACTIVATE, false);
+		env_title->setButton(BUTTON_PLAYER_4_AI, false);
+	}
 }
 
 void PrimeGUIManager::ShowRaces(PrimeTeam* p1, PrimeTeam* p2, PrimeTeam* p3, PrimeTeam* p4)
@@ -903,12 +1066,19 @@ bool PrimeGUIManager::VerifyTitlePlayerOnOffButtons(PrimeTeam* p1, PrimeTeam* p2
 	if (env_title->isPressedButton(BUTTON_PLAYER_3_ACTIVATE)) { p3->isActive = true; press = true; }
 	if (env_title->isPressedButton(BUTTON_PLAYER_4_ACTIVATE)) { p4->isActive = true; press = true; }
 
-	//Deactivate teams when deactivation buttons are pressed
+	//Deactivate teams and AI when deactivation buttons are pressed
 
-	if (env_title->isPressedButton(BUTTON_PLAYER_1_DEACTIVATE)) { p1->isActive = false; press = true; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_2_DEACTIVATE)) { p2->isActive = false; press = true; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_3_DEACTIVATE)) { p3->isActive = false; press = true; }
-	if (env_title->isPressedButton(BUTTON_PLAYER_4_DEACTIVATE)) { p4->isActive = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_1_DEACTIVATE)) { p1->isActive = false; p1->isAI = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_2_DEACTIVATE)) { p2->isActive = false; p2->isAI = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_3_DEACTIVATE)) { p3->isActive = false; p3->isAI = false; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_4_DEACTIVATE)) { p4->isActive = false; p4->isAI = false; press = true; }
+
+	//Activate AI teams when AI buttons are pressed
+
+	if (env_title->isPressedButton(BUTTON_PLAYER_1_AI)) { p1->isAI = true; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_2_AI)) { p2->isAI = true; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_3_AI)) { p3->isAI = true; press = true; }
+	if (env_title->isPressedButton(BUTTON_PLAYER_4_AI)) { p4->isAI = true; press = true; }
 
 	return press;
 }
@@ -1093,6 +1263,18 @@ void PrimeGUIManager::BuildGUITitleScreen()
 	env_title->addImage(INDICATOR_PLAYER_3_OFF,"gui/title/gui_image_player_team_3_inactive.png",165,398);
 	env_title->addImage(INDICATOR_PLAYER_4_OFF,"gui/title/gui_image_player_team_4_inactive.png",692,398);
 
+	//AI player indicators
+	env_title->addImage(INDICATOR_PLAYER_1_AI,"gui/title/gui_image_player_team_1_ai.png",165,201);
+	env_title->addImage(INDICATOR_PLAYER_2_AI,"gui/title/gui_image_player_team_2_ai.png",692,201);
+	env_title->addImage(INDICATOR_PLAYER_3_AI,"gui/title/gui_image_player_team_3_ai.png",165,397);
+	env_title->addImage(INDICATOR_PLAYER_4_AI,"gui/title/gui_image_player_team_4_ai.png",692,397);
+
+	//"AI" mini-indicators
+	env_title->addImage(INDICATOR_PLAYER_1_AI_SIGN,"gui/title/gui_image_player_team_ai.png",133,207);
+	env_title->addImage(INDICATOR_PLAYER_2_AI_SIGN,"gui/title/gui_image_player_team_ai.png",660,207);
+	env_title->addImage(INDICATOR_PLAYER_3_AI_SIGN,"gui/title/gui_image_player_team_ai.png",133,401);
+	env_title->addImage(INDICATOR_PLAYER_4_AI_SIGN,"gui/title/gui_image_player_team_ai.png",660,401);
+
 	//Player activation buttons
 	env_title->addButton(BUTTON_PLAYER_1_ACTIVATE,"gui/title/gui_button_player_activate_normal.png",
 												  "gui/title/gui_button_player_activate_hover.png",
@@ -1136,6 +1318,28 @@ void PrimeGUIManager::BuildGUITitleScreen()
 													"gui/title/gui_button_player_deactivate_normal.png",
 													"gui/title/gui_button_player_deactivate_hover.png",
 													533,382);
+
+	//Player AI activation buttons
+	env_title->addButton(BUTTON_PLAYER_1_AI,"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											355,186);
+	env_title->addButton(BUTTON_PLAYER_2_AI,"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											533,186);
+	env_title->addButton(BUTTON_PLAYER_3_AI,"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											355,382);
+	env_title->addButton(BUTTON_PLAYER_4_AI,"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											"gui/title/gui_button_player_ai_normal.png",
+											"gui/title/gui_button_player_ai_hover.png",
+											533,382);
 
 	//Selected race images (for when a race is selected and cannot be clicked anymore)
 	env_title->addImage(IMAGE_PLAYER_1_KOBOLD,"gui/title/gui_image_race_kobold_player_1.png",115,255);
@@ -1648,8 +1852,8 @@ int PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 			//If this is not a transition phase...
 			else
 			{
-				//If no signals have been sent to play state...
-				if (!playState->signalEndMatch && !playState->signalEndTurn)
+				//If no signals have been sent to play state and current player is human...
+				if (!playState->signalEndMatch && !playState->signalEndTurn && !playState->AIPlay)
 				{
 					//Enable "End Match" button
 					EnableEndMatchButton(true);
@@ -1661,14 +1865,19 @@ int PrimeGUIManager::ManageGUIMatchScreen(int turn, PrimePlayState* playState)
 					}
 				}
 
-				//Otherwise, if a signal has been sent...
-				else
+				//Otherwise, if a signal has been sent or current player is AI...
+				else if (playState->signalEndMatch || playState->signalEndTurn || playState->AIPlay)
 				{
-					//Disable both match buttons to avoid two
-					//signals being sent in one turn.
+					//Disable both match buttons to avoid two signals being sent in one turn,
+					//or only "End Turn" button to avoid player meddling in AI behavior.
 
 					EnableEndTurnButton(false);
-					EnableEndMatchButton(false);
+					
+					if (playState->signalEndMatch || playState->signalEndTurn)
+					{
+						EnableEndMatchButton(false);
+					}
+					else EnableEndMatchButton(true);
 				}
 			}
 

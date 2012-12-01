@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "PrimeToken.h"
+#include "PrimeAIArchitecture.h"
 
 //Audio definitions
 //----------------------------
@@ -114,6 +115,38 @@ using namespace IrrBoardGameEngine;
 class PrimePlayState
 {
 private:
+
+	//**************************************************
+	//  A R T I F I C I A L    I N T E L L I G E N C E
+	//**************************************************
+
+		PrimeAgent agent;
+
+		//Token acting order variables
+		bool tokenMovedAI;
+		bool firstTokenMovedAI, secondTokenMovedAI, thirdTokenMovedAI;
+		bool firstTokenTryAgainAI, secondTokenTryAgainAI, thirdTokenTryAgainAI;
+
+		//AI-induced ressurrection phase skipping
+		bool skipRessurrectionAI;
+
+		//AI ressurrection counter
+		int tokenRessurrectedAI;
+
+		//Act on the environment based on controller results (Actuator method)
+		void AgentACT(int ordering, IrrToken* token, IrrBoard* board);
+
+		//Ressurrects an AI-controlled token
+		void RessurrectTokenAI(IrrToken* token, IrrBoard* board, int i, int j);
+
+		//Startup an AI-controlled token's animation
+		void SetupAnimationAI(IrrToken* token, IrrBoard* board, std::string move);
+
+		//Attempt to move an token
+		void MoveTokenAI(IrrToken* token, IrrBoard* board, int ordering);
+
+	//**************************************************
+
 	//Time attributes for GUI messages and manual animations
 	float deltaTime;
 	int now;
@@ -199,6 +232,9 @@ public:
 	std::list<IrrToken*>* tokensTeam3;
 	std::list<IrrToken*>* tokensTeam4;
 	std::list<IrrToken*>::iterator t;
+
+	//Whether AI is playing
+	bool AIPlay;
 
 	bool signalBackToTitle; //If "true", match has finished completely and game should return to title screen
 	bool signalEndTurn; //If "true", GUI has reported the "End Turn" button has been pressed
@@ -297,6 +333,9 @@ public:
 
 	//Count tokens and advance phases when conditions are met
 	void SwapPhase(IrrBoard* board);
+
+	//Advance phases based on intelligent agent's actions
+	void SwapPhaseAI(IrrBoard* board);
 
 	//Advance phases according to token or tile which was clicked
 	void SwapPhaseOnClick(IrrBoard* board, int i, int j);

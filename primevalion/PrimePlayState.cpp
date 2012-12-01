@@ -3,6 +3,289 @@
 PrimePlayState::PrimePlayState() {};
 PrimePlayState::~PrimePlayState() {};
 
+void PrimePlayState::AgentACT(int ordering, IrrToken* token, IrrBoard* board)
+{
+	//Set up animation
+	SetupAnimationAI(token, board, agent.move);
+
+	//Complete movement
+	if (ordering == 1) firstTokenMovedAI = true;
+	else if (ordering == 2) secondTokenMovedAI = true;
+	else if (ordering == 3) thirdTokenMovedAI = true;
+	
+	tokenMovedAI = true;
+}
+
+void PrimePlayState::RessurrectTokenAI(IrrToken* token, IrrBoard* board, int i, int j)
+{
+	//Re-activate token
+	token->setActive(true);
+	token->getBehavior(0)->setBool("isDead", false);
+
+	//Place token at the safe zone!
+	if (board->addToken(i, j, token))
+	{
+		//Make sure the token cannot move this turn
+		token->getBehavior(0)->setBool("isFinished", true);
+
+		//Increment AI token ressurrection counter
+		tokenRessurrectedAI++;
+
+		//Play position fitting sound
+		SFX->at(SFX_TOKEN_FIT)->getAudio()->setPlayOnceMode();
+	}
+}
+
+void PrimePlayState::SetupAnimationAI(IrrToken* token, IrrBoard* board, std::string move)
+{
+	int iTarget, jTarget;
+
+	//Only animate tokens which have actually moved
+	if (move != "STAND")
+	{
+		//Simulate token selection
+		selectedToken = token;
+		token->getBehavior(0)->setBool("isSelected", true);
+
+		//Store adjacent positions
+		GetAdjacentTiles();
+
+		//Cross-shaped movement (includes Pushing)
+		if (move == "MOVE_N" || move == "MOVE_S" || move == "MOVE_W" || move == "MOVE_E")
+		{
+			//Set token's direction
+			if (move == "MOVE_N") selectedToken->getBehavior(0)->setInt("moveDir", NORTH);
+			else if (move == "MOVE_S") selectedToken->getBehavior(0)->setInt("moveDir", SOUTH);
+			else if (move == "MOVE_W") selectedToken->getBehavior(0)->setInt("moveDir", WEST);
+			else if (move == "MOVE_E") selectedToken->getBehavior(0)->setInt("moveDir", EAST);
+
+			//If target is a FREE tile...
+			if ((move == "MOVE_N" && board->board[iNorth][jNorth]->token == NULL)
+				|| (move == "MOVE_S" && board->board[iSouth][jSouth]->token == NULL)
+				|| (move == "MOVE_W" && board->board[iWest][jWest]->token == NULL)
+				|| (move == "MOVE_E" && board->board[iEast][jEast]->token == NULL))
+			{
+				//...And not a trap tile...
+				if ((move == "MOVE_N" && board->board[iNorth][jNorth]->inf != TRAP)
+					|| (move == "MOVE_S" && board->board[iSouth][jSouth]->inf != TRAP)
+					|| (move == "MOVE_W" && board->board[iWest][jWest]->inf != TRAP)
+					|| (move == "MOVE_E" && board->board[iEast][jEast]->inf != TRAP))
+				{
+					//...Neither an obstacle...
+					if ((move == "MOVE_N" && board->board[iNorth][jNorth]->inf != RUINS)
+						|| (move == "MOVE_S" && board->board[iSouth][jSouth]->inf != RUINS)
+						|| (move == "MOVE_W" && board->board[iWest][jWest]->inf != RUINS)
+						|| (move == "MOVE_E" && board->board[iEast][jEast]->inf != RUINS))
+					{
+						//Mark selected token for movement.
+						selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
+
+						//Startup animation for selected token
+						selectedToken->getBehavior(0)->setBool("isAnimStarted", true);
+
+						//Execute move (start animations)
+						phase = ANIMATION_EXECUTION;
+
+						//Play token movement sound
+						SFX->at(SFX_TOKEN_DRAG)->getAudio()->setPlayOnceMode();
+					}
+				}
+			}
+
+			//If target is an occupied tile (PUSH move)...
+			else if ((move == "MOVE_N" && board->board[iNorth][jNorth]->token != NULL)
+					|| (move == "MOVE_S" && board->board[iSouth][jSouth]->token != NULL)
+					|| (move == "MOVE_W" && board->board[iWest][jWest]->token != NULL)
+					|| (move == "MOVE_E" && board->board[iEast][jEast]->token != NULL))
+			{
+				//Get position of target tile
+				if (move == "MOVE_N") { iTarget = iNorth; jTarget = jNorth; }
+				else if (move == "MOVE_S") { iTarget = iSouth; jTarget = jSouth; }
+				else if (move == "MOVE_W") { iTarget = iWest; jTarget = jWest; }
+				else if (move == "MOVE_E") { iTarget = iEast; jTarget = jEast; }
+
+				//If its a valid Push move...
+				if (PlayIsValid(PUSH, selectedToken->getBehavior(0)->getInt("moveDir"), board, iTarget, jTarget))
+				{
+					//Mark target token and the tokens behind it for pushing
+					tokensPushed = SetPushLine(CLICKED, selectedToken->getBehavior(0)->getInt("moveDir"), board, iTarget, jTarget);
+									
+					//Mark selected token for movement
+					selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
+
+					//Startup animation for selected token
+					selectedToken->getBehavior(0)->setBool("isAnimStarted", true);
+
+					//Execute move (start animations)
+					phase = ANIMATION_EXECUTION;
+
+					//Play token movement sound
+					SFX->at(SFX_TOKEN_DRAG)->getAudio()->setPlayOnceMode();
+				}
+
+				//Otherwise...
+				else
+				{
+					//Deselect token
+					selectedToken = NULL;
+					token->getBehavior(0)->setBool("isSelected", false);
+				}
+			}
+		}
+
+		//Diagonal movement (Attacking)
+		else if (move == "ATK_NW" || move == "ATK_NE" || move == "ATK_SW" || move == "ATK_SE")
+		{
+			//Set token's direction
+			if (move == "ATK_NW") selectedToken->getBehavior(0)->setInt("moveDir", NORTHWEST);
+			else if (move == "ATK_NE") selectedToken->getBehavior(0)->setInt("moveDir", NORTHEAST);
+			else if (move == "ATK_SW") selectedToken->getBehavior(0)->setInt("moveDir", SOUTHWEST);
+			else if (move == "ATK_SE") selectedToken->getBehavior(0)->setInt("moveDir", SOUTHEAST);
+
+			//Get position of target tile
+			if (move == "ATK_NW") { iTarget = iNorthwest; jTarget = jNorthwest; }
+			else if (move == "ATK_NE") { iTarget = iNortheast; jTarget = jNortheast; }
+			else if (move == "ATK_SW") { iTarget = iSouthwest; jTarget = jSouthwest; }
+			else if (move == "ATK_SE") { iTarget = iSoutheast; jTarget = jSoutheast; }
+
+			//If there's really a token at target position...
+			if (board->board[iTarget][jTarget]->token != NULL)
+			{
+				//...And its really an enemy...
+				if (board->board[iTarget][jTarget]->token->player != selectedToken->player)
+				{
+					//Mark enemy as attack target
+					board->board[iTarget][jTarget]->token->getBehavior(0)->setBool("isTargeted", true);
+
+					//Mark selected token for movement
+					selectedToken->getBehavior(0)->setBool("isGonnaMove", true);
+
+					//Startup animation for enemy and selected token
+					board->board[iTarget][jTarget]->token->getBehavior(0)->setBool("isAnimStarted", true);
+					selectedToken->getBehavior(0)->setBool("isAnimStarted", true);
+
+					//Execute move (start animations)
+					animAttackDeath = true;
+					phase = ANIMATION_EXECUTION;
+				}
+			}
+		}
+	}
+}
+
+void PrimePlayState::MoveTokenAI(IrrToken* token, IrrBoard* board, int ordering)
+{
+	//Attempt to move a token based on agent FSM results
+
+	//First token of a team...
+	if (ordering == 1)
+	{
+		//If this token hasn't moved...
+		if (!firstTokenMovedAI && !tokenMovedAI)
+		{
+			//...Neither is already finished or dead...
+			if (!token->getBehavior(0)->getBool("isFinished") && !token->getBehavior(0)->getBool("isDead"))
+			{
+				//If token has attempted to move before...
+				if (firstTokenTryAgainAI)
+				{
+					//Try to move token a second time, making it "STAND" if still unable to move
+					if (agent.RunFSM(token, board, STAND_AS_DEFAULT))
+					{
+						//Act on the environment!
+						AgentACT(1, token, board);
+					}
+				}
+
+				//If this is the first attempt...
+				else
+				{
+					//Try to move token, doing nothing if it cannot move
+					if (agent.RunFSM(token, board, NO_DEFAULT))
+					{
+						//Act on the environment!
+						AgentACT(1, token, board);
+					}
+					else firstTokenTryAgainAI = true;
+				}
+			}
+			else firstTokenMovedAI = true;
+		}
+	}
+
+	//Second token of a team...
+	if (ordering == 2)
+	{
+		//If this token hasn't moved...
+		if (!secondTokenMovedAI && !tokenMovedAI)
+		{
+			//...Neither is already finished or dead...
+			if (!token->getBehavior(0)->getBool("isFinished") && !token->getBehavior(0)->getBool("isDead"))
+			{
+				//If token has attempted to move before...
+				if (secondTokenTryAgainAI)
+				{
+					//Try to move token a second time, making it "STAND" if still unable to move
+					if (agent.RunFSM(token, board, STAND_AS_DEFAULT))
+					{
+						//Act on the environment!
+						AgentACT(2, token, board);
+					}
+				}
+
+				//If this is the first attempt...
+				else
+				{
+					//Try to move token, doing nothing if it cannot move
+					if (agent.RunFSM(token, board, NO_DEFAULT))
+					{
+						//Act on the environment!
+						AgentACT(2, token, board);
+					}
+					else secondTokenTryAgainAI = true;
+				}
+			}
+			else secondTokenMovedAI = true;
+		}
+	}
+	
+	//Third token of a team...
+	if (ordering == 3)
+	{
+		//If this token hasn't moved...
+		if (!thirdTokenMovedAI && !tokenMovedAI)
+		{
+			//...Neither is already finished or dead...
+			if (!token->getBehavior(0)->getBool("isFinished") && !token->getBehavior(0)->getBool("isDead"))
+			{
+				//If token has attempted to move before...
+				if (thirdTokenTryAgainAI)
+				{
+					//Try to move token a second time, making it "STAND" if still unable to move
+					if (agent.RunFSM(token, board, STAND_AS_DEFAULT))
+					{
+						//Act on the environment!
+						AgentACT(3, token, board);
+					}
+				}
+
+				//If this is the first attempt...
+				else
+				{
+					//Try to move token, doing nothing if it cannot move
+					if (agent.RunFSM(token, board, NO_DEFAULT))
+					{
+						//Act on the environment!
+						AgentACT(3, token, board);
+					}
+					else thirdTokenTryAgainAI = true;
+				}
+			}
+			else thirdTokenMovedAI = true;
+		}
+	}
+}
+
 void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int goal,
 								IrrParticleSystem* b, IrrParticleSystem* a,
 								IrrParticleSystem* rnw, IrrParticleSystem* rne,
@@ -13,6 +296,10 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 								std::vector<IrrGameObject*>* music, std::vector<IrrGameObject*>* sound,
 								ICameraSceneNode* camera)
 {
+	//Initialize agents
+	agent.Startup("log/Primevalion.csv");
+	AIPlay = false;
+
 	//Get input from engine
 	input = engine->getInput();
 
@@ -123,7 +410,7 @@ void PrimePlayState::Initialize(IrrEngine* engine, int players, int tokens, int 
 	then = IrrEngine::getInstance()->getDevice()->getTimer()->getTime();
 
 	//Initialize ressurrection skipping variables
-	skipRessurrection = false;
+	skipRessurrection = skipRessurrectionAI = false;
 	deadTokensNotRevived = 0;
 	safeZoneTilesMax = 0;
 	safeZone1TilesOccupied = safeZone2TilesOccupied = 0;
@@ -878,8 +1165,6 @@ void PrimePlayState::AnimateToken(IrrToken* token, IrrBoard* board, float speed)
 	else if (!animAttackDeath && !token->getBehavior(0)->getBool("isAnimClosed") &&
 			(token->getBehavior(0)->getBool("isGonnaMove") || token->getBehavior(0)->getBool("isGonnaBePushed")))
 	{
-		//cout<<animAttackDeath<<endl;
-
 		if (token->getBehavior(0)->getBool("isGonnaMove")) animSimpleMove = true;
 		if (token->getBehavior(0)->getBool("isGonnaBePushed")) animPushMove = true;
 
@@ -1520,6 +1805,13 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			//First step of a new turn is to ressurrect dead tokens
 			phase = RESSURRECTION_PLACEMENT;
 
+			//Reset AI token acting order variables
+			firstTokenMovedAI = secondTokenMovedAI = thirdTokenMovedAI = false;
+			firstTokenTryAgainAI = secondTokenTryAgainAI = thirdTokenTryAgainAI = false;
+
+			//Reset AI token ressurrection counter
+			tokenRessurrectedAI = 0;
+
 			turnBeginPhase = 0;
 		}
 	}
@@ -1531,6 +1823,9 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 
 		//Check if there's at least 1 free safe zone tile
 		VerifySafeZoneOccupation(board);
+
+		//If AI has induced ressurrection phase skipping...
+		if (skipRessurrectionAI) skipRessurrection = true;
 
 		//Force ressurrection skipping if "End Match" button is pressed
 		if (signalEndMatch) skipRessurrection = true;
@@ -1544,6 +1839,7 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			{
 				deadTokensNotRevived = remainingTokens;
 				skipRessurrection = false;
+				skipRessurrectionAI = false;
 			}
 
 			//Don't forget to reset action states
@@ -1725,6 +2021,169 @@ void PrimePlayState::SwapPhase(IrrBoard* board)
 			//Remove camera crosshair billboard
 			billboardCameraCrosshair->remove();
 		}
+	}
+}
+
+void PrimePlayState::SwapPhaseAI(IrrBoard* board)
+{
+	//The agent senses its surroundings and determines a theoretical action for itself.
+	//This method will take that "imaginary" action and make it real.
+
+	//Move tokens based on agent decisions, not highlighted tiles
+	if (phase == PLAY_SELECTION)
+	{
+		//Enable new move by resetting previous move
+		tokenMovedAI = false;
+
+		//Team 1...
+		if (turnPlayer == 1 && player1.isAI)
+		{
+			AIPlay = true;
+
+			//Attempt to move tokens in order (2, 1, 3)
+			t = tokensTeam1->begin(); t++; MoveTokenAI((*t), board, 2);
+			--t; MoveTokenAI((*t), board, 1);
+			t++; t++; MoveTokenAI((*t), board, 3);
+
+			//If all tokens have moved, signal turn end
+			if (firstTokenMovedAI && secondTokenMovedAI && thirdTokenMovedAI && !signalEndTurn)
+			{
+				//This also forces Finished state onto "standing" tokens!
+				signalEndTurn = true;
+			}
+		}
+
+		//Team 2...
+		else if (turnPlayer == 2 && player2.isAI)
+		{
+			AIPlay = true;
+
+			//Attempt to move tokens in order (2, 3, 1)
+			t = tokensTeam2->begin(); t++; MoveTokenAI((*t), board, 2);
+			t++; MoveTokenAI((*t), board, 3);
+			--t; --t; MoveTokenAI((*t), board, 1);
+
+			//If all tokens have moved, signal turn end
+			if (firstTokenMovedAI && secondTokenMovedAI && thirdTokenMovedAI && !signalEndTurn)
+			{
+				//This also forces Finished state onto "standing" tokens!
+				signalEndTurn = true;
+			}
+		}
+
+		//Team 3...
+		else if (turnPlayer == 3 && player3.isAI)
+		{
+			AIPlay = true;
+
+			//Attempt to move tokens in order (2, 3, 1)
+			t = tokensTeam3->begin(); t++; MoveTokenAI((*t), board, 2);
+			t++; MoveTokenAI((*t), board, 3);
+			--t; --t; MoveTokenAI((*t), board, 1);
+
+			//If all tokens have moved, signal turn end
+			if (firstTokenMovedAI && secondTokenMovedAI && thirdTokenMovedAI && !signalEndTurn)
+			{
+				//This also forces Finished state onto "standing" tokens!
+				signalEndTurn = true;
+			}
+		}
+
+		//Team 4...
+		else if (turnPlayer == 4 && player4.isAI)
+		{
+			AIPlay = true;
+
+			//Attempt to move tokens in order (2, 1, 3)
+			t = tokensTeam4->begin(); t++; MoveTokenAI((*t), board, 2);
+			--t; MoveTokenAI((*t), board, 1);
+			t++; t++; MoveTokenAI((*t), board, 3);
+
+			//If all tokens have moved, signal turn end
+			if (firstTokenMovedAI && secondTokenMovedAI && thirdTokenMovedAI && !signalEndTurn)
+			{
+				//This also forces Finished state onto "standing" tokens!
+				signalEndTurn = true;
+			}
+		}
+
+		//No AI team is playing
+		else AIPlay = false;
+	}
+
+	//Ressurrection happens automatically, in pre-defined tiles
+	else if (phase == RESSURRECTION_PLACEMENT)
+	{
+		//Team 1...
+		if (turnPlayer == 1 && player1.isAI)
+		{
+			for (t = tokensTeam1->begin(); t != tokensTeam1->end(); t++)
+			{
+				//If token is dead...
+				if ((*t)->getBehavior(0)->getBool("isDead"))
+				{
+					if (board->board[4][0]->token == NULL) RessurrectTokenAI((*t), board, 4, 0); //1st Priority position
+					else if (board->board[5][0]->token == NULL) RessurrectTokenAI((*t), board, 5, 0); //2nd Priority position
+					else if (board->board[3][0]->token == NULL) RessurrectTokenAI((*t), board, 3, 0); //3rd Priority position
+
+					else skipRessurrectionAI = true; //All pre-defined positions occupied, skip ressurrection.
+				}
+			}
+		}
+
+		//Team 2...
+		else if (turnPlayer == 2 && player2.isAI)
+		{
+			for (t = tokensTeam2->begin(); t != tokensTeam2->end(); t++)
+			{
+				//If token is dead...
+				if ((*t)->getBehavior(0)->getBool("isDead"))
+				{
+					if (board->board[5][9]->token == NULL) RessurrectTokenAI((*t), board, 5, 9); //1st Priority position
+					else if (board->board[4][9]->token == NULL) RessurrectTokenAI((*t), board, 4, 9); //2nd Priority position
+					else if (board->board[6][9]->token == NULL) RessurrectTokenAI((*t), board, 6, 9); //3rd Priority position
+
+					else skipRessurrectionAI = true; //All pre-defined positions occupied, skip ressurrection.
+				}
+			}
+		}
+
+		//Team 3...
+		else if (turnPlayer == 3 && player3.isAI)
+		{
+			for (t = tokensTeam3->begin(); t != tokensTeam3->end(); t++)
+			{
+				//If token is dead...
+				if ((*t)->getBehavior(0)->getBool("isDead"))
+				{
+					if (board->board[0][5]->token == NULL) RessurrectTokenAI((*t), board, 0, 5); //1st Priority position
+					else if (board->board[0][4]->token == NULL) RessurrectTokenAI((*t), board, 0, 4); //2nd Priority position
+					else if (board->board[0][6]->token == NULL) RessurrectTokenAI((*t), board, 0, 6); //3rd Priority position
+
+					else skipRessurrectionAI = true; //All pre-defined positions occupied, skip ressurrection.
+				}
+			}
+		}
+
+		//Team 4...
+		else if (turnPlayer == 4 && player4.isAI)
+		{
+			for (t = tokensTeam4->begin(); t != tokensTeam4->end(); t++)
+			{
+				//If token is dead...
+				if ((*t)->getBehavior(0)->getBool("isDead"))
+				{
+					if (board->board[9][4]->token == NULL) RessurrectTokenAI((*t), board, 9, 4); //1st Priority position
+					else if (board->board[9][5]->token == NULL) RessurrectTokenAI((*t), board, 9, 5); //2nd Priority position
+					else if (board->board[9][3]->token == NULL) RessurrectTokenAI((*t), board, 9, 3); //3rd Priority position
+
+					else skipRessurrectionAI = true; //All pre-defined positions occupied, skip ressurrection.
+				}
+			}
+		}
+
+		//No AI team is playing
+		else AIPlay = false;
 	}
 }
 
@@ -1981,10 +2440,6 @@ int PrimePlayState::GetRemainingTokens(bool dead, bool finished, bool animated)
 		}
 	}
 
-	//FOR TESTS
-	//--------------------
-	//remainingTokens = 1;
-
 	//Return amout of dead or finished tokens
 	return remainingTokens;
 }
@@ -2090,7 +2545,8 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 	else if (token->getBehavior(0)->getInt("race") == GNOLL)
 	{
 		//RECOVERY RUSH activates when a dead Gnoll unit is placed back on the field
-		if (tokenRessurrected && !token->getBehavior(0)->getBool("isDead") && token->getBehavior(0)->getBool("isFinished"))
+		if (((AIPlay && tokenRessurrectedAI > 0) || (!AIPlay && tokenRessurrected))
+			&& !token->getBehavior(0)->getBool("isDead") && token->getBehavior(0)->getBool("isFinished"))
 		{
 			if (!token->getBehavior(0)->getBool("isAbilityActive"))
 			{
@@ -2104,6 +2560,9 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 
 				//Play ability activation sound
 				SFX->at(SFX_ABILITY)->getAudio()->setPlayOnceMode();
+
+				//Decrement AI token ressurrection counter
+				if (tokenRessurrectedAI > 0) tokenRessurrectedAI -= 1;
 			}
 		}
 
@@ -2168,6 +2627,14 @@ void PrimePlayState::ManageRaceAbilities(IrrToken* token, IrrBoard* board)
 
 						//This ability cannot be activated again for 3 rounds
 						token->getBehavior(0)->setInt("abilityCooldown", (3 * playersActive));
+
+						//If this is an AI turn...
+						if (AIPlay)
+						{
+							//Attempt to move Hog AI tokens one more time
+							firstTokenMovedAI = secondTokenMovedAI = thirdTokenMovedAI = false;
+							firstTokenTryAgainAI = secondTokenTryAgainAI = thirdTokenTryAgainAI = false;
+						}
 					}
 				}
 			}
@@ -2389,6 +2856,9 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	//Advance phases when conditions are met
 	SwapPhase(board);
 
+	//AI: Make intelligent agent think
+	SwapPhaseAI(board);
+
 	//Activate or deactivate resource extraction effects
 	if (particlesOK) VerifyResourceExtraction(board, true);
 
@@ -2400,87 +2870,92 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	{
 		for (int j=0; j < board->tile_j; j++)
 		{
-			//No token or tile is selected by default
-			tileSelected = false;
-			tokenSelected = false;
-
-			//If a token has been selected...
-			if (selectedToken != NULL)
+			//If this is not an AI player's turn...
+			if ((turnPlayer == 1 && !player1.isAI) || (turnPlayer == 2 && !player2.isAI)
+				|| (turnPlayer == 3 && !player3.isAI) || (turnPlayer == 4 && !player4.isAI))
 			{
-				//...But its animation hasn't begun...
-				if (!selectedToken->getBehavior(0)->getBool("isAnimStarted"))
-				{
-					//...Reset its move direction.
-					selectedToken->getBehavior(0)->setInt("moveDir", -1);
-				}
-			}
+				//No token or tile is selected by default
+				tileSelected = false;
+				tokenSelected = false;
 
-			//Highlight tiles and tokens according to phase
-
-
-			//-------------------------------------------
-			//-------- RESSURRECTION PLACEMENT ----------
-			//-------------------------------------------
-
-
-			if (phase == RESSURRECTION_PLACEMENT)
-			{
-				if (!tokenRessurrected) ManageRessurrection(board,i,j);
-				
-				else if (tokenRessurrected)
-				{
-					if (Wait(0.3f)) tokenRessurrected = false;
-				}
-			}
-
-
-			//-------------------------------------------
-			//------------ PLAY SELECTION ---------------
-			//-------------------------------------------
-
-
-			else if (phase == PLAY_SELECTION)
-			{
-				ManageTokenSelection(board,i,j);
-
+				//If a token has been selected...
 				if (selectedToken != NULL)
 				{
-					ManageMoveSelection(board,i,j);
+					//...But its animation hasn't begun...
+					if (!selectedToken->getBehavior(0)->getBool("isAnimStarted"))
+					{
+						//...Reset its move direction.
+						selectedToken->getBehavior(0)->setInt("moveDir", -1);
+					}
 				}
-			}
+
+				//Highlight tiles and tokens according to phase
 
 
-			//-------------------------------------------
-			//---------- INPUT VERIFICATION -------------
-			//-------------------------------------------
+				//-------------------------------------------
+				//-------- RESSURRECTION PLACEMENT ----------
+				//-------------------------------------------
 
 
-			//Check for mouse position over a tile which can be interacted with
-			if (board->board[i][j]->isMouseHover && board->board[i][j]->isHighlighted)
-			{
-				tileSelected = true;
-			}
+				if (phase == RESSURRECTION_PLACEMENT)
+				{
+					if (!tokenRessurrected) ManageRessurrection(board,i,j);
+				
+					else if (tokenRessurrected)
+					{
+						if (Wait(0.3f)) tokenRessurrected = false;
+					}
+				}
+
+
+				//-------------------------------------------
+				//------------ PLAY SELECTION ---------------
+				//-------------------------------------------
+
+
+				else if (phase == PLAY_SELECTION)
+				{
+					ManageTokenSelection(board,i,j);
+
+					if (selectedToken != NULL)
+					{
+						ManageMoveSelection(board,i,j);
+					}
+				}
+
+
+				//-------------------------------------------
+				//---------- INPUT VERIFICATION -------------
+				//-------------------------------------------
+
+
+				//Check for mouse position over a tile which can be interacted with
+				if (board->board[i][j]->isMouseHover && board->board[i][j]->isHighlighted)
+				{
+					tileSelected = true;
+				}
 			
-			//Check for mouse position over a token which can be interacted with
-			if (board->board[i][j]->token != NULL)
-			{
-				if (board->board[i][j]->token->isMouseHover && board->board[i][j]->token->isHighlighted)
+				//Check for mouse position over a token which can be interacted with
+				if (board->board[i][j]->token != NULL)
 				{
-					tokenSelected = true;
+					if (board->board[i][j]->token->isMouseHover && board->board[i][j]->token->isHighlighted)
+					{
+						tokenSelected = true;
+					}
 				}
-			}
 
-			//If mouse button is pressed, and it isn't hovering a match button...
-			if (input->getMouseState().leftButtonDown && !signalButtonHover)
-			{
-				//If mouse cursor is above a highlighted tile or token...
-				if (tileSelected || tokenSelected)
+				//If mouse button is pressed, and it isn't hovering a match button...
+				if (input->getMouseState().leftButtonDown && !signalButtonHover)
 				{
-					//Mouse has been clicked atop a highlighted object
-					mouseClickedOnHighlight = true;
+					//If mouse cursor is above a highlighted tile or token...
+					if (tileSelected || tokenSelected)
+					{
+						//Mouse has been clicked atop a highlighted object
+						mouseClickedOnHighlight = true;
 
-					//Select another token or advance phase
-					SwapPhaseOnClick(board, i, j);
+						//Select another token or advance phase
+						SwapPhaseOnClick(board, i, j);
+					}
 				}
 			}
 		}
@@ -2531,20 +3006,25 @@ void PrimePlayState::UpdateTurnPhases(IrrBoard* board)
 	//-------------------------------------------
 
 
-	if (input->getMouseState().leftButtonDown)
+	//If this is not an AI player's turn...
+	if ((turnPlayer == 1 && !player1.isAI) || (turnPlayer == 2 && !player2.isAI)
+		|| (turnPlayer == 3 && !player3.isAI) || (turnPlayer == 4 && !player4.isAI))
 	{
-		//If mouse has been clicked somewhere without interaction...
-		if (!mouseClickedOnHighlight)
+		if (input->getMouseState().leftButtonDown)
 		{
-			//If a token has already been selected...
-			if (phase == PLAY_SELECTION && selectedToken != NULL)
+			//If mouse has been clicked somewhere without interaction...
+			if (!mouseClickedOnHighlight)
 			{
-				//If neither selected token nor its tile are below mouse
-				if (!selectedToken->isMouseHover && !selectedToken->parentNode->isMouseHover)
+				//If a token has already been selected...
+				if (phase == PLAY_SELECTION && selectedToken != NULL)
 				{
-					//Unselect token!
-					selectedToken->getBehavior(0)->setBool("isSelected", false);
-					selectedToken = NULL;
+					//If neither selected token nor its tile are below mouse
+					if (!selectedToken->isMouseHover && !selectedToken->parentNode->isMouseHover)
+					{
+						//Unselect token!
+						selectedToken->getBehavior(0)->setBool("isSelected", false);
+						selectedToken = NULL;
+					}
 				}
 			}
 		}
