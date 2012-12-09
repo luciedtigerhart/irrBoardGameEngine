@@ -5,11 +5,17 @@ using namespace IrrBoardGameEngine;
 
 IrrBoard::IrrBoard(void)
 {
+	//
+	// Inicializa a lista de objs, lista que é preenchida pelo IrrLoader
+	// 
 	objs = new vector<std::string>();
 }
 
 IrrBoard::~IrrBoard(void)
 {
+	//
+	// Apaga da memoria
+	//
 	delete objs;
 	for(int i = 0; i < tile_i; i++)
 	{
@@ -23,22 +29,46 @@ IrrBoard::~IrrBoard(void)
 
 void IrrBoard::addTileBehavior(IrrTile * tile, IrrTileBehavior * behavior)
 {
+	//
+	// Adiciona um comportamento para o 'Tile'
+	//
 	tile->addBehaviour(behavior);
+
+	//
+	// configura o pai do 'tile'
+	//
 	tile->parentNode = this;
 
+	//
+	// Configura no comportamento as instancias do motor
+	//
 	behavior->driver = IrrEngine::getInstance()->getDriver();
 	behavior->smgr = IrrEngine::getInstance()->getSceneManager();
 	behavior->soundEngine = IrrEngine::getInstance()->getSoundEngine();
 	behavior->input = IrrEngine::getInstance()->getInput();
+
+	//
+	// Configura no comportamento o 'tile'
+	//
 	behavior->setTile(tile);
+
+	//
+	// Inicia o comportamento
+	//
 	behavior->init();
 }
 
+//
+// Configura um comportamento para um 'tile' do tabuleiro
+//
 void IrrBoard::addTileBehavior(int i, int j, IrrTileBehavior * behavior)
 {
 	addTileBehavior(board[i][j],behavior);
 }
 
+//
+// Devolve uma lista de 'tiles' especificado pela informação de 'inf'
+//
 std::list<IrrTile*> *IrrBoard::getTiles(int inf)
 {
 	std::list<IrrTile*> * list = new std::list<IrrTile*>();
@@ -55,6 +85,9 @@ std::list<IrrTile*> *IrrBoard::getTiles(int inf)
 	return list;
 }
 
+//
+// Devolve uma lista de todos os 'tiles'
+//
 std::list<IrrTile*> *IrrBoard::getAllTiles()
 {
 	std::list<IrrTile*> * list = new std::list<IrrTile*>();
@@ -68,6 +101,10 @@ std::list<IrrTile*> *IrrBoard::getAllTiles()
 	return list;
 }
 
+//
+// Cria vários 'tokens', deacordo com a leitura do arquivo
+// onde houver o a informação 'start'
+//
 std::list<IrrToken*> *IrrBoard::createTokens(int start)
 {
 	std::list<IrrToken*> *list = new std::list<IrrToken*>();
@@ -86,6 +123,10 @@ std::list<IrrToken*> *IrrBoard::createTokens(int start)
 	return list;
 }
 
+//
+// Cria um 'token' especifico numa posição do tabuleiro
+// e também é possivel passar um comportamento para esse 'token'
+//
 bool IrrBoard::createToken(int i, int j, IrrTokenBehavior * behavior)
 {
 	if(board[i][j]->token == NULL)
@@ -101,6 +142,9 @@ bool IrrBoard::createToken(int i, int j, IrrTokenBehavior * behavior)
 	}
 }
 
+//
+// Aciciona um comportamento para um 'token' já existente
+//
 void IrrBoard::addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior)
 {
 	behavior->setToken(token);
@@ -114,11 +158,17 @@ void IrrBoard::addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior)
 	token->addBehaviour(behavior);
 }
 
+//
+// Devolve um 'token' da posição especificada
+//
 IrrToken *IrrBoard::getToken(int i, int j)
 {
 	return board[i][j]->token;
 }
 
+//
+// Adiciona um token existente na posição especificada
+//
 bool IrrBoard::addToken(int i, int j, IrrToken * token)
 {
 	if(board[i][j]->token == NULL)
@@ -138,6 +188,9 @@ bool IrrBoard::addToken(int i, int j, IrrToken * token)
 	}
 }
 
+//
+// Move o token de (oi, oj) para (ti, tj)
+//
 bool IrrBoard::moveToken(int oi, int oj, int ti, int tj)
 {
 	IrrToken * token = getToken(oi, oj);
@@ -159,6 +212,9 @@ bool IrrBoard::moveToken(int oi, int oj, int ti, int tj)
 	}
 }
 
+//
+// Apaga um token
+//
 bool IrrBoard::deleteToken(int j, int i)
 {
 	IrrToken * token = getToken(i, j);
@@ -170,6 +226,10 @@ bool IrrBoard::deleteToken(int j, int i)
 	}
 }
 
+//
+// Muda o estado 'highlight' de um 'token' de um determinado jogador,
+// passando o tipo definido pelo o jogo
+//
 void IrrBoard::changeHighlightToken(int type, int player)
 {
 	for(int i = 0; i < tile_i; i++)
@@ -181,6 +241,9 @@ void IrrBoard::changeHighlightToken(int type, int player)
 	}
 }
 
+//
+// Muda o estado 'highlight' do 'tile', de acordo com a 'inf' do tile
+//
 void IrrBoard::changeHighlightTile(int type, int inf)
 {
 	for(int i = 0; i < tile_i; i++)
@@ -192,17 +255,19 @@ void IrrBoard::changeHighlightTile(int type, int inf)
 	}
 }
 
+//
+// Usado para o evento do mouse, quando o mouse passar por um 'tile' ou 'token'
+// ele fica com o estado isMouseHover / true ou false
+//
 void IrrBoard::setHighlight(ISceneNode *node)
-{
-	//FAZ A MAGICA
+{	
 	for(int i = 0; i < tile_i; i++)
 	{
 		for(int j = 0; j < tile_j; j++)
 		{
 			if(board[i][j]->node == node)
 			{
-				board[i][j]->isMouseHover = true;
-				//std::cout << "isHighlighted";
+				board[i][j]->isMouseHover = true;				
 			}
 			else
 			{
@@ -212,7 +277,6 @@ void IrrBoard::setHighlight(ISceneNode *node)
 					if(board[i][j]->token->node == node)
 					{
 						board[i][j]->token->isMouseHover = true;
-						//std::cout << "isHighlighted";
 					}
 					else
 					{

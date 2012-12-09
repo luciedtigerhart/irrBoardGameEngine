@@ -72,19 +72,32 @@ namespace IrrBoardGameEngine {
 		std::list<IrrTile*> * getTiles(int inf);
 		std::list<IrrToken*> * createTokens(int start);
 
+		//cria um token e adiciona um comportamento para o mesmo
 		bool createToken(int j, int i, IrrTokenBehavior * behavior);
 		void addTokenBehavior(IrrToken *token, IrrTokenBehavior * behavior);
 
+		//devolve um token determinado de uma regiao do tabuleiro
 		IrrToken *getToken(int j, int i);
+
+		//adiciona um token já existente para uma regiao do tabuleiro
 		bool addToken(int j, int i, IrrToken * token);
+
+		//move um token de lugar
 		bool moveToken(int oj, int oi, int tj, int ti);
+
+		//apaga um token
 		bool deleteToken(int j, int i);
 
+		//muda o estado 'highlight' de um token
 		void changeHighlightToken(int type, int player);
+
+		//muda o estado 'highlight' de um tile
 		void changeHighlightTile(int type, int inf);
 
+		//configura um nodo 'highlight'
 		void setHighlight(ISceneNode *node);
 
+		//função de atualização dos dados
 		void update();
 	};
 

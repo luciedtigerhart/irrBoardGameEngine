@@ -4,17 +4,8 @@ using namespace IrrBoardGameEngine;
 
 enum
 {
-	// I use this ISceneNode ID to indicate a scene node that is
-	// not pickable by getSceneNodeAndCollisionPointFromRay()
 	ID_IsNotPickable = 0,
-
-	// I use this flag in ISceneNode IDs to indicate that the
-	// scene node can be picked by ray selection.
 	IDFlag_IsPickable = 1 << 0,
-
-	// I use this flag in ISceneNode IDs to indicate that the
-	// scene node can be highlighted.  In this example, the
-	// homonids can be highlighted, but the level mesh can't.
 	IDFlag_IsHighlightable = 1 << 1
 };
 
@@ -40,8 +31,6 @@ IrrScene::IrrScene(IrrlichtDevice *device, ISoundEngine *se, IrrInput *inp)
 	selector = 0;
 
 	objects = new vector<IrrGameObject*>();
-
-	//bola = addSphere(new Vector(0.0f, 0.0f, 0.0f));
 }
 
 IrrScene::~IrrScene(void)
@@ -218,10 +207,7 @@ IrrBoard *IrrScene::addBoard(std::string src,Vector*p,bool animated, bool shadow
 				selector = smgr->createTriangleSelectorFromBoundingBox(go->board[i][j]->node);
 				go->board[i][j]->node->setTriangleSelector(selector);
 				selector->drop();
-
-				//std::cout << i << " " << j << " | ";
 			}
-			//std::cout << endl;
 		}
 
 		this->addObject(go);
@@ -252,28 +238,17 @@ IrrGameObject *IrrScene::addAudio(const char *filename, int id, Vector *p)
 
 ISceneNode * IrrScene::getSceneNodeAndCollisionPointFromRay()
 {
-	//ray.start = currentCamera->getPosition();
-	//ray.end = ray.start + (currentCamera->getTarget() - ray.start).normalize() * 1000.0f;
-
 	ray = smgr->getSceneCollisionManager()->getRayFromScreenCoordinates(input->getMouseState().position, currentCamera);
-
-	//std::cout << ray.start.X << "," << ray.start.Y << "," << ray.start.Z << endl;
-	//std::cout << ray.end.X << "," << ray.end.Y << "," << ray.end.Z << endl;
 
 
 	Vector nm((float)ray.end.X, (float)ray.end.Y, (float)ray.end.Z);
 
-	//bola->setPosition(nm);
-
 	ISceneNode * node = collMan->getSceneNodeAndCollisionPointFromRay(
 				ray,
-				intersection, // This will be the position of the collision
-				hitTriangle, // This will be the triangle hit in the collision
-				IDFlag_IsPickable, // This ensures that only nodes that we have
-									// set up to be pickable are considered
-									rootScene); // Check the entire scene (this is actually the implicit default)
-
-	//if(node != NULL) std::cout << "ACHOU" << endl;
+				intersection,
+				hitTriangle,
+				IDFlag_IsPickable,
+				rootScene);
 
 	return node;
 }

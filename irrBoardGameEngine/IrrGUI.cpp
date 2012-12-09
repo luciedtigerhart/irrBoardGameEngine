@@ -10,9 +10,7 @@ IrrGUI::IrrGUI(IrrlichtDevice * device)
 	guienv = device->getGUIEnvironment();
 
 	irr::core::dimension2d<u32> d = driver->getScreenSize();
-	//rootGUI = new IGUIElement(EGUIET_WINDOW,guienv,0,-1,rect<s32>(0, 0, 50, 50)); //guienv->addGUIElement(irr::gui::EGUI_ELEMENT_TYPE.EGUIET_ELEMENT);
-	//rootGUI = guienv->getRootGUIElement();
-	//rootGUI = guienv->addImage(rect<s32>(0, 0, d.Width, d.Height));
+
 	rootGUI = guienv->addStaticText(L"",rect<s32>(0, 0, d.Width, d.Height));
 	fader = NULL;
 	isfadein = false;
@@ -133,13 +131,15 @@ void IrrGUI::addButton(s32 id, char* fileNormal, char* fileHover, char* filePres
 	buttons.insert(pair<s32, IrrGUIButton*>(id,bt));
 }
 
-void IrrGUI::setButton(s32 id, bool visible) {
+void IrrGUI::setButton(s32 id, bool visible)
+{
     std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
     if(it != buttons.end())
 		(*it).second->setVisible(visible);
 }
 
-void IrrGUI::removeButton(s32 id) {
+void IrrGUI::removeButton(s32 id)
+{
 	/*
     std::map<s32, IrrGUIButton*>::iterator it = buttons.find(id);
     if(it != buttons.end())
@@ -149,21 +149,7 @@ void IrrGUI::removeButton(s32 id) {
 
 void IrrGUI::update()
 {
-	/*
-	std::map<s32, EState>::iterator it = elementState.begin();
-    while(it != elementState.end())
-	{		
-		if((*it).second.clicked)
-		{
-			std::cout << "elemento clicado";
-		}
-		it++;
-	}
-	
-	if (font2){		
-		font2->draw(L"Also mixing with 3d graphics is possible.", core::rect<s32>(130,20,300,60), video::SColor(255,0,0,0));
-	}
-	*/
+
 }
 
 void IrrGUI::setMouseOver(s32 id, bool value)

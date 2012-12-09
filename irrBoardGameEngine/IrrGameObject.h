@@ -16,14 +16,15 @@
 #include "IrrBehavior.h"
 #include "IrrAudio.h"
 
-//#include "IrrAnimation.h"
-
-
 using namespace irr;
 using namespace core;
 using namespace scene;
 using namespace video;
 using namespace std;
+
+//
+// Objeto padrão da cena
+//
 
 namespace IrrBoardGameEngine {
 	class IrrGameObject
@@ -34,61 +35,86 @@ namespace IrrBoardGameEngine {
 
 		IrrInput * s;
 
+		//
+		// Controle de posicionamento
+		//
 		void setPosition(Vector&);
 		void setScale(Vector&);
 		void setRotation(Vector&);		
 		void getPosition(Vector&);
+		void translate(float x, float y, float z);
 
+		//
+		// Configura um nome para o objeto
+		//
 		void setName(std::string*);
 		void setName(const char*s){name = new std::string(s);}
 		std::string *getName();
 
+		//
+		// Confugura uma camera
+		//
 		void setCamera(IrrCamera *);
 		IrrCamera* getCamera(); 
 
+		//
+		// Configura um mesh para o obejto
+		//
 		void setMesh(IrrMesh *);
 		IrrMesh* getMesh();
 
+		//
+		// Configura um mesh animado para o objeto
+		//
 		void setAnimatedMesh(IrrMeshAnimated *);
 		IrrMeshAnimated* getAnimatedMesh();
 
-		/*
-		void setAnimation(Animation *);
-		IrrAnimation* getAnimation();
-		*/
-
+		//
+		// Configura um audio
+		//
 		void setAudio(IrrAudio *);
 		IrrAudio *getAudio();
-		
+		void play();
 
+		//
+		// Adiciona um objeto filho
+		//
 		void addChild(IrrGameObject *o);
 		void removeChild(IrrGameObject *o);
 		IrrGameObject *getChild(int);
 		int getSize();
 
+		//
+		// Configura se o objeto está ativo
+		//
 		void setActive(bool a);	
 		bool isActive();
 
 		virtual void update();
+
+		//
+		// Adiciona um comportamento ao objeto
+		//
 		void addBehaviour(IrrBehavior *b);
+		IrrBehavior * getBehavior(int index);
 
-		void translate(float x, float y, float z);
-		void play();
 
+		//
+		// operador de <=
+		//
 		int operator<=(const IrrGameObject &) const;
 
+
+		//
+		// variavel responsavel do objeto no nodo da cena
+		//
 		ISceneNode *node;
 
-		IrrBehavior * getBehavior(int index);
 	protected:
 		std::string *name;
 		IrrCamera *camera;
 		IrrMesh *mesh;
 		IrrMeshAnimated *ani_mesh;
-
-		/*
-		Animation *animation;
-		*/
 		IrrAudio *audio;
 		
 		vector<IrrBehavior*> *behaviors;

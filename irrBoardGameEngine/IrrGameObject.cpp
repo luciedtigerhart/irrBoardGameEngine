@@ -82,18 +82,6 @@ IrrMeshAnimated* IrrGameObject::getAnimatedMesh()
 	return ani_mesh;
 }
 
-/*
-void IrrGameObject::setAnimation(Animation *c)
-{
-	this->animation = c;
-	node->addChild(((IrrAnimatedMesh*)c)->node);
-	((IrrAnimatedMesh*)c)->node->setParent(node);
-}
-
-IrrAnimation* IrrGameObject::getAnimation(){
-	return animation;
-}
-*/
 void IrrGameObject::setAudio(IrrAudio *a)
 {
 	this->audio = a;

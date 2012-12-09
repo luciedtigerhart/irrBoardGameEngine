@@ -39,15 +39,8 @@ namespace IrrBoardGameEngine {
 		vector<IrrGameObject*> *objects;
 		stack<IrrGameObject*> newObjects;
 
-		// All intersections in this example are done with a ray cast out from the camera to
-		// a distance of 1000.  You can easily modify this to check (e.g.) a bullet
-		// trajectory or a sword's position, or create a ray from a mouse click position using
-		// ISceneCollisionManager::getRayFromScreenCoordinates()
 		core::line3d<f32> ray;
-
-		// Tracks the current intersection point with the level or a mesh
 		core::vector3df intersection;
-		// Used to show with triangle has been hit
 		core::triangle3df hitTriangle;
 
 		ISceneNode * rootScene;

@@ -11,8 +11,7 @@ IrrInput::IrrInput()
 	{
 		keyStatusDown[i] = keyStatusPressed[i] = keyStatusReleased[i] = 0;
 	}
-	camera = NULL;
-	//multimap<std::string,int> *keys = new multimap<std::string,int>();
+	camera = NULL;	
 }
 
 void IrrInput::setDriver(IVideoDriver * d)
@@ -55,12 +54,10 @@ bool IrrInput::OnEvent(const SEvent& event)
 			case EMIE_LMOUSE_PRESSED_DOWN:
 				gui->setPressedButton(guiElementid, true);
 				mouseState.leftButtonDown = true;
-				//std::cout << "EMIE_LMOUSE_PRESSED_DOWN" << endl;
 				break;
 			case EMIE_LMOUSE_LEFT_UP:
 				gui->setPressedButton(false);
-				mouseState.leftButtonDown = false;
-				//std::cout << "EMIE_LMOUSE_LEFT_UP" << endl;
+				mouseState.leftButtonDown = false;				
 				break;
 
 			case EMIE_RMOUSE_PRESSED_DOWN:
@@ -108,16 +105,6 @@ bool IrrInput::OnEvent(const SEvent& event)
 		if( event.EventType == EET_KEY_INPUT_EVENT )
 		{
 			const SEvent::SKeyInput *ev = &event.KeyInput;
-			/*
-			if( ev->Key == KEY_LEFT )
-				camera->m_Rot.Y -= 0.1f;
-			else if( ev->Key == KEY_RIGHT )
-				camera->m_Rot.Y += 0.1f;
-			else if( ev->Key == KEY_UP )
-				camera->m_Rot.X += 0.1f;
-			else if( ev->Key == KEY_DOWN )
-				camera->m_Rot.X -= 0.1f;
-			*/			
 
 			if (!camera->m_Dragging)
 			{
@@ -133,34 +120,22 @@ bool IrrInput::OnEvent(const SEvent& event)
 					else
 					{
 						if( ev->Key == KEY_KEY_W || ev->Key == KEY_UP )
-						{
-							//camera->m_LookAt.Z += 0.1f;
-							//camera->m_Trans.Z += 0.1f;
-				
+						{			
 							camera->moveForward(100.0f * deltaTime);
 							camera->is_move = true;
 						}
 						else if( ev->Key == KEY_KEY_S  || ev->Key == KEY_DOWN )
-						{
-							//camera->m_LookAt.Z -= 0.1f;
-							//camera->m_Trans.Z -= 0.1f;
-				
+						{			
 							camera->moveBackward(100.0f * deltaTime);
 							camera->is_move = true;
 						}
 						else if( ev->Key == KEY_KEY_A  || ev->Key == KEY_LEFT )
-						{
-							//camera->m_LookAt.X -= 0.1f;
-							//camera->m_Trans.X -= 0.1f;
-				
+						{				
 							camera->moveLeft(100.0f * deltaTime);
 							camera->is_move = true;
 						}
 						else if( ev->Key == KEY_KEY_D  || ev->Key == KEY_RIGHT )
 						{
-							//camera->m_LookAt.X += 0.1f;
-							//camera->m_Trans.X += 0.1f;
-				
 							camera->moveRight(100.0f * deltaTime);
 							camera->is_move = true;
 						}
@@ -184,8 +159,6 @@ bool IrrInput::OnEvent(const SEvent& event)
 				camera->is_move = false;
 			}
 
-			//camera->update();
-
 			return true;
 		}
 		else if( event.EventType == EET_MOUSE_INPUT_EVENT )
@@ -193,8 +166,6 @@ bool IrrInput::OnEvent(const SEvent& event)
 			const SEvent::SMouseInput *ev = &event.MouseInput;
 			if( ev->Event == EMIE_MOUSE_WHEEL )
 			{
-				//cout << "Wheel event: " << ev->Wheel << endl;
-
 				if (!camera->is_focused)
 				{
 					if( ev->Wheel >= 0 )
@@ -202,8 +173,6 @@ bool IrrInput::OnEvent(const SEvent& event)
 					else
 						camera->m_Rad += 100.0f * deltaTime;
 				}
-
-				//camera->update();
 			}
 			else
 			{
@@ -222,15 +191,15 @@ bool IrrInput::OnEvent(const SEvent& event)
 						camera->m_Dragging = false;
 					}
 					else if( camera->m_Dragging && ev->isRightPressed() )
-					{					
-						// Calculate a rotational offset in the range of -PI to +PI
+					{		
+						//
+						// Calcula a rotação feita pelo mouse
+						//
 						f32 dx = (( ev->X - camera->m_DragStart.X ) / driver->getScreenSize().Width ) * PI;
 						f32 dy = (( ev->Y - camera->m_DragStart.Y ) / driver->getScreenSize().Height ) * PI;
-						// Calculate the new total rotation
+
 						camera->m_Rot.X = camera->m_DragStartRotation.X + dy;
 						camera->m_Rot.Y = camera->m_DragStartRotation.Y + dx;
-
-						//camera->update();
 					}
 				}
 			}
@@ -301,98 +270,3 @@ void IrrInput::setCamera(IrrCamera * currentCamera)
 {
 	camera = currentCamera;
 }
-/*
-bool IrrInput::getButton(char *c)
-{
-	std::string t(c);
-	multimap<std::string, int>::iterator i = keys->find(t);
-	if(i==keys->end())
-	{
-		return false;
-	}
-	else
-	{
-		multimap<std::string, int>::iterator lastElement = keys->upper_bound(t);
-		for(; i != lastElement; ++i)
-		{
-			if(isKeyDown(i->second))
-			{
-				return true;
-			}
-		}	
-	}
-	return false;
-}
-
-bool IrrInput::getButtonDown(char *c)
-{
-	std::string t(c);
-	multimap<std::string, int>::iterator i = keys->find(t);
-	if(i==keys->end())
-	{
-		return false;
-	}
-	else
-	{
-		multimap<std::string, int>::iterator lastElement = keys->upper_bound(t);
-		for(; i != lastElement; ++i)
-		{
-			if(isKeyDown(i->second))
-			{
-				return true;
-			}
-		}	
-	}
-	return false;
-}
-
-bool IrrInput::getButtonPressed(char *c)
-{
-	std::string t(c);
-	multimap<std::string, int>::iterator i = keys->find(t);
-	if(i==keys->end())
-	{
-		return false;
-	}
-	else
-	{
-		multimap<std::string, int>::iterator lastElement = keys->upper_bound(t);
-		for(; i != lastElement; ++i)
-		{
-			if(isKeyPressed(i->second))
-			{
-				return true;
-			}
-		}	
-	}
-	return false;
-}
-
-bool IrrInput::getButtonReleased(char *c)
-{
-	std::string t(c);
-	multimap<std::string, int>::iterator i = keys->find(t);
-	if(i==keys->end())
-	{
-		return false;
-	}
-	else
-	{
-		multimap<std::string, int>::iterator lastElement = keys->upper_bound(t);
-		for(; i != lastElement; ++i)
-		{
-			if(isKeyReleased(i->second))
-			{
-				return true;
-			}
-		}	
-	}
-	return false;
-}
-
-void IrrInput::registry(char *t, int k)
-{
-	//keys->insert(std::pair<std::string,int>(std::string(t),k));
-	keys->insert(std::pair<std::string,int>(std::string("Fire"),irr::KEY_SPACE));
-}
-*/

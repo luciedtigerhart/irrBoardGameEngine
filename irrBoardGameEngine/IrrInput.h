@@ -16,9 +16,7 @@ namespace IrrBoardGameEngine {
 	class IrrCamera;
 	class IrrInput: public IEventReceiver
 	{
-	public:
-
-		// We'll create a struct to record info on the mouse state
+	public:		
 		struct SMouseState
 		{
 			core::position2di position;
@@ -42,17 +40,7 @@ namespace IrrBoardGameEngine {
 		s32 guiElementid;
 
 		void setCamera(IrrCamera *);
-		/*
-		//registra uma comando de teclado
-		void registry(char *, int);
 
-		bool getButton(char *);
-		bool getButtonDown(char *);
-		bool getButtonPressed(char *);
-		bool getButtonReleased(char *);
-
-		multimap<std::string,int> *keys;
-		*/
 		const SMouseState & getMouseState(void) const { return mouseState; }
 	private:
 
@@ -64,7 +52,9 @@ namespace IrrBoardGameEngine {
 		void setKeyStatus(int* k, int keyCode, bool value);
 		bool getKeyStatus(int* k, int keyCode);
 
-		//Armazena o estado das teclas pressionadas
+		//
+		// Armazena o estado das teclas pressionadas
+		//
 		int keyStatusDown[KEY_KEY_CODES_COUNT / 32];
 		int keyStatusPressed[KEY_KEY_CODES_COUNT / 32];
 		int keyStatusReleased[KEY_KEY_CODES_COUNT / 32];

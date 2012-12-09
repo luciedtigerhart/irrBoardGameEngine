@@ -3,19 +3,21 @@
 
 using namespace IrrBoardGameEngine;
 
-// id for our scene node, 'ikng', short for 'irrklang'.
-// If this line doesn't work, you are probably using irrlicht 1.3 or earlier.
-// Then remove the MAKE_IRR_ID thing and replace it with a random number.
+//
+// Configurações para o nodo da cena!
+// com o seu id e o tipo!
+//
 const int IRRKLANG_SCENE_NODE_ID = MAKE_IRR_ID('i','k','n','g');
-
-// type name for our scene node
 const char* IrrAudioTypeName = "IrrAudio";
 
 IrrAudio::IrrAudio(irrklang::ISoundEngine* soundEngine, scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) : scene::ISceneNode(parent, mgr, id), SoundEngine(soundEngine)
 {
 	setAutomaticCulling(scene::EAC_OFF);
 
-	MinDistance = 20.0f; // a usual good value for irrlicht engine applications
+	//
+	// Configurações padrões
+	//
+	MinDistance = 20.0f;
 	MaxDistance = -1.0f;
 	PlayMode = EPM_RANDOM;
 	TimeMsDelayFinished = 0;
@@ -57,6 +59,10 @@ void IrrAudio::OnAnimate(u32 timeMs)
 {
 	ISceneNode::OnAnimate(timeMs);
 
+	//
+	// Se houver verdadeiro
+	// é realizada a contagem de tempo para o 'fade' funcionar
+	//
 	if(fade_out || fade_in)
 	{
 		fade_tempo_now = (float)timeMs;
@@ -71,17 +77,20 @@ void IrrAudio::OnAnimate(u32 timeMs)
 		fade_tempo_then = fade_tempo_now;
 
 		fade_inc_tempo += 1.0f * fade_tempo_delta;
-
-		//std::cout << fade_inc_tempo << std::endl;
 	}
-	// play the sound
 
 	core::vector3df pos = getAbsolutePosition();
-
+	
+	//
+	// Se o som estiver sendo executado
+	//
 	if (Sound)
 	{
 		Sound->setPosition(pos);
 
+		//
+		// Controla o fluxo do 'fade'
+		// 
 		if(fade_out)
 		{
 			fade_volume = Sound->getVolume();
@@ -90,8 +99,6 @@ void IrrAudio::OnAnimate(u32 timeMs)
 			{
 				fade_volume -= fade_velocidade;
 				fade_inc_tempo = 0;
-
-				//std::cout << fade_volume << std::endl;
 			}
 
 			if(fade_volume <= 0)
@@ -117,8 +124,6 @@ void IrrAudio::OnAnimate(u32 timeMs)
 			{
 				fade_volume += fade_velocidade;	
 				fade_inc_tempo = 0;
-
-				//std::cout << fade_volume << std::endl;
 			}
 
 			Sound->setVolume(fade_volume);			
@@ -139,7 +144,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 				Sound->drop();
 				Sound = 0;
 
-				// calculate next play time
+				//
+				// Calcula o proximo tempo
+				//
 
 				s32 delta = MaxTimeMsInterval - MinTimeMsInterval;
 
@@ -150,8 +157,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 			}
 			else if (!Sound && (!TimeMsDelayFinished || timeMs > TimeMsDelayFinished))
 			{
-				// play new sound		
-
+				//
+				// Toca um novo som
+				//
 				if (SoundFileName.size())
 					Sound = SoundEngine->play3D(SoundFileName.c_str(), pos, false, true, true);
 
@@ -183,7 +191,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 				}
 				else
 				{
-					// sound could not be loaded
+					//
+					// Caso não conseguir carregar o som ele é descartado.
+					//
 					stop();
 				}
 			}			
@@ -191,8 +201,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 		case EPM_ONCE:			
 			if (PlayedCount)
 			{
-				// stop
-
+				//
+				// Caso o som chegou no fim				
+				//
 				if (Sound && Sound->isFinished())
 				{
 					stop();
@@ -203,8 +214,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 			}
 			else
 			{
-				// start
-
+				//
+				// Inicia o som
+				//
 				if (SoundFileName.size())
 					Sound = SoundEngine->play3D(SoundFileName.c_str(), pos, false, true, true);
 
@@ -220,7 +232,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 				}
 				else
 				{
-					// sound could not be loaded
+					//
+					// Caso não conseguir carregar o som ele é descartado.
+					//
 					stop();
 				}
 			}
@@ -231,8 +245,9 @@ void IrrAudio::OnAnimate(u32 timeMs)
 
 void IrrAudio::render()
 {
-	// draw scene node as billboard when debug data is visible
-
+	//
+	// Desenha na tela, caso configurado um billboard
+	//
 	if (!DebugDataVisible)
 		return;
 
@@ -288,9 +303,10 @@ void IrrAudio::render()
 
 		for (s32 i=0; i<4; ++i)
 			vertices[i].Normal = view;
-
-		// draw billboard
-
+		
+		//
+		// Desenha na tela
+		//
 		video::SMaterial material;
 		material.Lighting = false;
 		material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
@@ -316,8 +332,6 @@ const c8* const IrrKlangPlayModeNames[] =
 	"nothing", "random", "looping",	"play_once", 0
 };
 
-
-//! Returns type of the scene node
 ESCENE_NODE_TYPE IrrAudio::getType() const
 {
 	return (ESCENE_NODE_TYPE)IRRKLANG_SCENE_NODE_ID;
@@ -358,8 +372,6 @@ void IrrAudio::setVolume(ik_f32 volume)
 	Sound->setVolume(volume);
 }
 
-//! Sets the play mode to 'play once', a sound file is played once, and 
-//! the scene node deletes itself then, if wished.
 void IrrAudio::setPlayOnceMode(bool fadeIn, float tempo, bool deleteWhenFinished)
 {
 	stop();
@@ -378,8 +390,6 @@ void IrrAudio::setPlayOnceMode(bool fadeIn, float tempo, bool deleteWhenFinished
 	}
 }
 
-
-//! Sets the play mode to 'looping stream', plays a looped sound over and over again.
 void IrrAudio::setLoopingStreamMode(bool fadeIn, float tempo)
 {
 	stop();
@@ -396,11 +406,6 @@ void IrrAudio::setLoopingStreamMode(bool fadeIn, float tempo)
 	}
 }
 
-
-//! Sets the play mode to 'random'. Plays a sound with a variable, random interval
-//! over and over again.
-//! \param minTimeMs: Minimal wait time in milli seconds before the sound is played again.
-//! \param maxTimeMs: Maximal wait time in milli seconds before the sound is played again.
 void IrrAudio::setRandomMode(int minTimeMs, int maxTimeMs)
 {
 	stop();
@@ -409,8 +414,6 @@ void IrrAudio::setRandomMode(int minTimeMs, int maxTimeMs)
 	MaxTimeMsInterval = maxTimeMs;
 }
 
-
-//! Sets the sound filename to play
 void IrrAudio::setSoundFileName(const char* soundFilename)
 {
 	if (soundFilename)
@@ -419,15 +422,11 @@ void IrrAudio::setSoundFileName(const char* soundFilename)
 		SoundFileName = "";
 }
 
-
-//! Gets the sound filename to play
 const char* IrrAudio::getSoundFileName() const
 {
 	return SoundFileName.c_str();
 }
 
-
-//! Sets the minimal and maximal 3D sound distances
 void IrrAudio::setMinMaxSoundDistance(f32 minDistance, f32 maxDistance)
 {
 	MinDistance = minDistance;

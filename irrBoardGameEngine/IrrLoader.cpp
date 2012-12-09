@@ -78,10 +78,8 @@ bool IrrLoader::loadBoard(std::string src, IrrBoard * board)
 			board->board[i][j] = new IrrTile();
 			board->board[i][j]->posi = i;
 			board->board[i][j]->posj = j;
-			board->board[i][j]->idx = tile_atual;
-			//std::cout << tile_atual << " ";
+			board->board[i][j]->idx = tile_atual;			
 		}
-		//std::cout << endl;
 	}
 
 	//

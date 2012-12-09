@@ -10,10 +10,6 @@
 #include "IrrMesh.h"
 #include "IrrMeshAnimated.h"
 
-//#include "IrrBehavior.h"
-//#include "IrrAnimation.h"
-//#include "IrrAudio.h"
-
 #include "IrrGameObject.h"
 
 using namespace irr;

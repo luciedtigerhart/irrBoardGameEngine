@@ -47,10 +47,10 @@ IrrCamera::~IrrCamera(void)
 }
 
 vector3df IrrCamera::getPositionOnSphere( f32 angleH, f32 angleV, f32 radius )
-{
-	//std::cout << angleH << " " << angleV << " " << radius << std::endl;
-	
-	//Limit Y angle to avoid Z-axis flipping
+{	
+	//
+	// Controle o limite do angulo Y para o 'flipping' do eixo Z
+	//
 	if(angleV > 1.4f)
 	{
 		angleV = 1.4f;
@@ -62,8 +62,9 @@ vector3df IrrCamera::getPositionOnSphere( f32 angleH, f32 angleV, f32 radius )
 		m_Rot.X = angleV;
 	}
 
-	//Limit radius (zooming) to avoid Z-axis flipping
-	//and to prevent camera from going too far
+	//
+	// Controla o limite do zoom
+	//
 	if (radius < 2.0f)
 	{
 		radius = 2.0f;
@@ -75,26 +76,21 @@ vector3df IrrCamera::getPositionOnSphere( f32 angleH, f32 angleV, f32 radius )
 		m_Rad = radius;
 	}
 
-	// Get position on Z/Y Plane using conversion from polar
-    // to cartesian coordinates
+	//
+	// Adquire a posição Z e Y do plano
+	// utilizando uma conversão de polar para coordenadas cartesiana
+	//
     f32 posZ = radius * cos( angleV );
     f32 posY = radius * sin( angleV );
 
-    // Create a positional vector with X=0
     vector3df camPos( 0, posY, posZ );
 
-    // Create a transformation matrix to rotate the vector 'camPos'
-    // around the Y Axis
-
+	//
+	// Cria uma transformação matrix para rotacionar o vetor 'camPos' ao redor do eixo Y
+	//
     matrix4 yawMat;
     yawMat.setRotationRadians( vector3df( 0, angleH, 0 ));
 	yawMat.transformVect( camPos );	
-
-	//std::cout<<"after: "<<camPos.X<<", "<<camPos.Y<<", "<<camPos.Z<<std::endl;
-
-	//camPos.X += m_Trans.X;
-	//camPos.Z += m_Trans.Z;
-	//camPos.Y += m_Trans.Y;
 
     return camPos;
 }
@@ -143,7 +139,10 @@ void IrrCamera::update()
 
 		if (!is_move && !is_focused)
 		{
-			this->node->getParent()->setPosition(m_LookAt); //Parent node is the rotation sphere center
+			//
+			// O nodo pai é centro da rotacao da espera
+			//
+			this->node->getParent()->setPosition(m_LookAt);
 
 			m_Trans = getPositionOnSphere( m_Rot.Y, m_Rot.X, m_Rad );
 		}
@@ -175,7 +174,10 @@ void IrrCamera::moveForward(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-	//Camera has moved, so enable resetting
+	//
+	// quando a camera está se movendo, 
+	// é ativado a função de 'resetting'
+	//
 	is_reset = false;
 }
 
@@ -187,7 +189,10 @@ void IrrCamera::moveBackward(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-	//Camera has moved, so enable resetting
+	//
+	// quando a camera está se movendo, 
+	// é ativado a função de 'resetting'
+	//
 	is_reset = false;
 }
 
@@ -199,7 +204,10 @@ void IrrCamera::moveRight(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-	//Camera has moved, so enable resetting
+	//
+	// quando a camera está se movendo, 
+	// é ativado a função de 'resetting'
+	//
 	is_reset = false;
 }
 
@@ -211,7 +219,10 @@ void IrrCamera::moveLeft(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-	//Camera has moved, so enable resetting
+	//
+	// quando a camera está se movendo, 
+	// é ativado a função de 'resetting'
+	//
 	is_reset = false;
 }
 
@@ -223,7 +234,10 @@ void IrrCamera::moveUp(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-	//Camera has moved, so enable resetting
+	//
+	// quando a camera está se movendo, 
+	// é ativado a função de 'resetting'
+	//
 	is_reset = false;
 }
 
@@ -235,7 +249,10 @@ void IrrCamera::moveDown(f32 speed)
 	m_Trans = this->node->getPosition() + camMovement;
 	m_LookAt = this->node->getTarget() + camMovement;
 
-	//Camera has moved, so enable resetting
+	//
+	// quando a camera está se movendo, 
+	// é ativado a função de 'resetting'
+	//
 	is_reset = false;
 }
 

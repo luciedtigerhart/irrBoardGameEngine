@@ -41,7 +41,6 @@ IParticleEmitter * IrrParticleSystem::createBoxEmitter(s32 id,const core::aabbox
 
 	node->setEmitter(em);
 
-	// so we can drop it here without deleting it
     em->drop();
 
 	return em;
@@ -67,7 +66,6 @@ IParticleEmitter * IrrParticleSystem::createSphereEmitter(s32 id,const core::vec
 
 	node->setEmitter(em);
 
-	// so we can drop it here without deleting it
     em->drop();
 
 	return em;
@@ -94,7 +92,6 @@ IParticleEmitter * IrrParticleSystem::createCylinderEmitter(s32 id,const core::v
 
 	node->setEmitter(em);
 
-	// so we can drop it here without deleting it
     em->drop();
 
 	return em;
@@ -120,7 +117,6 @@ IParticleEmitter * IrrParticleSystem::createRingEmitter(s32 id,const core::vecto
 
 	node->setEmitter(em);
 
-	// so we can drop it here without deleting it
     em->drop();
 
 	return em;
@@ -147,7 +143,6 @@ IParticleEmitter * IrrParticleSystem::createMeshEmitter(s32 id, const char * src
 
 	node->setEmitter(em);
 
-	// so we can drop it here without deleting it
     em->drop();
 
 	return em;

@@ -46,17 +46,16 @@ namespace IrrBoardGameEngine {
 		//quando o mouse estiver sobre
 		bool isMouseHover;
 
-		//Whether this tile must be highlighted
+		//quando o hightligh está ativo
 		bool isHighlighted;
 
-		//Type of highlight (movement, pushing, attack, etc.)
+		//tipo do highliht
 		int highlight;
 
 		//Peça
 		IrrToken *token;
 
 		//board
-		//ISceneNode *parentNode;
 		IrrBoard *parentNode;
 
 		void update();

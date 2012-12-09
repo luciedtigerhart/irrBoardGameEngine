@@ -17,41 +17,64 @@ namespace IrrBoardGameEngine
 		IrrAudio(irrklang::ISoundEngine* soundEngine, scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id);
 		~IrrAudio();
 
-		// play modes:
+		//
+		// Modos para iniciar o som:
+		//
 
-		//! Sets the play mode to 'play once', a sound file is played once, and 
-		//! the scene node deletes itself then, if wished.
-		void setPlayOnceMode(bool fadeIn = false, float velocidade = 0.1f,bool deleteWhenFinished=false);
-
-		//! Sets the play mode to 'looping stream', plays a looped sound over and over again.
+		//
+		// Quando utilizado o modo 'play once', o som será tocado apenas uma vez
+		// é possivel configurar que o som surja em 'fadeIn', e o tempo de duração do 'fade'
+		// 
+		void setPlayOnceMode(bool fadeIn = false, float tempo = 0.1f,bool deleteWhenFinished=false);
+		
+		//
+		// Quando utilizado o modo 'looping stream', o som ficará em loop
+		// é possivel configurar que o som surja em 'fadeIn', e o tempo de duração do 'fade'
+		//
 		void setLoopingStreamMode(bool fadeIn = false, float tempo = 1.0f);
 
-		//! Sets the play mode to 'random'. Plays a sound with a variable, random interval
-		//! over and over again.
-		//! \param minTimeMsInterval: Minimal wait time in milli seconds before the sound is played again.
-		//! \param maxTimeMsInterval: Maximal wait time in milli seconds before the sound is played again.
+		//
+		// Quando utilizado o modo 'random'. o som será tocado com um intervalo aleatorio
+		//
 		void setRandomMode(int minTimeMsInterval=1000, int maxTimeMsInterval=5000);
 
-		// Sound parameters
+		//
+		// Parametros do som
+		//
 
-		//! Sets the sound filename to play
+		//
+		// Configura o aquivo do som
+		//
 		void setSoundFileName(const char* soundFilename);
 
-		//! Gets the sound filename to play
+		//
+		// Devolve o nome do arquivo de som
+		//
 		const char* getSoundFileName() const;
 
-		//! Sets the minimal and maximal 3D sound distances.
-		//! Set to negative values if you want to use the default values of the sound engine.
+		//
+		// Configurações do som 3D, determina a minima distancia e máxima que o som será tocado
+		//
 		void setMinMaxSoundDistance(f32 minDistance=1.0f, f32 maxDistance=10000000.0f);
 
-		//! stops playback, releases sound, sets playmode to 'nothing'
+		//
+		// O som é parado, é possivel determinar um fadeOut para o som, passando o tempo de duração
+		//
 		void stop(bool fadeOut = false, float tempo = 1.0f);
 
 		//
+		// Devolve quando o som terminou
+		//
 		bool isFinished();
+
+		//
+		// Configura o volume do som
+		//
 		void setVolume(ik_f32 volume);
 
-		// rendering functions:
+		//
+		// Funções de rendering
+		//
 		virtual void OnAnimate(u32 timeMs);
 		virtual void OnRegisterSceneNode();
 		virtual void render();
@@ -68,6 +91,9 @@ namespace IrrBoardGameEngine
 			EPM_ONCE
 		};
 
+		//
+		// Variaveis de controle do fade
+		//
 		bool fade_in;
 		bool fade_out;
 		float fade_velocidade;
@@ -81,14 +107,23 @@ namespace IrrBoardGameEngine
 		float fade_volume;
 		float fade_volume_atual;
 
+		//
+		// Variaveis de controle do som
+		//
 		core::aabbox3d<f32> Box;
 		irrklang::ISoundEngine* SoundEngine;
 		irrklang::ISound* Sound;
-
 		core::stringc SoundFileName;
+
+		//
+		// Controle do som 3D
+		//
 		f32 MinDistance;
 		f32 MaxDistance;
 
+		//
+		// Controle enquanto o som está em execução
+		//
 		EPlayMode PlayMode;
 		u32 TimeMsDelayFinished;
 		bool DeleteWhenFinished;

@@ -13,9 +13,6 @@ IrrEngine::~IrrEngine(void)
 {
 }
 
-
-//singleton
-//IrrEngine *IrrEngine::getInstance(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false)
 IrrEngine *IrrEngine::getInstance(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>& windowSize,u32 bits,bool fullscreen,bool stencilbuffer,bool vsync,const wchar_t* text)
 {
 	if(IrrEngine::instance==NULL){
@@ -25,31 +22,29 @@ IrrEngine *IrrEngine::getInstance(video::E_DRIVER_TYPE deviceType,const core::di
 	return IrrEngine::instance;
 }
 
-//int IrrEngine::init(video::E_DRIVER_TYPE deviceType = video::EDT_SOFTWARE,const core::dimension2d<u32>& windowSize = (core::dimension2d<u32>(640,480)),u32 bits = 16,bool fullscreen = false,bool stencilbuffer = false,bool vsync = false) {
 int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>& windowSize,u32 bits,bool fullscreen,bool stencilbuffer,bool vsync,const wchar_t* text)
 {
-	//irrklang::ISoundEngine* soundEngine = irrklang::createIrrKlangDevice();
 	soundEngine = createIrrKlangDevice();
 	
 	input = new IrrInput();
-	//Cria um novo dispositivo
-	//qual o driver - no caso esta usando via software mesmo
-	//tamanho da janela - 640x480
-	//deep color
-	//fullscren?
-	//usa stencil buffer?
-	//se utiliza vsync
-	//o endereço objeto para receber os eventos. No caso o default é 0
+	//
+	// Cria um novo dispositivo
+	//
 	device = createDevice(deviceType,windowSize,bits,fullscreen,stencilbuffer,vsync,input);
-	//Se nao conseguiu retornar encerra a aplicação
+	
+	//
+	// Se nao conseguiu retornar encerra a aplicação
+	//
     if (!device) return 1;
 
-	//Titulo na janela
+	//
+	// Titulo na janela
+	//
 	device->setWindowCaption(text);
-	
-	//device->getCursorControl()->setVisible(true);
 
-	//Pegar o driver de video
+	//
+	// Pegar o driver de video
+	//
 	driver = device->getVideoDriver();
 
 	input->setDriver(driver);
@@ -58,7 +53,6 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	//
 	// GUI
 	//
-	//guienv = device->getGUIEnvironment();
 	currentGUI = createGUI();
 	input->setGUI(currentGUI);
 	currentGUI->setActive(true);
@@ -69,7 +63,6 @@ int IrrEngine::init(video::E_DRIVER_TYPE deviceType,const core::dimension2d<u32>
 	//
 	// SCENE
 	//
-	//smgr = device->getSceneManager();
 	currentScene = createScene();
 	currentScene->setActive(true);
 
@@ -121,27 +114,11 @@ void IrrEngine::loop(void(*f)()) {
 		//Pega a fatia de tempo atual
 		const u32 now = device->getTimer()->getTime();
 		//Pega a variacao do tempo
-		frameDeltaTime = (f32)(now - then) / 1000.f; //Tempo em segundos
+		//Tempo em segundos
+		frameDeltaTime = (f32)(now - then) / 1000.f;
 		//Define o tempo passado com o atual
 		then = now;
 
-		/*
-		vector3df pos(0.0f, 0.0f, 0.0f);
-		SMaterial m;
-		m.setTexture(0,0);
-		m.Lighting=false; 
-		driver->setMaterial(m); 
-		driver->setTransform(video::ETS_WORLD, core::matrix4()); 
-
-		//y
-		driver->draw3DLine(pos,vector3df(0,10,0),SColor(255,255,0,0));
-
-		//x
-		driver->draw3DLine(pos,vector3df(10,0,0),SColor(255,0,255,0)); 
-
-		//z
-		driver->draw3DLine(pos,vector3df(0,0,10),SColor(255,0,0,255)); 
-		*/
 		update();
 		
 		//Função do usuario

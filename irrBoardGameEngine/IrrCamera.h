@@ -25,9 +25,16 @@ namespace IrrBoardGameEngine {
 		ICameraSceneNode *node;
 		~IrrCamera(void);
 
+		//
+		// Atualizações de valores
+		//
 		void updateVectors();
 		void update();
 		void reset();
+
+		//
+		// Responsavel pela movimentação
+		//
 		void moveForward(f32 speed);
 		void moveBackward(f32 speed);
 		void moveRight(f32 speed);
@@ -36,20 +43,26 @@ namespace IrrBoardGameEngine {
 		void moveDown(f32 speed);
 		void setFocus(vector3df position, vector3df lookAt);
 
+		//
+		// Controle de estado
+		//
 		bool is_move;
 		bool is_manager;
 		bool is_focused;
 		bool is_reset;
+		bool m_Dragging;
 
+		//
+		// Usado para o calculo do posicionamento da camera
+		//
+		f32 m_Rad;
+		vector2df m_DragStart;
 		vector3df focus_Trans;
 		vector3df focus_LookAt;
 		vector3df m_Trans;
 		vector3df m_LookAt;
-		vector3df m_Rot;                   // H/V Position of camera on sphere (only X/Y used)
-		f32 m_Rad;                         // Radius of sphere
-		bool m_Dragging;                   // Is currently dragging?
-		vector2df m_DragStart;             // 2D Position on screen where the drag started
-		vector3df m_DragStartRotation;     // Rotation when drag started
+		vector3df m_Rot;		
+		vector3df m_DragStartRotation;
 
 		vector3df forwardVector;
 		vector3df backwardVector;

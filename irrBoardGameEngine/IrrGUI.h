@@ -22,7 +22,9 @@ namespace IrrBoardGameEngine {
 		IrrGUI(IrrlichtDevice *);
 		~IrrGUI(void);
 
-		//TEXTOS NORMAIS
+		//
+		// TEXTOS NORMAIS
+		//
 		void addLabel(s32 id, char *text, int minX, int minY, int maxX, int maxY, video::SColor color = video::SColor(255, 0, 0, 0), s32 idFont = -1);
         void setText(s32 id, char *text);
 		void setLabelColor(s32 id, video::SColor color);
@@ -30,18 +32,23 @@ namespace IrrBoardGameEngine {
         bool getLabelIsVisible(s32 id);
         void removeLabel(s32 id);
 
-		//TEXTOS COM FONT
+		//
+		// TEXTOS COM FONT
+		//
 		void addFont(s32 id, char * src, s32 space = 1, s32 lineHeight = 1);
-		IGUIFont* getFont(s32 id);
-		//void addTextFont(s32 idFont, s32 id, char *text, int minX, int minY, int maxX, int maxY);
+		IGUIFont* getFont(s32 id);		
 
-		//IMAGENS
+		//
+		// IMAGENS
+		//
         void addImage(s32 id, char* file, int x, int y);
         void setImage(s32 id, bool visible);
         bool getImage(s32 id);
         void removeImage(s32 id);
 
-		//BOTOES
+		//
+		// BOTOES
+		//
 		void setDisabledButton(s32 id, bool value);
 		bool isDisabledButton(s32 id);
 		void setPressedButton(s32 id, bool value);
@@ -54,22 +61,32 @@ namespace IrrBoardGameEngine {
 		void setButton(s32 id, bool visible);
 		void removeButton(s32 id);
 
-		//ATUALIZA
+		//
+		// ATUALIZA
+		//
 		void update();
 
+		//
+		// Controla o 'fade' da gui
+		//
 		void fadeIn(u32 time, video::SColor color = video::SColor(255, 0, 0, 0));
 		void fadeOut(u32 time, video::SColor color = video::SColor(255, 0, 0, 0));
 		void fade(u32 time, bool in = true, video::SColor color = video::SColor(255, 0, 0, 0));
 		bool isReadyfade();
 
-		//ATIVA A CENA
+		//
+		// ATIVA A CENA
+		//
 		void setActive(bool flag);
 
 		IGUIEnvironment * getGUIenv();
+
+		//
+		// Desenha a 'gui'
+		//
 		void drawAll();
 
 	protected:
-
 		IGUIElement * rootGUI;
 		IGUIInOutFader* fader;
 		bool isfadein;
