@@ -53,17 +53,16 @@ PrimeToken::PrimeToken(PrimeTeam myTeam)
 
 	else if (race == TROLL)
 	{
-		//pathOBJ = "obj/tokens/token02.obj";
 		pathOBJ = "obj/tokens/troll.obj";
 
 		//Set texture according to team
-		if (team == 1) pathTEX = "obj/tokens/troll2_mapa.jpg";
-		else if (team == 2) pathTEX = "obj/tokens/troll2_mapa2.jpg";
-		else if (team == 3) pathTEX = "obj/tokens/troll2_mapa3.jpg";
-		else if (team == 4) pathTEX = "obj/tokens/troll2_mapa4.jpg";
+		if (team == 1) pathTEX = "obj/tokens/mapa_troll_1a.jpg";
+		else if (team == 2) pathTEX = "obj/tokens/mapa_troll_2a.jpg";
+		else if (team == 3) pathTEX = "obj/tokens/mapa_troll_3a.jpg";
+		else if (team == 4) pathTEX = "obj/tokens/mapa_troll_4a.jpg";
 
 		//Highlight texture
-		pathTEXHL = "obj/tokens/troll2_mapa_hl.jpg";
+		pathTEXHL = "obj/tokens/mapa_troll_hl.jpg";
 
 		//Ability icon texture
 		if (team == 1) pathBBICO = "billboard/ability/billboard_troll_icon_t1.png";
